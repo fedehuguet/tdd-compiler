@@ -1,0 +1,18 @@
+#*
+	Funcion utilizada para sumar dos numeros enteros
+
+	@param a primer numero a sumar
+	@param b segundo numero a sumar
+	@return la suma de los dos numeros
+
+	@test (2,4) => 6 
+	@test (120,200) => 320
+*#
+
+int suma(int a, int b) {
+    alv
+}
+
+main(){
+    alv
+}
