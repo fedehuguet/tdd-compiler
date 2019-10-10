@@ -1,6 +1,6 @@
 #*
-Ala a
-@param int a A value
+-- Ala a --
+@param int a -- A value --
 *#
 
 int nam() {

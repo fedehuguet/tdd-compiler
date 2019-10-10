@@ -31,21 +31,20 @@ ALV: 'alv';
 
 COMMA: ',';
 fragment DOT: '.';
+fragment DESC: '--';
 
 TYPE: (INT | FLOAT | BOOL | STR | CHAR);
 ID: LOWER_CASE (LOWER_CASE | UPPPER_CASE)*;
 CONST: UPPPER_CASE (UPPPER_CASE | '_')* NUMBER?;
-SENTENCE: UCASEWORD ' ' WORD*;
+DESCRIPTION: DESC (LOWER_CASE | UPPPER_CASE)+ DESC;
 
-fragment STRING_VAL: '"'SENTENCE'"';
+fragment STRING_VAL: '"'(LOWER_CASE | UPPPER_CASE | ' ')*'"';
 fragment CHAR_VAL: '\'' (LOWER_CASE | UPPPER_CASE) '\'';
 fragment INT_VAL: NUMBER;
 fragment FLOAT_VAL: NUMBER DOT NUMBER;
 fragment BOOL_VAL: (FALSE | TRUE);
 VALUE: (STRING_VAL | CHAR_VAL | INT_VAL | FLOAT_VAL | BOOL_VAL);
 
-UCASEWORD: UPPPER_CASE LOWER_CASE*;
-WORD: (LOWER_CASE)+;
 NUMBER: DIGIT+;
 
 fragment LOWER_CASE: [a-z];
@@ -53,7 +52,7 @@ fragment UPPPER_CASE: [A-Z];
 fragment DIGIT: [0-9];
 
 WHITESPACE
-    :   [ \t]+
+    :   ([ \t]+ | ' ')
         -> skip
     ;
 
@@ -74,13 +73,13 @@ function: (header function_dec OPEN_BLOCK function_body CLOSE_BLOCK) | (header v
 
 header: OPEN_HEADER header_body CLOSE_HEADER;
 
-header_body: (SENTENCE params return_test tests) | (SENTENCE params) | (SENTENCE);
+header_body: (DESCRIPTION params return_test tests) | (DESCRIPTION params) | (DESCRIPTION);
 
 params: (param params) | (param);
 
-param: PARAM_HEADER TYPE ID SENTENCE;
+param: PARAM_HEADER TYPE ID DESCRIPTION;
 
-return_test: RETURN_HEADER TYPE SENTENCE;
+return_test: RETURN_HEADER TYPE DESCRIPTION;
 
 tests: (test tests) | (test);
 
