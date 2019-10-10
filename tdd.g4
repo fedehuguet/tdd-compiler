@@ -3,10 +3,6 @@ grammar tdd;
     Lexer rules
 */
 
-fragment LOWER_CASE: [a-z];
-fragment UPPPER_CASE: [A-Z];
-fragment DIGIT: [0-9];
-
 OPEN_BLOCK: '{';
 CLOSE_BLOCK: '}';
 OPEN_PAR: '(';
@@ -20,13 +16,13 @@ PARAM_HEADER: '@param';
 RETURN_HEADER: '@return';
 TEST: '@test';
 FAT_ARROW: '=>';
-INT: 'int';
-FLOAT: 'float';
-CHAR: 'char';
-STR: 'string';
-BOOL: 'bool';
-FALSE: 'false';
-TRUE: 'true';
+fragment INT: 'int';
+fragment FLOAT: 'float';
+fragment CHAR: 'char';
+fragment STR: 'string';
+fragment BOOL: 'bool';
+fragment FALSE: 'false';
+fragment TRUE: 'true';
 VOID: 'void';
 MAIN: 'main';
 RETURN: 'return';
@@ -34,32 +30,45 @@ RETURN: 'return';
 ALV: 'alv';
 
 COMMA: ',';
-DOT: '.';
-WHITE_SPACE: ' ';
-TAB: '\t';
-NEW_LINE: '\n';
+fragment DOT: '.';
 
-TYPE: (INT | FLOAT | CHAR | STR | BOOL);
-NUMBER: DIGIT+;
-ID: (LOWER_CASE) (LOWER_CASE | UPPPER_CASE | '_')* NUMBER?;
-CONST: (UPPPER_CASE) (UPPPER_CASE | '_')* NUMBER?;
-WORD: (LOWER_CASE | UPPPER_CASE)+;
-SENTENCE: (WORD WHITE_SPACE)* WORD;
+TYPE: (INT | FLOAT | BOOL | STR | CHAR);
+ID: LOWER_CASE (LOWER_CASE | UPPPER_CASE)*;
+CONST: UPPPER_CASE (UPPPER_CASE | '_')* NUMBER?;
+SENTENCE: UCASEWORD ' ' WORD*;
 
-STRING_VAL: '"' SENTENCE '"';
-CHAR_VAL: '\'' (LOWER_CASE | UPPPER_CASE) '\'';
-INT_VAL: NUMBER;
-FLOAT_VAL: NUMBER DOT NUMBER;
-BOOL_VAL: (FALSE | TRUE);
+fragment STRING_VAL: '"'SENTENCE'"';
+fragment CHAR_VAL: '\'' (LOWER_CASE | UPPPER_CASE) '\'';
+fragment INT_VAL: NUMBER;
+fragment FLOAT_VAL: NUMBER DOT NUMBER;
+fragment BOOL_VAL: (FALSE | TRUE);
 VALUE: (STRING_VAL | CHAR_VAL | INT_VAL | FLOAT_VAL | BOOL_VAL);
 
-/*
+UCASEWORD: UPPPER_CASE LOWER_CASE*;
+WORD: (LOWER_CASE)+;
+NUMBER: DIGIT+;
+
+fragment LOWER_CASE: [a-z];
+fragment UPPPER_CASE: [A-Z];
+fragment DIGIT: [0-9];
+
+WHITESPACE
+    :   [ \t]+
+        -> skip
+    ;
+
+NEWLINE
+    :   (   '\r' '\n'?
+        |   '\n'
+        )
+        -> skip
+    ;
+
+    /*
     Parser rules
 */
 
-program: functions main;
-
-functions: (function functions) | (function);
+program: function* main;
 
 function: (header function_dec OPEN_BLOCK function_body CLOSE_BLOCK) | (header void_function_dec OPEN_BLOCK void_function_body CLOSE_BLOCK);
 
