@@ -11,6 +11,8 @@ OPEN_COMMENT: '/*';
 CLOSE_COMMENT: '*/';
 OPEN_HEADER: '#*';
 CLOSE_HEADER: '*#';
+SEMI_COLON: ';';
+COLON: ':';
 
 PARAM_HEADER: '@param';
 RETURN_HEADER: '@return';
@@ -102,8 +104,14 @@ function_body: body return_statement;
 
 void_function_body: body;
 
-body: ALV;
+body: vars ALV | ALV;
 
-return_statement: RETURN VALUE;
+return_statement: RETURN VALUE SEMI_COLON;
 
 main: MAIN OPEN_PAR CLOSE_PAR OPEN_BLOCK body CLOSE_BLOCK;
+
+vars: TYPE var_declaration vars | TYPE var_declaration;
+
+var_declaration: var_name;
+    
+var_name: ID SEMI_COLON | ID COMMA var_name;

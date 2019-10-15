@@ -1,13 +1,16 @@
 #*
-Ala a
-@param int a A value
+ Ala a 
+@param int  a A value 
 *#
 
 int nam() {
+	int w;
 	alv
-	return 3
+	return 3;
 }
 
 main(){
+	int a, b, c;
+	float zz;
     alv
 }
