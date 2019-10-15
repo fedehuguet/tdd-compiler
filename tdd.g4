@@ -13,6 +13,15 @@ OPEN_HEADER: '#*';
 CLOSE_HEADER: '*#';
 SEMI_COLON: ';';
 COLON: ':';
+ADD: '+';
+SUBSTRACT: '-';
+MULTIPLY: '*';
+AND: '&&';
+OR: '||';
+DIFFERENT: '!=';
+NOT: '!';
+EQUALITY: '==';
+EQUALS: '=';
 
 PARAM_HEADER: '@param';
 RETURN_HEADER: '@return';
@@ -28,6 +37,8 @@ fragment TRUE: 'true';
 VOID: 'void';
 MAIN: 'main';
 RETURN: 'return';
+WHILE: 'while';
+IF: 'if';
 
 ALV: 'alv';
 
