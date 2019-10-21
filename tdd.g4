@@ -3,6 +3,7 @@ grammar tdd;
     Lexer rules
 */
 
+//Reserved characters
 OPEN_BLOCK: '{';
 CLOSE_BLOCK: '}';
 OPEN_PAR: '(';
@@ -11,14 +12,29 @@ OPEN_COMMENT: '/*';
 CLOSE_COMMENT: '*/';
 OPEN_HEADER: '#*';
 CLOSE_HEADER: '*#';
+SEMI_COLON: ';';
+COLON: ':';
+ADD: '+';
+SUBSTRACT: '-';
+MULTIPLY: '*';
+AND: '&&';
+OR: '||';
+DIFFERENT: '!=';
+NOT: '!';
+EQUALITY: '==';
+EQUALS: '=';
 
+//Header documentation
 PARAM_HEADER: '@param';
 RETURN_HEADER: '@return';
 TEST_HEADER: '@test';
 FAT_ARROW: '=>';
+
 VOID: 'void';
 MAIN: 'main';
 RETURN: 'return';
+WHILE: 'while';
+IF: 'if';
 
 ALV: 'alv';
 
@@ -27,13 +43,13 @@ COMMA: ',';
 TYPE: (INT | FLOAT | BOOL | STR | CHAR);
 ID: LOWER_CASE (LOWER_CASE | UPPPER_CASE | '_')* NUMBER?;
 CONST: UPPPER_CASE (UPPPER_CASE | '_')* NUMBER?;
-DESCRIPTION: DESC (LOWER_CASE | UPPPER_CASE | WHITESPACE)+ DESC;
+DESCRIPTION: DESC (LOWER_CASE | UPPPER_CASE | WHITESPACE)+;
 
 VALUE: (STRING_VAL | CHAR_VAL | INT_VAL | FLOAT_VAL | BOOL_VAL);
 
 NUMBER: DIGIT+;
 
-fragment DESC: '**';
+fragment DESC: '%%';
 
 fragment STRING_VAL: '"'(LOWER_CASE | UPPPER_CASE | ' ')*'"';
 fragment CHAR_VAL: '\'' (LOWER_CASE | UPPPER_CASE) '\'';
@@ -75,28 +91,32 @@ function: (header function_dec OPEN_BLOCK function_body CLOSE_BLOCK) | (header v
 
 header: OPEN_HEADER header_body CLOSE_HEADER;
 
-header_body: (DESCRIPTION param+ return_test test+) | (DESCRIPTION param+ ) | (DESCRIPTION);
+header_body: DESCRIPTION (param+ return_test test+ | param*);
 
 param: PARAM_HEADER TYPE ID DESCRIPTION;
 
 return_test: RETURN_HEADER TYPE DESCRIPTION;
 
-test: TEST_HEADER OPEN_PAR test_input CLOSE_PAR FAT_ARROW VALUE;
+test: TEST_HEADER OPEN_PAR test_inputs? CLOSE_PAR FAT_ARROW VALUE;
 
-test_input: VALUE (COMMA VALUE)*;
+test_inputs: VALUE (COMMA test_inputs)*;
 
-function_dec: TYPE ID OPEN_PAR input* CLOSE_PAR;
+function_dec: TYPE ID OPEN_PAR inputs? CLOSE_PAR;
 
-void_function_dec: VOID ID OPEN_PAR input* CLOSE_PAR;
+void_function_dec: VOID ID OPEN_PAR inputs? CLOSE_PAR;
 
-input: TYPE ID (COMMA TYPE ID)*;
+inputs: TYPE ID (COMMA inputs)*;
 
 function_body: body return_statement;
 
 void_function_body: body;
 
-body: ALV;
+body: var* ALV | ALV;
 
-return_statement: RETURN (VALUE | ID);
+return_statement: RETURN VALUE SEMI_COLON;
 
 main: MAIN OPEN_PAR CLOSE_PAR OPEN_BLOCK body CLOSE_BLOCK;
+
+var: TYPE var_declaration+;
+
+var_declaration: ID (SEMI_COLON | COMMA var_declaration);

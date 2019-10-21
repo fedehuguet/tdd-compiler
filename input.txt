@@ -1,18 +1,16 @@
 #*
-	** Ala a ** 
-	@param int a ** A value **
-	@param int b ** B value **
-
-	@return int c ** C return **
-	
-	@test (1,2) => 3
+%% Ala a
+@param int  a %% A value
 *#
 
 int nam(int a, int b) {
+	int w;
 	alv
-	return 3
+	return 3;
 }
 
 main(){
+	int a, b, c;
+	float zz;
     alv
 }
