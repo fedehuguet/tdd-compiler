@@ -3,6 +3,7 @@ grammar tdd;
     Lexer rules
 */
 
+//Reserved characters
 OPEN_BLOCK: '{';
 CLOSE_BLOCK: '}';
 OPEN_PAR: '(';
@@ -23,17 +24,12 @@ NOT: '!';
 EQUALITY: '==';
 EQUALS: '=';
 
+//Header documentation
 PARAM_HEADER: '@param';
 RETURN_HEADER: '@return';
-TEST: '@test';
+TEST_HEADER: '@test';
 FAT_ARROW: '=>';
-fragment INT: 'int';
-fragment FLOAT: 'float';
-fragment CHAR: 'char';
-fragment STR: 'string';
-fragment BOOL: 'bool';
-fragment FALSE: 'false';
-fragment TRUE: 'true';
+
 VOID: 'void';
 MAIN: 'main';
 RETURN: 'return';
@@ -43,30 +39,38 @@ IF: 'if';
 ALV: 'alv';
 
 COMMA: ',';
-fragment DOT: '.';
 
 TYPE: (INT | FLOAT | BOOL | STR | CHAR);
-ID: LOWER_CASE (LOWER_CASE | UPPPER_CASE)*;
+ID: LOWER_CASE (LOWER_CASE | UPPPER_CASE | '_')* NUMBER?;
 CONST: UPPPER_CASE (UPPPER_CASE | '_')* NUMBER?;
-SENTENCE: UCASEWORD ' ' WORD*;
+DESCRIPTION: DESC (LOWER_CASE | UPPPER_CASE | WHITESPACE)+;
 
-fragment STRING_VAL: '"'SENTENCE'"';
-fragment CHAR_VAL: '\'' (LOWER_CASE | UPPPER_CASE) '\'';
-fragment INT_VAL: NUMBER;
-fragment FLOAT_VAL: NUMBER DOT NUMBER;
-fragment BOOL_VAL: (FALSE | TRUE);
 VALUE: (STRING_VAL | CHAR_VAL | INT_VAL | FLOAT_VAL | BOOL_VAL);
 
-UCASEWORD: UPPPER_CASE LOWER_CASE*;
-WORD: (LOWER_CASE)+;
 NUMBER: DIGIT+;
+
+fragment DESC: '%%';
+
+fragment STRING_VAL: '"'(LOWER_CASE | UPPPER_CASE | ' ')*'"';
+fragment CHAR_VAL: '\'' (LOWER_CASE | UPPPER_CASE) '\'';
+fragment INT_VAL: NUMBER;
+fragment FLOAT_VAL: NUMBER '.' NUMBER;
+fragment BOOL_VAL: (FALSE | TRUE);
+
+fragment INT: 'int';
+fragment FLOAT: 'float';
+fragment CHAR: 'char';
+fragment STR: 'string';
+fragment BOOL: 'bool';
+fragment FALSE: 'false';
+fragment TRUE: 'true';
 
 fragment LOWER_CASE: [a-z];
 fragment UPPPER_CASE: [A-Z];
 fragment DIGIT: [0-9];
 
 WHITESPACE
-    :   [ \t]+
+    :   ([ \t]+ | ' ')
         -> skip
     ;
 
@@ -87,42 +91,32 @@ function: (header function_dec OPEN_BLOCK function_body CLOSE_BLOCK) | (header v
 
 header: OPEN_HEADER header_body CLOSE_HEADER;
 
-header_body: (SENTENCE params return_test tests) | (SENTENCE params) | (SENTENCE);
+header_body: DESCRIPTION (param+ return_test test+ | param*);
 
-params: (param params) | (param);
+param: PARAM_HEADER TYPE ID DESCRIPTION;
 
-param: PARAM_HEADER TYPE ID SENTENCE;
+return_test: RETURN_HEADER TYPE DESCRIPTION;
 
-return_test: RETURN_HEADER TYPE SENTENCE;
+test: TEST_HEADER OPEN_PAR test_inputs? CLOSE_PAR FAT_ARROW VALUE;
 
-tests: (test tests) | (test);
+test_inputs: VALUE (COMMA test_inputs)*;
 
-test: OPEN_PAR test_inputs CLOSE_PAR FAT_ARROW VALUE;
+function_dec: TYPE ID OPEN_PAR inputs? CLOSE_PAR;
 
-test_inputs: (test_input test_inputs) | test_input;
+void_function_dec: VOID ID OPEN_PAR inputs? CLOSE_PAR;
 
-test_input: (VALUE COMMA test_inputs) | VALUE;
-
-function_dec: (TYPE ID OPEN_PAR inputs CLOSE_PAR) | (TYPE ID OPEN_PAR CLOSE_PAR);
-
-void_function_dec: (VOID ID OPEN_PAR inputs CLOSE_PAR) | (VOID ID OPEN_PAR CLOSE_PAR);
-
-inputs: (input COMMA inputs) | input;
-
-input: TYPE ID;
+inputs: TYPE ID (COMMA inputs)*;
 
 function_body: body return_statement;
 
 void_function_body: body;
 
-body: vars ALV | ALV;
+body: var* ALV | ALV;
 
 return_statement: RETURN VALUE SEMI_COLON;
 
 main: MAIN OPEN_PAR CLOSE_PAR OPEN_BLOCK body CLOSE_BLOCK;
 
-vars: TYPE var_declaration vars | TYPE var_declaration;
+var: TYPE var_declaration+;
 
-var_declaration: var_name;
-    
-var_name: ID SEMI_COLON | ID COMMA var_name;
+var_declaration: ID (SEMI_COLON | COMMA var_declaration);
