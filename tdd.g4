@@ -129,9 +129,11 @@ var_declaration: ID (SEMI_COLON | COMMA var_declaration);
 
 statements:  statement*;
 
-statement:  asignation | condition | print;
+statement:  asignation | condition | print | while_loop;
 
-condition: IF OPEN_PAR expresion CLOSE_PAR OPEN_BLOCK body CLOSE_BLOCK | IF OPEN_PAR expresion CLOSE_PAR OPEN_BLOCK body CLOSE_BLOCK ELSE OPEN_BLOCK body CLOSE_BLOCK | IF OPEN_PAR expresion CLOSE_PAR OPEN_BLOCK body CLOSE_BLOCK (ELSEIF OPEN_PAR expresion CLOSE_PAR OPEN_BLOCK body CLOSE_BLOCK)+ (ELSE OPEN_BLOCK body CLOSE_BLOCK)?;
+condition_check: OPEN_PAR expresion CLOSE_PAR;
+
+condition: IF condition_check OPEN_BLOCK body CLOSE_BLOCK | IF condition_check OPEN_BLOCK body CLOSE_BLOCK ELSE OPEN_BLOCK body CLOSE_BLOCK | IF condition_check OPEN_BLOCK body CLOSE_BLOCK (ELSEIF condition_check OPEN_BLOCK body CLOSE_BLOCK)+ (ELSE OPEN_BLOCK body CLOSE_BLOCK)?;
 
 expresion:
     exp
@@ -150,7 +152,7 @@ termino:
     | factor DIVIDE termino;
 
 factor:
-    OPEN_PAR expresion CLOSE_PAR
+    condition_check
     | ADD VALUE
     | SUBSTRACT VALUE
     | VALUE | ID;
@@ -160,4 +162,6 @@ print: PRINT OPEN_PAR algo_imprimible CLOSE_PAR SEMI_COLON;
 algo_imprimible: expresion | STRING_VAL | expresion COMMA algo_imprimible | STRING_VAL COMMA algo_imprimible;
 
 asignation: ID EQUALS expresion SEMI_COLON;
+
+while_loop: WHILE condition_check OPEN_BLOCK body CLOSE_BLOCK;
 
