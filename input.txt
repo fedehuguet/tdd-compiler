@@ -22,9 +22,9 @@ main(){
 	if(2>4){
 		print("Hola");
 	} elseif(a>b) {
-		print("Hola segundo");
+		print("Hola 33");
 	} else {
-		print("Hola tercero");
+		print("Hola tercero!!@");
 	}
 	print(4+2);
 }
