@@ -17,6 +17,9 @@ COLON: ':';
 ADD: '+';
 SUBSTRACT: '-';
 MULTIPLY: '*';
+DIVIDE: '/';
+LESS_THAN: '<';
+GREATER_THAN: '>';
 AND: '&&';
 OR: '||';
 DIFFERENT: '!=';
@@ -35,6 +38,9 @@ MAIN: 'main';
 RETURN: 'return';
 WHILE: 'while';
 IF: 'if';
+ELSE: 'else';
+ELSEIF: 'elseif';
+PRINT: 'print';
 
 ALV: 'alv';
 
@@ -51,11 +57,11 @@ NUMBER: DIGIT+;
 
 fragment DESC: '%%';
 
-fragment STRING_VAL: '"'(LOWER_CASE | UPPPER_CASE | ' ')*'"';
-fragment CHAR_VAL: '\'' (LOWER_CASE | UPPPER_CASE) '\'';
-fragment INT_VAL: NUMBER;
-fragment FLOAT_VAL: NUMBER '.' NUMBER;
-fragment BOOL_VAL: (FALSE | TRUE);
+STRING_VAL: '"'(LOWER_CASE | UPPPER_CASE | ' ')*'"';
+CHAR_VAL: '\'' (LOWER_CASE | UPPPER_CASE) '\'';
+INT_VAL: NUMBER;
+FLOAT_VAL: NUMBER '.' NUMBER;
+BOOL_VAL: (FALSE | TRUE);
 
 fragment INT: 'int';
 fragment FLOAT: 'float';
@@ -111,7 +117,7 @@ function_body: body return_statement;
 
 void_function_body: body;
 
-body: var* ALV | ALV;
+body: var* statements;
 
 return_statement: RETURN VALUE SEMI_COLON;
 
@@ -120,3 +126,38 @@ main: MAIN OPEN_PAR CLOSE_PAR OPEN_BLOCK body CLOSE_BLOCK;
 var: TYPE var_declaration+;
 
 var_declaration: ID (SEMI_COLON | COMMA var_declaration);
+
+statements:  statement*;
+
+statement:  asignation | condition | print;
+
+condition: IF OPEN_PAR expresion CLOSE_PAR OPEN_BLOCK body CLOSE_BLOCK | IF OPEN_PAR expresion CLOSE_PAR OPEN_BLOCK body CLOSE_BLOCK ELSE OPEN_BLOCK body CLOSE_BLOCK | IF OPEN_PAR expresion CLOSE_PAR OPEN_BLOCK body CLOSE_BLOCK (ELSEIF OPEN_PAR expresion CLOSE_PAR OPEN_BLOCK body CLOSE_BLOCK)+ (ELSE OPEN_BLOCK body CLOSE_BLOCK)?;
+
+expresion:
+    exp
+    | exp LESS_THAN exp
+    | exp GREATER_THAN exp
+    | exp DIFFERENT exp;
+
+exp:
+    termino
+    | termino ADD exp
+    | termino SUBSTRACT exp;
+
+termino:
+    factor
+    | factor MULTIPLY termino
+    | factor DIVIDE termino;
+
+factor:
+    OPEN_PAR expresion CLOSE_PAR
+    | ADD VALUE
+    | SUBSTRACT VALUE
+    | VALUE | ID;
+
+print: PRINT OPEN_PAR algo_imprimible CLOSE_PAR SEMI_COLON;
+
+algo_imprimible: expresion | STRING_VAL | expresion COMMA algo_imprimible | STRING_VAL COMMA algo_imprimible;
+
+asignation: ID EQUALS expresion SEMI_COLON;
+
