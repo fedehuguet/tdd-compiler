@@ -117,13 +117,13 @@ function_body: body return_statement;
 
 void_function_body: body;
 
-body: var* statements;
+body: variable* statements;
 
 return_statement: RETURN VALUE SEMI_COLON;
 
 main: MAIN OPEN_PAR CLOSE_PAR OPEN_BLOCK body CLOSE_BLOCK;
 
-var: TYPE var_declaration+;
+variable: TYPE var_declaration+;
 
 var_declaration: ID (SEMI_COLON | COMMA var_declaration);
 
