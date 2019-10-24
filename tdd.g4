@@ -58,7 +58,7 @@ NUMBER: DIGIT+;
 fragment DESC: '%%';
 
 STRING_VAL: '"'(.*?)'"';
-CHAR_VAL: '\'' (LOWER_CASE | UPPPER_CASE) '\'';
+CHAR_VAL: '\'' (.?) '\'';
 INT_VAL: NUMBER;
 FLOAT_VAL: NUMBER '.' NUMBER;
 BOOL_VAL: (FALSE | TRUE);
