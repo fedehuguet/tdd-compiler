@@ -117,7 +117,7 @@ function_body: body return_statement;
 
 void_function_body: body;
 
-body: variable* statements;
+body: variable* statement*;
 
 return_statement: RETURN VALUE SEMI_COLON;
 
@@ -126,8 +126,6 @@ main: MAIN OPEN_PAR CLOSE_PAR OPEN_BLOCK body CLOSE_BLOCK;
 variable: TYPE var_declaration+;
 
 var_declaration: ID (SEMI_COLON | COMMA var_declaration);
-
-statements:  statement*;
 
 statement:  asignation | condition | print | while_loop;
 
