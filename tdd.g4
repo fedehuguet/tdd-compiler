@@ -47,7 +47,7 @@ void_function_body:
     body;
 
 body: 
-    variable* statement*;
+    variable* statement+;
 
 return_statement: 
     RETURN VALUE SEMI_COLON;
