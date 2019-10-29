@@ -1,93 +1,5 @@
 grammar tdd;
 /*
-    Lexer rules
-*/
-
-//Reserved characters
-OPEN_BLOCK: '{';
-CLOSE_BLOCK: '}';
-OPEN_PAR: '(';
-CLOSE_PAR: ')';
-OPEN_COMMENT: '/*';
-CLOSE_COMMENT: '*/';
-OPEN_HEADER: '#*';
-CLOSE_HEADER: '*#';
-SEMI_COLON: ';';
-COLON: ':';
-ADD: '+';
-SUBSTRACT: '-';
-MULTIPLY: '*';
-DIVIDE: '/';
-LESS_THAN: '<';
-GREATER_THAN: '>';
-AND: '&&';
-OR: '||';
-DIFFERENT: '!=';
-NOT: '!';
-EQUALITY: '==';
-EQUALS: '=';
-
-//Header documentation
-PARAM_HEADER: '@param';
-RETURN_HEADER: '@return';
-TEST_HEADER: '@test';
-FAT_ARROW: '=>';
-
-VOID: 'void';
-MAIN: 'main';
-RETURN: 'return';
-WHILE: 'while';
-IF: 'if';
-ELSE: 'else';
-ELSEIF: 'elseif';
-PRINT: 'print';
-
-ALV: 'alv';
-
-COMMA: ',';
-
-TYPE: (INT | FLOAT | BOOL | STR | CHAR);
-ID: LOWER_CASE (LOWER_CASE | UPPPER_CASE | '_')* NUMBER?;
-CONST: UPPPER_CASE (UPPPER_CASE | '_')* NUMBER?;
-DESCRIPTION: DESC (LOWER_CASE | UPPPER_CASE | WHITESPACE)+;
-
-VALUE: (STRING_VAL | CHAR_VAL | INT_VAL | FLOAT_VAL | BOOL_VAL);
-
-NUMBER: DIGIT+;
-
-fragment DESC: '%%';
-
-STRING_VAL: '"'(.*?)'"';
-CHAR_VAL: '\'' (.?) '\'';
-INT_VAL: NUMBER;
-FLOAT_VAL: NUMBER '.' NUMBER;
-BOOL_VAL: (FALSE | TRUE);
-
-fragment INT: 'int';
-fragment FLOAT: 'float';
-fragment CHAR: 'char';
-fragment STR: 'string';
-fragment BOOL: 'bool';
-fragment FALSE: 'false';
-fragment TRUE: 'true';
-
-fragment LOWER_CASE: [a-z];
-fragment UPPPER_CASE: [A-Z];
-fragment DIGIT: [0-9];
-
-WHITESPACE
-    :   ([ \t]+ | ' ')
-        -> skip
-    ;
-
-NEWLINE
-    :   (   '\r' '\n'?
-        |   '\n'
-        )
-        -> skip
-    ;
-
-    /*
     Parser rules
 */
 
@@ -206,3 +118,90 @@ asignation:
 while_loop: 
     WHILE condition_check OPEN_BLOCK body CLOSE_BLOCK;
 
+/*
+    Lexer rules
+*/
+
+//Reserved characters
+OPEN_BLOCK: '{';
+CLOSE_BLOCK: '}';
+OPEN_PAR: '(';
+CLOSE_PAR: ')';
+OPEN_COMMENT: '/*';
+CLOSE_COMMENT: '*/';
+OPEN_HEADER: '#*';
+CLOSE_HEADER: '*#';
+SEMI_COLON: ';';
+COLON: ':';
+ADD: '+';
+SUBSTRACT: '-';
+MULTIPLY: '*';
+DIVIDE: '/';
+LESS_THAN: '<';
+GREATER_THAN: '>';
+AND: '&&';
+OR: '||';
+DIFFERENT: '!=';
+NOT: '!';
+EQUALITY: '==';
+EQUALS: '=';
+
+//Header documentation
+PARAM_HEADER: '@param';
+RETURN_HEADER: '@return';
+TEST_HEADER: '@test';
+FAT_ARROW: '=>';
+
+VOID: 'void';
+MAIN: 'main';
+RETURN: 'return';
+WHILE: 'while';
+IF: 'if';
+ELSE: 'else';
+ELSEIF: 'elseif';
+PRINT: 'print';
+
+ALV: 'alv';
+
+COMMA: ',';
+
+TYPE: (INT | FLOAT | BOOL | STR | CHAR);
+ID: LOWER_CASE (LOWER_CASE | UPPPER_CASE | '_')* NUMBER?;
+CONST: UPPPER_CASE (UPPPER_CASE | '_')* NUMBER?;
+DESCRIPTION: DESC (LOWER_CASE | UPPPER_CASE | WHITESPACE)+;
+
+VALUE: (STRING_VAL | CHAR_VAL | INT_VAL | FLOAT_VAL | BOOL_VAL);
+
+NUMBER: DIGIT+;
+
+fragment DESC: '%%';
+
+STRING_VAL: '"'(.*?)'"';
+CHAR_VAL: '\'' (.?) '\'';
+INT_VAL: NUMBER;
+FLOAT_VAL: NUMBER '.' NUMBER;
+BOOL_VAL: (FALSE | TRUE);
+
+fragment INT: 'int';
+fragment FLOAT: 'float';
+fragment CHAR: 'char';
+fragment STR: 'string';
+fragment BOOL: 'bool';
+fragment FALSE: 'false';
+fragment TRUE: 'true';
+
+fragment LOWER_CASE: [a-z];
+fragment UPPPER_CASE: [A-Z];
+fragment DIGIT: [0-9];
+
+WHITESPACE
+    :   ([ \t]+ | ' ')
+        -> skip
+    ;
+
+NEWLINE
+    :   (   '\r' '\n'?
+        |   '\n'
+        )
+        -> skip
+    ;
