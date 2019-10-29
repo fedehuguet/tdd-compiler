@@ -4,7 +4,7 @@ grammar tdd;
 */
 
 program: 
-    function* main;
+    variable* function* main;
 
 function: 
     header function_dec OPEN_BLOCK function_body CLOSE_BLOCK
