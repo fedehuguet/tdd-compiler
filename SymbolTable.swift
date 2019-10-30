@@ -19,15 +19,14 @@ class SymbolTable<Element> {
     }
 
     func insert(symbol: UnsafeMutablePointer<Element>) -> Bool {
-        let index = self.hash(id)
+        let index = self.hash(symbol.id)
 
         if (self.symbols[index] == nil) {
             self.symbols[index] = symbol
             return true
         }
         else {
-            let start : UnsafeMutablePointer<Element>
-            start = self.symbols[index]
+            let start = self.symbols[index]
             while start.next != nil {
                 start = start.next
             }
