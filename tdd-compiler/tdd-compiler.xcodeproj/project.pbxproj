@@ -15,6 +15,10 @@
 		D3B68A5C236B7FC100B540D5 /* tddLexer.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3B68A54236B7FC000B540D5 /* tddLexer.swift */; };
 		D3B68A5D236B7FC100B540D5 /* tddLexerATN.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3B68A57236B7FC000B540D5 /* tddLexerATN.swift */; };
 		D3B68A5E236B7FC100B540D5 /* tddParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3B68A58236B7FC000B540D5 /* tddParser.swift */; };
+		D3B68A6B23712C9700B540D5 /* Function.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3B68A6923712C9700B540D5 /* Function.swift */; };
+		D3B68A6C23712C9700B540D5 /* SymbolTable.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3B68A6A23712C9700B540D5 /* SymbolTable.swift */; };
+		D3B68A6E237132EA00B540D5 /* Variable.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3B68A6D237132EA00B540D5 /* Variable.swift */; };
+		D3B68A702371337D00B540D5 /* Type.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3B68A6F2371337D00B540D5 /* Type.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -68,6 +72,10 @@
 		D3B68A56236B7FC000B540D5 /* tddLexer.interp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = tddLexer.interp; sourceTree = "<group>"; };
 		D3B68A57236B7FC000B540D5 /* tddLexerATN.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = tddLexerATN.swift; sourceTree = "<group>"; };
 		D3B68A58236B7FC000B540D5 /* tddParser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = tddParser.swift; sourceTree = "<group>"; };
+		D3B68A6923712C9700B540D5 /* Function.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Function.swift; sourceTree = "<group>"; };
+		D3B68A6A23712C9700B540D5 /* SymbolTable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SymbolTable.swift; sourceTree = "<group>"; };
+		D3B68A6D237132EA00B540D5 /* Variable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Variable.swift; sourceTree = "<group>"; };
+		D3B68A6F2371337D00B540D5 /* Type.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Type.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -103,6 +111,7 @@
 		D3B689F42363B2B100B540D5 /* tdd-compiler */ = {
 			isa = PBXGroup;
 			children = (
+				D3B68A6523712C7A00B540D5 /* Classes */,
 				D3B68A092363B35000B540D5 /* Compiler */,
 				D3B689F52363B2B100B540D5 /* main.swift */,
 			);
@@ -141,6 +150,17 @@
 			children = (
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		D3B68A6523712C7A00B540D5 /* Classes */ = {
+			isa = PBXGroup;
+			children = (
+				D3B68A6923712C9700B540D5 /* Function.swift */,
+				D3B68A6A23712C9700B540D5 /* SymbolTable.swift */,
+				D3B68A6D237132EA00B540D5 /* Variable.swift */,
+				D3B68A6F2371337D00B540D5 /* Type.swift */,
+			);
+			path = Classes;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -228,10 +248,14 @@
 				D3B689F62363B2B100B540D5 /* main.swift in Sources */,
 				D3B68A5C236B7FC100B540D5 /* tddLexer.swift in Sources */,
 				D3B68A5B236B7FC100B540D5 /* tddParserATN.swift in Sources */,
+				D3B68A6C23712C9700B540D5 /* SymbolTable.swift in Sources */,
 				D3B68A5E236B7FC100B540D5 /* tddParser.swift in Sources */,
+				D3B68A702371337D00B540D5 /* Type.swift in Sources */,
 				D3B68A5D236B7FC100B540D5 /* tddLexerATN.swift in Sources */,
 				D3B68A5A236B7FC100B540D5 /* tddListener.swift in Sources */,
 				D3B68A59236B7FC100B540D5 /* tddBaseListener.swift in Sources */,
+				D3B68A6B23712C9700B540D5 /* Function.swift in Sources */,
+				D3B68A6E237132EA00B540D5 /* Variable.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

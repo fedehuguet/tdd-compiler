@@ -5,3 +5,4 @@ tdd*.swift
 *.interp
 *.tokens
 .
+*.DS_Store

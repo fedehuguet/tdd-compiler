@@ -17,7 +17,7 @@ let code: String = """
 *#
 
 int nam(int a, int b) {
-    int w;
+    int w, k;
     if(a>2 && a >3 || a<1) {
         print("Hola");
     } elseif(a>3) {
