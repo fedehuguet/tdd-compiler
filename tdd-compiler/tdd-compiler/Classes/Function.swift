@@ -3,13 +3,12 @@ class Function {
     let type : Type
     let scope : String
     let address: Int
-    let next : UnsafeMutablePointer<Function>?
+    var variables : [Variable] = [Variable]()
 
     init(name : String, type: Type, scope: String, address: Int) {
         self.name = name
         self.type = type
         self.scope = scope
         self.address = address
-        self.next = nil
     }
 }

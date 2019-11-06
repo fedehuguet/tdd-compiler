@@ -10,6 +10,7 @@ import Foundation
 import Antlr4
 
 let code: String = """
+int a;
 #*
 %% Ala a
 @param int  a %% A value
@@ -34,7 +35,7 @@ int nam(int a, int b) {
 @param int b %% Second value to add
 *#
 
-int suma(int a, int b) {
+int suma(string a, int b) {
     print(a);
     return 3;
 }

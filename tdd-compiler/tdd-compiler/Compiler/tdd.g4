@@ -72,9 +72,9 @@ condition_check:
     OPEN_PAR hiper_expresion CLOSE_PAR;
 
 condition:
-    IF condition_check OPEN_BLOCK body CLOSE_BLOCK
-    | IF condition_check OPEN_BLOCK body CLOSE_BLOCK ELSE OPEN_BLOCK body CLOSE_BLOCK
-    | IF condition_check OPEN_BLOCK body CLOSE_BLOCK (ELSEIF condition_check OPEN_BLOCK body CLOSE_BLOCK)+ (ELSE OPEN_BLOCK body CLOSE_BLOCK)?;
+    IF condition_check OPEN_BLOCK statement* CLOSE_BLOCK
+    | IF condition_check OPEN_BLOCK statement* CLOSE_BLOCK ELSE OPEN_BLOCK statement* CLOSE_BLOCK
+    | IF condition_check OPEN_BLOCK statement* CLOSE_BLOCK (ELSEIF condition_check OPEN_BLOCK statement* CLOSE_BLOCK)+ (ELSE OPEN_BLOCK statement* CLOSE_BLOCK)?;
 
 hiper_expresion:
     expresion
@@ -116,7 +116,7 @@ asignation:
     ID EQUALS expresion SEMI_COLON;
 
 while_loop:
-    WHILE condition_check OPEN_BLOCK body CLOSE_BLOCK;
+    WHILE condition_check OPEN_BLOCK statement* CLOSE_BLOCK;
 
 /*
     Lexer rules
