@@ -1,6 +1,7 @@
 .antlr/
 *.java
 tdd*.swift
+!tddBaseListener.swift
 *.class
 *.interp
 *.tokens
