@@ -5,6 +5,30 @@ import Antlr4
 var symbols = SymbolTable()
 var scope: String = "error"
 
+//Stacks
+var sOperators = [Int]()
+var sOperands = [Int]()
+var sTypes = [Type]()
+var sJumps = [Int]()
+
+var constantsTable = [Variable]()
+
+func findType(value: String) -> Type {
+    var sType : String = "int"
+    if value.starts(with: "\"") {
+        sType = "string"
+    }
+    else if value.starts(with: "\'") {
+        sType = "char"
+    }
+    else if value == "true" || value == "false" {
+        sType = "bool"
+    }
+    else if value.contains(".") {
+        sType = "float"
+    }
+    return Type(type: sType)
+}
 
 /**
  * This class provides an empty implementation of {@link tddListener},
@@ -30,11 +54,22 @@ open class tddBaseListener: tddListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	open func exitProgram(_ ctx: tddParser.ProgramContext) {
+        print("---Simbolos---")
         for symbol in symbols.functionsDictionary {
             print(symbol.value.name + " " + symbol.value.type.rawValue)
             for variable in symbol.value.variables {
                 print(variable.name + " " + variable.type.rawValue)
             }
+        }
+        print("---Constants---")
+        for constant in constantsTable {
+            print(constant.name + " " + constant.type.rawValue)
+        }
+        print("---Operands---&&---Types---")
+        while !sOperands.isEmpty && !sTypes.isEmpty {
+            print(sOperands.first! + " " + sTypes.first!.rawValue)
+            sOperands.removeFirst()
+            sTypes.removeFirst()
         }
     }
 
@@ -399,7 +434,9 @@ open class tddBaseListener: tddListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	open func enterTermino(_ ctx: tddParser.TerminoContext) { }
+	open func enterTermino(_ ctx: tddParser.TerminoContext) {
+        
+    }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -412,7 +449,35 @@ open class tddBaseListener: tddListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	open func enterFactor(_ ctx: tddParser.FactorContext) { }
+	open func enterFactor(_ ctx: tddParser.FactorContext) {
+        //Check for ID
+        if let id = ctx.ID()?.getText() {
+            guard let variable = symbols.findID(scope: scope, id: id) else {
+                //Compile error var does not exist
+                return
+            }
+            sOperands.insert(variable.address, at:0)
+            sTypes.insert(variable.type, at:0)
+        }
+        //Check for negative constant
+        else if ctx.SUBSTRACT()?.getText() != nil {
+            guard let value = ctx.VALUE()?.getText() else {
+                //Compile error
+                return
+            }
+            let variable = Variable(name: value, type: findType(value: value), address: 2)
+            constantsTable.append(variable)
+            sOperands.insert(variable.address, at:0)
+            sTypes.insert(variable.type, at:0)
+        }
+        //Check for constant
+        else if let value = ctx.VALUE()?.getText() {
+            let variable = Variable(name: value, type: findType(value: value), address: 2)
+            constantsTable.append(variable)
+            sOperands.insert(variable.address, at:0)
+            sTypes.insert(variable.type, at:0)
+        }
+    }
 	/**
 	 * {@inheritDoc}
 	 *

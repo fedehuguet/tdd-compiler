@@ -14,7 +14,7 @@ enum Type: Int {
     case string = 3
     case bool = 4
     case char = 5
-    case error
+    case error = -1
 }
 
 extension Type {
