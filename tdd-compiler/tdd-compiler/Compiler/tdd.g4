@@ -3,81 +3,81 @@ grammar tdd;
     Parser rules
 */
 
-program: 
+program:
     variable* function* main;
 
-function: 
+function:
     header function_dec OPEN_BLOCK function_body CLOSE_BLOCK
     | header void_function_dec OPEN_BLOCK void_function_body CLOSE_BLOCK;
 
-header: 
+header:
     OPEN_HEADER header_body CLOSE_HEADER;
 
-header_body: 
-    DESCRIPTION param+ return_test test+ 
+header_body:
+    DESCRIPTION param+ return_test test+
     | DESCRIPTION param*;
 
-param: 
+param:
     PARAM_HEADER TYPE ID DESCRIPTION;
 
-return_test: 
+return_test:
     RETURN_HEADER TYPE DESCRIPTION;
 
-test: 
+test:
     TEST_HEADER OPEN_PAR test_inputs? CLOSE_PAR FAT_ARROW VALUE;
 
-test_inputs: 
-    VALUE 
+test_inputs:
+    VALUE
     | VALUE COMMA test_inputs;
 
-function_dec: 
+function_dec:
     TYPE ID OPEN_PAR inputs? CLOSE_PAR;
 
-void_function_dec: 
+void_function_dec:
     VOID ID OPEN_PAR inputs? CLOSE_PAR;
 
-inputs: 
-    TYPE ID 
+inputs:
+    TYPE ID
     | TYPE ID COMMA inputs;
 
-function_body: 
+function_body:
     body return_statement;
 
-void_function_body: 
+void_function_body:
     body;
 
-body: 
-    variable* statement+;
+body:
+    variable* statement*;
 
-return_statement: 
+return_statement:
     RETURN VALUE SEMI_COLON;
 
-main: 
+main:
     MAIN OPEN_PAR CLOSE_PAR OPEN_BLOCK body CLOSE_BLOCK;
 
-variable: 
+variable:
     TYPE var_declaration+;
 
-var_declaration: 
+var_declaration:
     ID SEMI_COLON
     | ID COMMA var_declaration;
 
-statement:  
-    asignation 
-    | condition 
-    | print 
+statement:
+    asignation
+    | condition
+    | print
     | while_loop;
 
-condition_check: 
+condition_check:
     OPEN_PAR hiper_expresion CLOSE_PAR;
 
-condition: 
-    IF condition_check OPEN_BLOCK body CLOSE_BLOCK 
-    | IF condition_check OPEN_BLOCK body CLOSE_BLOCK ELSE OPEN_BLOCK body CLOSE_BLOCK 
-    | IF condition_check OPEN_BLOCK body CLOSE_BLOCK (ELSEIF condition_check OPEN_BLOCK body CLOSE_BLOCK)+ (ELSE OPEN_BLOCK body CLOSE_BLOCK)?;
+condition:
+    IF condition_check OPEN_BLOCK statement* CLOSE_BLOCK
+    | IF condition_check OPEN_BLOCK statement* CLOSE_BLOCK ELSE OPEN_BLOCK statement* CLOSE_BLOCK
+    | IF condition_check OPEN_BLOCK statement* CLOSE_BLOCK (ELSEIF condition_check OPEN_BLOCK statement* CLOSE_BLOCK)+ (ELSE OPEN_BLOCK statement* CLOSE_BLOCK)?;
 
-hiper_expresion: 
-    expresion 
+hiper_expresion:
+    expresion
     | expresion AND hiper_expresion
     | expresion OR hiper_expresion;
 
@@ -103,20 +103,20 @@ factor:
     | SUBSTRACT VALUE
     | VALUE | ID;
 
-print: 
+print:
     PRINT OPEN_PAR algo_imprimible CLOSE_PAR SEMI_COLON;
 
-algo_imprimible: 
-    expresion 
-    | STRING_VAL 
-    | expresion COMMA algo_imprimible 
+algo_imprimible:
+    expresion
+    | STRING_VAL
+    | expresion COMMA algo_imprimible
     | STRING_VAL COMMA algo_imprimible;
 
-asignation: 
+asignation:
     ID EQUALS expresion SEMI_COLON;
 
-while_loop: 
-    WHILE condition_check OPEN_BLOCK body CLOSE_BLOCK;
+while_loop:
+    WHILE condition_check OPEN_BLOCK statement* CLOSE_BLOCK;
 
 /*
     Lexer rules

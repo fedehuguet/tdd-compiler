@@ -29,3 +29,5 @@ After installing everything and creating the aliases you can run:
 Followed by the code you want to test. And press Ctrl+D to see the constructed tree.
 
 **An example for input text can be seen on input.txt.**
+
+Symbol table is implemented as a hashing table with separate chaining to handle collisions
