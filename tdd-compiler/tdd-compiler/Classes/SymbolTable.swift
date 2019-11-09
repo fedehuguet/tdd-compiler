@@ -14,7 +14,7 @@ class SymbolTable {
         //Check in current scope
         var return_var = self.findVar(id: id, variables: function.variables)
         //Check in global scope
-        if return_var != nil {
+        if return_var == nil {
             guard let function = self.functionsDictionary["global"] else {
                 return nil
             }
