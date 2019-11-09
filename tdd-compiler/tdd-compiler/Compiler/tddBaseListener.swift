@@ -5,13 +5,20 @@ import Antlr4
 var symbols = SymbolTable()
 var scope: String = "error"
 
+
 //Stacks
-var sOperators = [Int]()
+var sOperators = [String]()
 var sOperands = [Int]()
 var sTypes = [Type]()
 var sJumps = [Int]()
 
 var constantsTable = [Variable]()
+
+//Memories
+let globalMemory = Memory(dirBase: 0)
+let constantMemory = Memory(dirBase: 10000)
+let temporalMemory = Memory(dirBase: 20000)
+let localMemory = Memory(dirBase: 30000)
 
 func findType(value: String) -> Type {
     var sType : String = "int"
@@ -28,6 +35,26 @@ func findType(value: String) -> Type {
         sType = "float"
     }
     return Type(type: sType)
+}
+
+func createVariable(memory: Memory, id: String, type: Type) -> Variable {
+    let address: Int!
+    switch type {
+    case .int:
+        address = memory.addInt()
+    case .float:
+        address = memory.addFloat()
+    case .string:
+        address = memory.addString()
+    case .bool:
+        address = memory.addBool()
+    case .char:
+        address = memory.addChar()
+    case .error:
+        address = -1
+    }
+    // TODO: Handle error in case the address is -1
+    return Variable(name: id, type: type, address: address)
 }
 
 /**
@@ -58,12 +85,12 @@ open class tddBaseListener: tddListener {
         for symbol in symbols.functionsDictionary {
             print(symbol.value.name + " " + symbol.value.type.rawValue)
             for variable in symbol.value.variables {
-                print(variable.name + " " + variable.type.rawValue)
+                print(variable.name + " " + variable.type.rawValue + " " + variable.address)
             }
         }
         print("---Constants---")
         for constant in constantsTable {
-            print(constant.name + " " + constant.type.rawValue)
+            print(constant.name + " " + constant.type.rawValue + " " + constant.address)
         }
         print("---Operands---&&---Types---")
         while !sOperands.isEmpty && !sTypes.isEmpty {
@@ -105,15 +132,15 @@ open class tddBaseListener: tddListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	open func enterHeader_body(_ ctx: tddParser.Header_bodyContext) {
-        print("inside header body")
-        print(ctx.DESCRIPTION()?.getText() ?? 2)
-        print("Params: \n")
-        for param in ctx.param() {
-            print("param desc: " + (param.DESCRIPTION()?.getText() ?? "3"))
-            print("param id: " + (param.ID()?.getText() ?? "2"))
-            print("param type: " + (param.TYPE()?.getText() ?? "2"))
-            print("")
-        }
+//        print("inside header body")
+//        print(ctx.DESCRIPTION()?.getText() ?? 2)
+//        print("Params: \n")
+//        for param in ctx.param() {
+//            print("param desc: " + (param.DESCRIPTION()?.getText() ?? "3"))
+//            print("param id: " + (param.ID()?.getText() ?? "2"))
+//            print("param type: " + (param.TYPE()?.getText() ?? "2"))
+//            print("")
+//        }
     }
 	/**
 	 * {@inheritDoc}
@@ -214,14 +241,13 @@ open class tddBaseListener: tddListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	open func enterInputs(_ ctx: tddParser.InputsContext) {
-        // Var name
-        
-        guard let name = ctx.ID(), let type = ctx.TYPE() else {
+        // Var nam
+        guard let name = ctx.ID()?.getText(), let type = ctx.TYPE()?.getText() else {
+            // TODO: Handle possible error
             return
         }
-        
-            let variable = Variable(name: name.getText(), type: Type(type: type.getText()), address: 2)
-            symbols.functionsDictionary[scope]?.variables.append(variable)
+        let variable = createVariable(memory: localMemory, id: name, type: Type(type: type))
+        symbols.functionsDictionary[scope]?.variables.append(variable)
     }
 	/**
 	 * {@inheritDoc}
@@ -338,7 +364,12 @@ open class tddBaseListener: tddListener {
             print("error")
             return
         }
-        let variable = Variable(name: id.getText(), type: Type(type: type.getText()), address: 2)
+        let variable: Variable!
+        if scope == "global" {
+            variable = createVariable(memory: globalMemory, id: id.getText(), type: Type(type: type.getText()))
+        } else {
+               variable = createVariable(memory: localMemory, id: id.getText(), type: Type(type: type.getText()))
+        }
         symbols.functionsDictionary[scope]?.variables.append(variable)
     }
 
@@ -414,35 +445,84 @@ open class tddBaseListener: tddListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	open func exitExpresion(_ ctx: tddParser.ExpresionContext) { }
-
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	open func enterExp(_ ctx: tddParser.ExpContext) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	open func exitExp(_ ctx: tddParser.ExpContext) { }
-
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	open func enterTermino(_ ctx: tddParser.TerminoContext) {
-        
+	open func exitExpresion(_ ctx: tddParser.ExpresionContext) {
+        if (!sOperators.isEmpty) {
+            //TODO gen quadruple with sOperators.first!
+            if(sOperators.first! == "&&" || sOperators.first! == "||") {
+                print(sOperators.first!)
+                sOperators.removeFirst()
+            }
+        }
+        if let parent = ctx.parent as? tddParser.Hiper_expresionContext {
+            if let oper = parent.AND()?.getText() {
+                sOperators.insert(oper, at:0)
+            }
+            else if let oper = parent.OR()?.getText() {
+                sOperators.insert(oper, at:0)
+            }
+        }
     }
+
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	open func exitTermino(_ ctx: tddParser.TerminoContext) { }
+	open func enterExp(_ ctx: tddParser.ExpContext) {}
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	open func exitExp(_ ctx: tddParser.ExpContext) {
+        if (!sOperators.isEmpty) {
+            //TODO gen quadruple with sOperators.first!
+            if(sOperators.first! == ">" || sOperators.first! == "<" || sOperators.first! == "!=") {
+                print(sOperators.first!)
+                sOperators.removeFirst()
+            }
+        }
+        if let parent = ctx.parent as? tddParser.ExpresionContext {
+            if let oper = parent.LESS_THAN()?.getText() {
+                sOperators.insert(oper, at:0)
+            }
+            else if let oper = parent.GREATER_THAN()?.getText() {
+                sOperators.insert(oper, at:0)
+            }
+            else if let oper = parent.DIFFERENT()?.getText() {
+                sOperators.insert(oper, at:0)
+            }
+        }
+    }
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	open func enterTermino(_ ctx: tddParser.TerminoContext) {}
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	open func exitTermino(_ ctx: tddParser.TerminoContext) {
+        if (!sOperators.isEmpty) {
+            //TODO gen quadruple with sOperators.first!
+            if(sOperators.first! == "+" || sOperators.first! == "-") {
+                print(sOperators.first!)
+                sOperators.removeFirst()
+            }
+        }
+        if let parent = ctx.parent as? tddParser.ExpContext {
+            if let oper = parent.ADD()?.getText() {
+                sOperators.insert(oper, at:0)
+            }
+            else if let oper = parent.SUBSTRACT()?.getText() {
+                sOperators.insert(oper, at:0)
+            }
+        }
+    }
 
 	/**
 	 * {@inheritDoc}
@@ -462,17 +542,18 @@ open class tddBaseListener: tddListener {
         //Check for negative constant
         else if ctx.SUBSTRACT()?.getText() != nil {
             guard let value = ctx.VALUE()?.getText() else {
-                //Compile error
+                // TODO: Erro
                 return
             }
-            let variable = Variable(name: value, type: findType(value: value), address: 2)
+            let variable = createVariable(memory: constantMemory, id: "-\(value)", type: findType(value: value))
             constantsTable.append(variable)
             sOperands.insert(variable.address, at:0)
             sTypes.insert(variable.type, at:0)
         }
         //Check for constant
         else if let value = ctx.VALUE()?.getText() {
-            let variable = Variable(name: value, type: findType(value: value), address: 2)
+            let variable = createVariable(memory: constantMemory, id: value, type: findType(value: value))
+  
             constantsTable.append(variable)
             sOperands.insert(variable.address, at:0)
             sTypes.insert(variable.type, at:0)
@@ -483,7 +564,23 @@ open class tddBaseListener: tddListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	open func exitFactor(_ ctx: tddParser.FactorContext) { }
+	open func exitFactor(_ ctx: tddParser.FactorContext) {
+        if (!sOperators.isEmpty) {
+            //TODO gen quadruple with sOperators.first!
+            if(sOperators.first! == "*" || sOperators.first! == "/") {
+                print(sOperators.first!)
+                sOperators.removeFirst()
+            }
+        }
+        if let parent = ctx.parent as? tddParser.TerminoContext {
+            if let oper = parent.MULTIPLY()?.getText() {
+                sOperators.insert(oper, at:0)
+            }
+            else if let oper = parent.DIVIDE()?.getText() {
+                sOperators.insert(oper, at:0)
+            }
+        }
+    }
 
 	/**
 	 * {@inheritDoc}

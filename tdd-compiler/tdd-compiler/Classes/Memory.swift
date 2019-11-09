@@ -50,10 +50,10 @@ class Memory {
     }
     
     private func addVar(typeBase: Int, typeCounter: inout Int) -> Int {
-        if (typeBase + typeCounter  > varTotal) {
+        if (typeCounter  > varTotal) {
             return -1
         }
-        let retVal = dirBase + typeBase + varTotal
+        let retVal = dirBase + typeBase + typeCounter
         typeCounter = typeCounter + 1
         return retVal
     }
