@@ -50,7 +50,7 @@ body:
     variable* statement*;
 
 return_statement:
-    RETURN VALUE SEMI_COLON;
+    RETURN hiper_expresion SEMI_COLON;
 
 main:
     MAIN OPEN_PAR CLOSE_PAR OPEN_BLOCK body CLOSE_BLOCK;
@@ -78,8 +78,8 @@ condition:
 
 hiper_expresion:
     expresion
-    | expresion AND hiper_expresion
-    | expresion OR hiper_expresion;
+    | expresion AND expresion
+    | expresion OR expresion;
 
 expresion:
     exp
@@ -99,9 +99,9 @@ termino:
 
 factor:
     condition_check
-    | ADD VALUE
     | SUBSTRACT VALUE
-    | VALUE | ID;
+    | VALUE | ID 
+    | OPEN_PAR hiper_expresion CLOSE_PAR;
 
 print:
     PRINT OPEN_PAR algo_imprimible CLOSE_PAR SEMI_COLON;
