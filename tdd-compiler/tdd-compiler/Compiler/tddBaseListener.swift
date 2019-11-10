@@ -10,7 +10,8 @@ var scope: String = "error"
 var sOperators = [String]()
 var sOperands = [Int]()
 var sTypes = [Type]()
-var sJumps = [Int]()
+var arrayQuads = [Quadruple]
+var sJumps = [Int]() //Contains index of unfilled quadruple
 
 var constantsTable = [Variable]()
 
@@ -404,13 +405,20 @@ open class tddBaseListener: tddListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	open func enterCondition(_ ctx: tddParser.ConditionContext) { }
+	open func enterCondition(_ ctx: tddParser.ConditionContext) {
+        //Generate if quad
+        
+        //While else if
+        //Else
+    }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	open func exitCondition(_ ctx: tddParser.ConditionContext) { }
+	open func exitCondition(_ ctx: tddParser.ConditionContext) {
+        //Solve previous quad
+    }
 
 	/**
 	 * {@inheritDoc}
