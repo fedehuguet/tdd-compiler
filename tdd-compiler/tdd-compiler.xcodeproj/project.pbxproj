@@ -12,6 +12,7 @@
 		9471657E2374CA5E00737AC0 /* tddLexer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 947165772374CA5D00737AC0 /* tddLexer.swift */; };
 		9471657F2374CA5E00737AC0 /* tddLexerATN.swift in Sources */ = {isa = PBXBuildFile; fileRef = 947165782374CA5D00737AC0 /* tddLexerATN.swift */; };
 		947165812374CA5E00737AC0 /* tddListener.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9471657A2374CA5D00737AC0 /* tddListener.swift */; };
+		D361E0982378D23200A91DF0 /* Quadruple.swift in Sources */ = {isa = PBXBuildFile; fileRef = D361E0972378D23200A91DF0 /* Quadruple.swift */; };
 		D3B689F62363B2B100B540D5 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3B689F52363B2B100B540D5 /* main.swift */; };
 		D3B68A59236B7FC100B540D5 /* tddBaseListener.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3B68A4F236B7FC000B540D5 /* tddBaseListener.swift */; };
 		D3B68A6B23712C9700B540D5 /* Function.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3B68A6923712C9700B540D5 /* Function.swift */; };
@@ -68,6 +69,7 @@
 		9471657A2374CA5D00737AC0 /* tddListener.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = tddListener.swift; path = ../../../tddListener.swift; sourceTree = "<group>"; };
 		9471657B2374CA5E00737AC0 /* tddLexer.tokens */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = tddLexer.tokens; path = ../../../tddLexer.tokens; sourceTree = "<group>"; };
 		947165842374D36C00737AC0 /* Antlr4.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Antlr4.xcodeproj; path = ../../antlr4/runtime/Swift/Antlr4.xcodeproj; sourceTree = "<group>"; };
+		D361E0972378D23200A91DF0 /* Quadruple.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Quadruple.swift; sourceTree = "<group>"; };
 		D3B689F22363B2B100B540D5 /* tdd-compiler */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "tdd-compiler"; sourceTree = BUILT_PRODUCTS_DIR; };
 		D3B689F52363B2B100B540D5 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
 		D3B68A0A2363B38300B540D5 /* tdd.g4 */ = {isa = PBXFileReference; lastKnownFileType = text; path = tdd.g4; sourceTree = "<group>"; };
@@ -160,6 +162,7 @@
 				D3B68A6A23712C9700B540D5 /* SymbolTable.swift */,
 				D3B68A6D237132EA00B540D5 /* Variable.swift */,
 				D3B68A6F2371337D00B540D5 /* Type.swift */,
+				D361E0972378D23200A91DF0 /* Quadruple.swift */,
 			);
 			path = Classes;
 			sourceTree = "<group>";
@@ -249,6 +252,7 @@
 				D3B68A7D2376299800B540D5 /* Memory.swift in Sources */,
 				9471657E2374CA5E00737AC0 /* tddLexer.swift in Sources */,
 				9471657F2374CA5E00737AC0 /* tddLexerATN.swift in Sources */,
+				D361E0982378D23200A91DF0 /* Quadruple.swift in Sources */,
 				D3B689F62363B2B100B540D5 /* main.swift in Sources */,
 				D3B68A6C23712C9700B540D5 /* SymbolTable.swift in Sources */,
 				D3B68A702371337D00B540D5 /* Type.swift in Sources */,
