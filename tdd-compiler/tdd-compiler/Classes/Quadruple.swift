@@ -14,12 +14,16 @@ class Quadruple {
     let quadOperator: String!
     let leftOperand: Int!
     let rightOperand: Int!
-    let result: Int!
+    var result: Int!
     
     init(quadOperator: String, leftOperand: Int, rightOperand: Int, result: Int) {
         self.quadOperator = quadOperator
         self.leftOperand = leftOperand
         self.rightOperand = rightOperand
+        self.result = result
+    }
+    
+    func fillMissingResult(result: Int) {
         self.result = result
     }
 }
