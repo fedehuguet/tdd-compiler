@@ -10,7 +10,7 @@ var scope: String = "error"
 var sOperators = [String]()
 var sOperands = [Int]()
 var sTypes = [Type]()
-var arrayQuads = [Quadruple]
+var arrayQuads = [Quadruple]()
 var sJumps = [Int]() //Contains index of unfilled quadruple
 
 var constantsTable = [Variable]()
