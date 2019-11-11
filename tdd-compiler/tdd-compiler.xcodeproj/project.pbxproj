@@ -13,6 +13,7 @@
 		9403A4D92378E98A00C089AB /* tddParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9403A4D32378E98A00C089AB /* tddParser.swift */; };
 		9403A4DA2378E98A00C089AB /* tddLexer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9403A4D52378E98A00C089AB /* tddLexer.swift */; };
 		9403A4DC2378E9E300C089AB /* tddBaseListener.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9403A4DB2378E9E300C089AB /* tddBaseListener.swift */; };
+		9403A4E4237932F200C089AB /* SemanticCube.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9403A4E3237932F200C089AB /* SemanticCube.swift */; };
 		D361E0982378D23200A91DF0 /* Quadruple.swift in Sources */ = {isa = PBXBuildFile; fileRef = D361E0972378D23200A91DF0 /* Quadruple.swift */; };
 		D3B689F62363B2B100B540D5 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3B689F52363B2B100B540D5 /* main.swift */; };
 		D3B68A6B23712C9700B540D5 /* Function.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3B68A6923712C9700B540D5 /* Function.swift */; };
@@ -68,6 +69,7 @@
 		9403A4D42378E98A00C089AB /* tddLexer.tokens */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = tddLexer.tokens; sourceTree = "<group>"; };
 		9403A4D52378E98A00C089AB /* tddLexer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = tddLexer.swift; sourceTree = "<group>"; };
 		9403A4DB2378E9E300C089AB /* tddBaseListener.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = tddBaseListener.swift; sourceTree = "<group>"; };
+		9403A4E3237932F200C089AB /* SemanticCube.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SemanticCube.swift; sourceTree = "<group>"; };
 		947165842374D36C00737AC0 /* Antlr4.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Antlr4.xcodeproj; path = ../../antlr4/runtime/Swift/Antlr4.xcodeproj; sourceTree = "<group>"; };
 		D361E0972378D23200A91DF0 /* Quadruple.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Quadruple.swift; sourceTree = "<group>"; };
 		D3B689F22363B2B100B540D5 /* tdd-compiler */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "tdd-compiler"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -161,6 +163,7 @@
 				D3B68A6D237132EA00B540D5 /* Variable.swift */,
 				D3B68A6F2371337D00B540D5 /* Type.swift */,
 				D361E0972378D23200A91DF0 /* Quadruple.swift */,
+				9403A4E3237932F200C089AB /* SemanticCube.swift */,
 			);
 			path = Classes;
 			sourceTree = "<group>";
@@ -259,6 +262,7 @@
 				D3B68A6B23712C9700B540D5 /* Function.swift in Sources */,
 				9403A4DA2378E98A00C089AB /* tddLexer.swift in Sources */,
 				9403A4D62378E98A00C089AB /* tddListener.swift in Sources */,
+				9403A4E4237932F200C089AB /* SemanticCube.swift in Sources */,
 				D3B68A6E237132EA00B540D5 /* Variable.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

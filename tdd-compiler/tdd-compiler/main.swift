@@ -9,6 +9,18 @@
 import Foundation
 import Antlr4
 
+let code2: String = """
+    main() {
+        int a;
+        if (a>2>3) {
+            a = a + 2 * 8;
+        } else {
+            a=2*2;
+        }
+    }
+
+"""
+
 let code: String = """
 int a;
 #*
@@ -19,7 +31,7 @@ int a;
 
 int nam(int a, int b) {
     int w, k;
-    if(a>1+1*8/7 && (a >3 || a<1)) {
+    if(a>1+1*8/7 && a<2) {
         print("Hola");
     } elseif(a>3) {
         print("Hola dos");
@@ -44,7 +56,7 @@ main(){
     int a, b, c;
     float zz;
     a = 4;
-    if((2 + 4) > a){
+    if(2+4 > a){
         print("Hola");
     } elseif(a>b) {
         print("Hola 33");

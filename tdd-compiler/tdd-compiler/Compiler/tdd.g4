@@ -85,8 +85,8 @@ else_condition:
 
 hiper_expresion:
     expresion
-    | expresion AND expresion
-    | expresion OR expresion;
+    | expresion AND hiper_expresion
+    | expresion OR hiper_expresion;
 
 expresion:
     exp
