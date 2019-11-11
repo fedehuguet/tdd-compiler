@@ -235,6 +235,18 @@ public protocol tddListener: ParseTreeListener {
 	 */
 	func exitStatement(_ ctx: tddParser.StatementContext)
 	/**
+	 * Enter a parse tree produced by {@link tddParser#super_condition_check}.
+	 - Parameters:
+	   - ctx: the parse tree
+	 */
+	func enterSuper_condition_check(_ ctx: tddParser.Super_condition_checkContext)
+	/**
+	 * Exit a parse tree produced by {@link tddParser#super_condition_check}.
+	 - Parameters:
+	   - ctx: the parse tree
+	 */
+	func exitSuper_condition_check(_ ctx: tddParser.Super_condition_checkContext)
+	/**
 	 * Enter a parse tree produced by {@link tddParser#condition_check}.
 	 - Parameters:
 	   - ctx: the parse tree
@@ -258,6 +270,30 @@ public protocol tddListener: ParseTreeListener {
 	   - ctx: the parse tree
 	 */
 	func exitCondition(_ ctx: tddParser.ConditionContext)
+	/**
+	 * Enter a parse tree produced by {@link tddParser#else_if_condition}.
+	 - Parameters:
+	   - ctx: the parse tree
+	 */
+	func enterElse_if_condition(_ ctx: tddParser.Else_if_conditionContext)
+	/**
+	 * Exit a parse tree produced by {@link tddParser#else_if_condition}.
+	 - Parameters:
+	   - ctx: the parse tree
+	 */
+	func exitElse_if_condition(_ ctx: tddParser.Else_if_conditionContext)
+	/**
+	 * Enter a parse tree produced by {@link tddParser#else_condition}.
+	 - Parameters:
+	   - ctx: the parse tree
+	 */
+	func enterElse_condition(_ ctx: tddParser.Else_conditionContext)
+	/**
+	 * Exit a parse tree produced by {@link tddParser#else_condition}.
+	 - Parameters:
+	   - ctx: the parse tree
+	 */
+	func exitElse_condition(_ ctx: tddParser.Else_conditionContext)
 	/**
 	 * Enter a parse tree produced by {@link tddParser#hiper_expresion}.
 	 - Parameters:

@@ -67,15 +67,18 @@ statement:
     | condition
     | print
     | while_loop;
+    
+super_condition_check:
+    condition_check;
 
 condition_check:
     OPEN_PAR hiper_expresion CLOSE_PAR;
 
 condition:
-    IF condition_check OPEN_BLOCK statement* CLOSE_BLOCK else_if_condition* else_condition?;
+    IF super_condition_check OPEN_BLOCK statement* CLOSE_BLOCK else_if_condition* else_condition?;
 
 else_if_condition:
-    ELSEIF condition_check OPEN_BLOCK statement* CLOSE_BLOCK;
+    ELSEIF super_condition_check OPEN_BLOCK statement* CLOSE_BLOCK;
     
 else_condition:
     ELSE OPEN_BLOCK statement* CLOSE_BLOCK;
@@ -87,9 +90,9 @@ hiper_expresion:
 
 expresion:
     exp
-    | exp LESS_THAN exp
-    | exp GREATER_THAN exp
-    | exp DIFFERENT exp;
+    | exp LESS_THAN expresion
+    | exp GREATER_THAN expresion
+    | exp DIFFERENT expresion;
 
 exp:
     termino
@@ -120,7 +123,7 @@ asignation:
     ID EQUALS expresion SEMI_COLON;
 
 while_loop:
-    WHILE condition_check OPEN_BLOCK statement* CLOSE_BLOCK;
+    WHILE super_condition_check OPEN_BLOCK statement* CLOSE_BLOCK;
 
 /*
     Lexer rules

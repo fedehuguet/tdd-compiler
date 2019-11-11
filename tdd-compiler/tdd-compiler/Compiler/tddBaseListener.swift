@@ -13,6 +13,7 @@ var sTypes = [Type]()
 var arrayQuads : [Quadruple] = [Quadruple.init(quadOperator: ">", leftOperand: -2, rightOperand: -2, result: 20)]
 var sJumps = [Int]() //Contains index of unfilled quadruple
 var sGoto = [Int]()
+var sWhile = [Int]()
 
 var constantsTable = [Variable]()
 
@@ -103,10 +104,6 @@ open class tddBaseListener: tddListener {
             print(sOperands.first! + " " + sTypes.first!.rawValue)
             sOperands.removeFirst()
             sTypes.removeFirst()
-        }
-        print("---QUADRS")
-        for quad in arrayQuads {
-            print("\(quad.quadOperator) \(quad.leftOperand) \(quad.result)")
         }
     }
 
@@ -395,7 +392,20 @@ open class tddBaseListener: tddListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	open func exitStatement(_ ctx: tddParser.StatementContext) { }
-
+    
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation does nothing.</p>
+     */
+    open func enterSuper_condition_check(_ ctx: tddParser.Super_condition_checkContext) { }
+    
+    open func exitSuper_condition_check(_ ctx: tddParser.Super_condition_checkContext) {
+        let quad = Quadruple.init(quadOperator: "GOTOF", leftOperand: arrayQuads[arrayQuads.count-1].result, rightOperand: -1, result: -1)
+        arrayQuads.append(quad)
+        sJumps.insert(arrayQuads.count - 1, at: 0)
+    }
+    
 	/**
 	 * {@inheritDoc}
 	 *
@@ -407,11 +417,7 @@ open class tddBaseListener: tddListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	open func exitCondition_check(_ ctx: tddParser.Condition_checkContext) {
-        let quad = Quadruple.init(quadOperator: "GOTOF", leftOperand: arrayQuads[arrayQuads.count-1].result, rightOperand: -1, result: -1)
-        arrayQuads.append(quad)
-        sJumps.insert(arrayQuads.count - 1, at: 0)
-    }
+	open func exitCondition_check(_ ctx: tddParser.Condition_checkContext) { }
 
 	/**
 	 * {@inheritDoc}
@@ -701,13 +707,25 @@ open class tddBaseListener: tddListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	open func enterWhile_loop(_ ctx: tddParser.While_loopContext) { }
+	open func enterWhile_loop(_ ctx: tddParser.While_loopContext) {
+        sWhile.insert(arrayQuads.count, at: 0)
+    }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	open func exitWhile_loop(_ ctx: tddParser.While_loopContext) { }
+	open func exitWhile_loop(_ ctx: tddParser.While_loopContext) {
+        //Generate GOTO
+        let quad = Quadruple.init(quadOperator: "GOTO", leftOperand: -1, rightOperand: -1, result: sWhile.first!)
+        sWhile.removeFirst()
+        arrayQuads.append(quad)
+        sGoto.insert(arrayQuads.count - 1, at: 0)
+        //Solve previous quad
+        if(!sJumps.isEmpty) {
+            solveQuad()
+        }
+    }
 
 	/**
 	 * {@inheritDoc}
