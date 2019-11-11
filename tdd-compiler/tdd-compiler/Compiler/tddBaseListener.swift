@@ -10,8 +10,9 @@ var scope: String = "error"
 var sOperators = [String]()
 var sOperands = [Int]()
 var sTypes = [Type]()
-var arrayQuads = [Quadruple]()
+var arrayQuads : [Quadruple] = [Quadruple.init(quadOperator: ">", leftOperand: -2, rightOperand: -2, result: 20)]
 var sJumps = [Int]() //Contains index of unfilled quadruple
+var sGoto = [Int]()
 
 var constantsTable = [Variable]()
 
@@ -102,6 +103,10 @@ open class tddBaseListener: tddListener {
             print(sOperands.first! + " " + sTypes.first!.rawValue)
             sOperands.removeFirst()
             sTypes.removeFirst()
+        }
+        print("---QUADRS")
+        for quad in arrayQuads {
+            print("\(quad.quadOperator) \(quad.leftOperand) \(quad.result)")
         }
     }
 
@@ -402,19 +407,18 @@ open class tddBaseListener: tddListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	open func exitCondition_check(_ ctx: tddParser.Condition_checkContext) { }
+	open func exitCondition_check(_ ctx: tddParser.Condition_checkContext) {
+        let quad = Quadruple.init(quadOperator: "GOTOF", leftOperand: arrayQuads[arrayQuads.count-1].result, rightOperand: -1, result: -1)
+        arrayQuads.append(quad)
+        sJumps.insert(arrayQuads.count - 1, at: 0)
+    }
 
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	open func enterCondition(_ ctx: tddParser.ConditionContext) {
-        //Generate if quad
-        var quad = Quadruple.init(quadOperator: "GOTOF", leftOperand: -1, rightOperand: -1, result: -1)
-        arrayQuads.append(quad)
-        sJumps.insert(arrayQuads.count - 1, at: 0)
-    }
+	open func enterCondition(_ ctx: tddParser.ConditionContext) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -422,7 +426,64 @@ open class tddBaseListener: tddListener {
 	 */
 	open func exitCondition(_ ctx: tddParser.ConditionContext) {
         //Solve previous quad
+        if(!sJumps.isEmpty) {
+            solveQuad()
+        }
+        //Solve all GOTO
+        while(!sGoto.isEmpty) {
+            arrayQuads[sGoto.first!].fillMissingResult(result: arrayQuads.count)
+            sGoto.removeFirst()
+        }
     }
+    
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation does nothing.</p>
+     */
+    open func enterElse_if_condition(_ ctx: tddParser.Else_if_conditionContext) {
+        //Generate GOTO
+        let quad = Quadruple.init(quadOperator: "GOTO", leftOperand: -1, rightOperand: -1, result: -1)
+        arrayQuads.append(quad)
+        sGoto.insert(arrayQuads.count - 1, at: 0)
+        //Solve previous quad
+        if(!sJumps.isEmpty) {
+            solveQuad()
+        }
+    }
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation does nothing.</p>
+     */
+    open func exitElse_if_condition(_ ctx: tddParser.Else_if_conditionContext) {
+        //Solve previous quad
+        if(!sJumps.isEmpty) {
+            solveQuad()
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation does nothing.</p>
+     */
+    open func enterElse_condition(_ ctx: tddParser.Else_conditionContext) {
+        //Generate GOTO
+        let quad = Quadruple.init(quadOperator: "GOTO", leftOperand: -1, rightOperand: -1, result: -1)
+        arrayQuads.append(quad)
+        sGoto.insert(arrayQuads.count - 1, at: 0)
+        //Solve previous quad
+        if(!sJumps.isEmpty) {
+            solveQuad()
+        }
+    }
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation does nothing.</p>
+     */
+    open func exitElse_condition(_ ctx: tddParser.Else_conditionContext) { }
 
 	/**
 	 * {@inheritDoc}
