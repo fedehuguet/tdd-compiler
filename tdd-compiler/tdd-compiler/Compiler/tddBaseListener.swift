@@ -58,6 +58,10 @@ func createVariable(memory: Memory, id: String, type: Type) -> Variable {
     return Variable(name: id, type: type, address: address)
 }
 
+func solveQuad() {
+    arrayQuads[sJumps.first!].fillMissingResult(result: arrayQuads.count)
+}
+
 /**
  * This class provides an empty implementation of {@link tddListener},
  * which can be extended to create a listener which only needs to handle a subset
@@ -407,9 +411,9 @@ open class tddBaseListener: tddListener {
 	 */
 	open func enterCondition(_ ctx: tddParser.ConditionContext) {
         //Generate if quad
-        
-        //While else if
-        //Else
+        var quad = Quadruple.init(quadOperator: "GOTOF", leftOperand: -1, rightOperand: -1, result: -1)
+        arrayQuads.append(quad)
+        sJumps.insert(arrayQuads.count - 1, at: 0)
     }
 	/**
 	 * {@inheritDoc}

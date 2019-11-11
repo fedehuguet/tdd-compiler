@@ -72,9 +72,13 @@ condition_check:
     OPEN_PAR hiper_expresion CLOSE_PAR;
 
 condition:
-    IF condition_check OPEN_BLOCK statement* CLOSE_BLOCK
-    | IF condition_check OPEN_BLOCK statement* CLOSE_BLOCK ELSE OPEN_BLOCK statement* CLOSE_BLOCK
-    | IF condition_check OPEN_BLOCK statement* CLOSE_BLOCK (ELSEIF condition_check OPEN_BLOCK statement* CLOSE_BLOCK)+ (ELSE OPEN_BLOCK statement* CLOSE_BLOCK)?;
+    IF condition_check OPEN_BLOCK statement* CLOSE_BLOCK else_if_condition* else_condition?;
+
+else_if_condition:
+    ELSEIF condition_check OPEN_BLOCK statement* CLOSE_BLOCK;
+    
+else_condition:
+    ELSE OPEN_BLOCK statement* CLOSE_BLOCK;
 
 hiper_expresion:
     expresion
