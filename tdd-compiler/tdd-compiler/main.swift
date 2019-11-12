@@ -12,10 +12,8 @@ import Antlr4
 let code2: String = """
     main() {
         int a;
-        if (a>2>3) {
-            a = a + 2 * 8;
-        } else {
-            a=2*2;
+        if (a > 3) {
+            print("Hola");
         }
     }
 
@@ -45,11 +43,31 @@ int nam(int a, int b) {
 %% Function to add two variables
 @param int  a %% First value to add
 @param int b %% Second value to add
+@return int %% la suma de los dos numeros
+
+@test (2,4) => 6
+@test (120,200) => 320
 *#
 
-int suma(string a, int b) {
+int suma(int a, int b) {
     print(a);
     return 3;
+}
+
+#*
+%% A void function with no params
+*#
+
+void noReturn() {
+    a = a + 1;
+}
+
+#*
+%% A void function with params
+*#
+
+void noReturnParams(int w, string k) {
+    print(k);
 }
 
 main(){
