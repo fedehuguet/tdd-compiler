@@ -2,6 +2,15 @@
 
 import Antlr4
 
+// Little helper function to facilitate getting substrings
+extension String {
+    subscript(_ range: CountableRange<Int>) -> String {
+        let idx1 = index(startIndex, offsetBy: max(0, range.lowerBound))
+        let idx2 = index(startIndex, offsetBy: min(self.count, range.upperBound))
+        return String(self[idx1..<idx2])
+    }
+}
+
 let semanticCube = SemanticCube()
 
 var symbols = SymbolTable()
@@ -18,6 +27,9 @@ var sGoto = [Int]()
 var sWhile = [Int]()
 
 var constantsTable = [Variable]()
+
+var documentation = "# Documentation \n"
+var docCurrFunName = ""
 
 //Memories
 let globalMemory = Memory(dirBase: 0)
@@ -133,6 +145,8 @@ open class tddBaseListener: tddListener {
             }
             print("operator \(oper) left: \(left) right \(right) result: \(res)")
         }
+        
+        print(documentation)
     }
 
     /**
@@ -167,15 +181,54 @@ open class tddBaseListener: tddListener {
      * <p>The default implementation does nothing.</p>
      */
     open func enterHeader_body(_ ctx: tddParser.Header_bodyContext) {
-//        print("inside header body")
-//        print(ctx.DESCRIPTION()?.getText() ?? 2)
-//        print("Params: \n")
-//        for param in ctx.param() {
-//            print("param desc: " + (param.DESCRIPTION()?.getText() ?? "3"))
-//            print("param id: " + (param.ID()?.getText() ?? "2"))
-//            print("param type: " + (param.TYPE()?.getText() ?? "2"))
-//            print("")
+        guard let description = ctx.DESCRIPTION() else {
+                return
+        }
+        var functionName = ""
+        let params = ctx.param()
+        let tests = ctx.test()
+        if (ctx.parent?.parent as? tddParser.FunctionContext) != nil {
+            let functionContext = ctx.parent?.parent as! tddParser.FunctionContext
+            if functionContext.function_dec() == nil {
+                functionName = functionContext.void_function_dec()!.ID()!.getText()
+            } else {
+            functionName = functionContext.function_dec()!.ID()!.getText()
+            }
+            documentation.append("## \(functionName) \n")
+            documentation.append("\(description.getText()[3..<description.getText().count]) \n")
+        }
+        docCurrFunName = functionName
+        if params.count > 0 {
+            documentation.append("### Parameters: \n")
+            documentation.append("| Type | Name | Description | \n")
+            documentation.append("| --- | --- | --- | \n")
+        }
+        for param in params {
+            let description: String = param.DESCRIPTION()!.getText()
+            documentation.append("| \(param.TYPE()!.getText()) | \(param.ID()!.getText()) | \(description[3..<description.count]) | \n")
+        }
+        
+        guard let returnTests = ctx.return_test() else {
+            return
+        }
+        
+        // Append test related stuff
+        let testDescription = returnTests.DESCRIPTION()!.getText()
+        documentation.append("### Returns \n")
+        documentation.append("| Type | Description | \n")
+        documentation.append("| --- | --- | \n")
+        documentation.append("| \(returnTests.TYPE()!.getText()) | \(testDescription[3..<testDescription.count]) | \n")
+        
+        if tests.count > 0 {
+            documentation.append("## Tests \n")
+        }
+        
+//        for test in tests {
+//            print("First test")
+//            documentation.append("\(functionName)(")
 //        }
+        
+        
     }
     /**
      * {@inheritDoc}
@@ -221,20 +274,44 @@ open class tddBaseListener: tddListener {
      *
      * <p>The default implementation does nothing.</p>
      */
-    open func exitTest(_ ctx: tddParser.TestContext) { }
+    open func exitTest(_ ctx: tddParser.TestContext) {
+            var testParams = [String]()
+            if let curr = ctx.test_inputs() {
+                var child = ctx.test_inputs()
+                while child != nil {
+                    let inputContext = child as! tddParser.Test_inputsContext
+                    testParams.append(inputContext.VALUE()!.getText())
+                    child = child?.test_inputs()
+            }
+        }
+        print(testParams)
+        if testParams.count > 0 {
+            documentation.append("- **\(docCurrFunName)**(")
+        }
+        for (index, param) in testParams.enumerated() {
+            if index == testParams.count - 1 {
+                documentation.append("\(param)) => \(ctx.VALUE()!.getText())\n")
+            } else {
+                documentation.append("\(param),")
+            }
+        }
+    }
 
     /**
      * {@inheritDoc}
      *
      * <p>The default implementation does nothing.</p>
      */
-    open func enterTest_inputs(_ ctx: tddParser.Test_inputsContext) { }
+    open func enterTest_inputs(_ ctx: tddParser.Test_inputsContext) {
+        
+    }
     /**
      * {@inheritDoc}
      *
      * <p>The default implementation does nothing.</p>
      */
-    open func exitTest_inputs(_ ctx: tddParser.Test_inputsContext) { }
+    open func exitTest_inputs(_ ctx: tddParser.Test_inputsContext) {
+    }
 
     /**
      * {@inheritDoc}
