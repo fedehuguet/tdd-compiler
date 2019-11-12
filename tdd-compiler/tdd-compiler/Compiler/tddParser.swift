@@ -1935,16 +1935,16 @@ open class tddParser: Parser {
 
 	public class Hiper_expresionContext: ParserRuleContext {
 			open
-			func expresion() -> ExpresionContext? {
-				return getRuleContext(ExpresionContext.self, 0)
+			func expresion() -> [ExpresionContext] {
+				return getRuleContexts(ExpresionContext.self)
+			}
+			open
+			func expresion(_ i: Int) -> ExpresionContext? {
+				return getRuleContext(ExpresionContext.self, i)
 			}
 			open
 			func AND() -> TerminalNode? {
 				return getToken(tddParser.Tokens.AND.rawValue, 0)
-			}
-			open
-			func hiper_expresion() -> Hiper_expresionContext? {
-				return getRuleContext(Hiper_expresionContext.self, 0)
 			}
 			open
 			func OR() -> TerminalNode? {
@@ -1991,7 +1991,7 @@ open class tddParser: Parser {
 		 		setState(262)
 		 		try match(tddParser.Tokens.AND.rawValue)
 		 		setState(263)
-		 		try hiper_expresion()
+		 		try expresion()
 
 		 		break
 		 	case 3:
@@ -2001,7 +2001,7 @@ open class tddParser: Parser {
 		 		setState(266)
 		 		try match(tddParser.Tokens.OR.rawValue)
 		 		setState(267)
-		 		try hiper_expresion()
+		 		try expresion()
 
 		 		break
 		 	default: break

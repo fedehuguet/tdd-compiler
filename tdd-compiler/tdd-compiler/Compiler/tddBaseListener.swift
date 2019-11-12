@@ -508,7 +508,6 @@ open class tddBaseListener: tddListener {
      */
     open func enterHiper_expresion(_ ctx: tddParser.Hiper_expresionContext) {
 //        print(ctx.parent)
-        print(ctx.getText())
 //        if((ctx.parent as? tddParser.Condition_checkContext) != nil) {
 //            print("if")
 //            print(ctx.getText())
@@ -522,7 +521,66 @@ open class tddBaseListener: tddListener {
      *
      * <p>The default implementation does nothing.</p>
      */
-    open func exitHiper_expresion(_ ctx: tddParser.Hiper_expresionContext) { }
+    open func exitHiper_expresion(_ ctx: tddParser.Hiper_expresionContext) {
+        print (ctx.getText())
+        if let oper = ctx.AND()?.getText() {
+            sOperators.insert(oper, at:0)
+            print("Oper: \(oper)")
+            let currentOperator = sOperators.first!
+             sOperators.removeFirst()
+             let leftOperand = sOperands.first!
+             let leftType = sTypes.first!
+             sTypes.removeFirst()
+             sOperands.removeFirst()
+             let rightOperand = sOperands.first!
+             let rightType = sTypes.first!
+             sTypes.removeFirst()
+             sOperands.removeFirst()
+             // Could potentially do some refactoring 🤔
+             if !semanticCube.checkCube(currOperator: currentOperator, leftType: leftType, rightType: rightType) {
+                 // TODO: There was a semantic error with the typing
+             }
+
+            let newType = semanticCube.getResultType(currOperator: currentOperator, leftType: leftType, rightType: rightType)
+             let temporalMemoryAssignedSpace = createTemp(type:newType)
+             if newType == .error {
+                 print("Auxilio")
+             }
+             let newQuad = Quadruple(quadOperator: currentOperator, leftOperand: leftOperand, rightOperand: rightOperand, result: temporalMemoryAssignedSpace)
+             arrayQuads.append(newQuad)
+             sOperands.insert(temporalMemoryAssignedSpace, at: 0)
+             sTypes.insert(newType, at: 0)
+        }
+        else if let oper = ctx.OR()?.getText() {
+            sOperators.insert(oper, at:0)
+            print("Oper: \(oper)")
+            let currentOperator = sOperators.first!
+             sOperators.removeFirst()
+             let leftOperand = sOperands.first!
+             let leftType = sTypes.first!
+             sTypes.removeFirst()
+             sOperands.removeFirst()
+             let rightOperand = sOperands.first!
+             let rightType = sTypes.first!
+             sTypes.removeFirst()
+             sOperands.removeFirst()
+             // Could potentially do some refactoring 🤔
+             if !semanticCube.checkCube(currOperator: currentOperator, leftType: leftType, rightType: rightType) {
+                 // TODO: There was a semantic error with the typing
+             }
+
+            let newType = semanticCube.getResultType(currOperator: currentOperator, leftType: leftType, rightType: rightType)
+             let temporalMemoryAssignedSpace = createTemp(type:newType)
+             if newType == .error {
+                 print("Auxilio")
+             }
+             let newQuad = Quadruple(quadOperator: currentOperator, leftOperand: leftOperand, rightOperand: rightOperand, result: temporalMemoryAssignedSpace)
+             arrayQuads.append(newQuad)
+             sOperands.insert(temporalMemoryAssignedSpace, at: 0)
+             sTypes.insert(newType, at: 0)
+        }
+        print("AAAA")
+    }
 
     /**
      * {@inheritDoc}
@@ -536,46 +594,46 @@ open class tddBaseListener: tddListener {
      * <p>The default implementation does nothing.</p>
      */
     open func exitExpresion(_ ctx: tddParser.ExpresionContext) {
-        if (!sOperators.isEmpty) {
-            //TODO gen quadruple with sOperators.first!
-            if(sOperators.first! == "&&" || sOperators.first! == "||") {
-                let currentOperator = sOperators.first!
-                sOperators.removeFirst()
-                let leftOperand = sOperands.first!
-                let leftType = sTypes.first!
-                sTypes.removeFirst()
-                sOperands.removeFirst()
-                let rightOperand = sOperands.first!
-                let rightType = sTypes.first!
-                sTypes.removeFirst()
-                sOperands.removeFirst()
-                // Could potentially do some refactoring 🤔
-                if !semanticCube.checkCube(currOperator: currentOperator, leftType: leftType, rightType: rightType) {
-                    // TODO: There was a semantic error with the typing
-                }
-
-               let newType = semanticCube.getResultType(currOperator: currentOperator, leftType: leftType, rightType: rightType)
-                let temporalMemoryAssignedSpace = createTemp(type:newType)
-                if newType == .error {
-                    print("Auxilio")
-                }
-                let newQuad = Quadruple(quadOperator: currentOperator, leftOperand: leftOperand, rightOperand: rightOperand, result: temporalMemoryAssignedSpace)
-                arrayQuads.append(newQuad)
-                sOperands.insert(temporalMemoryAssignedSpace, at: 0)
-                sTypes.insert(newType, at: 0)
-
-            }
-        }
-        if let parent = ctx.parent as? tddParser.Hiper_expresionContext {
-            if let oper = parent.AND()?.getText() {
-                sOperators.insert(oper, at:0)
-                print("Oper: \(oper)")
-            }
-            else if let oper = parent.OR()?.getText() {
-                sOperators.insert(oper, at:0)
-                print("Oper: \(oper)")
-            }
-        }
+//        if (!sOperators.isEmpty) {
+//            //TODO gen quadruple with sOperators.first!
+//            if(sOperators.first! == "&&" || sOperators.first! == "||") {
+//                let currentOperator = sOperators.first!
+//                sOperators.removeFirst()
+//                let leftOperand = sOperands.first!
+//                let leftType = sTypes.first!
+//                sTypes.removeFirst()
+//                sOperands.removeFirst()
+//                let rightOperand = sOperands.first!
+//                let rightType = sTypes.first!
+//                sTypes.removeFirst()
+//                sOperands.removeFirst()
+//                // Could potentially do some refactoring 🤔
+//                if !semanticCube.checkCube(currOperator: currentOperator, leftType: leftType, rightType: rightType) {
+//                    // TODO: There was a semantic error with the typing
+//                }
+//
+//               let newType = semanticCube.getResultType(currOperator: currentOperator, leftType: leftType, rightType: rightType)
+//                let temporalMemoryAssignedSpace = createTemp(type:newType)
+//                if newType == .error {
+//                    print("Auxilio")
+//                }
+//                let newQuad = Quadruple(quadOperator: currentOperator, leftOperand: leftOperand, rightOperand: rightOperand, result: temporalMemoryAssignedSpace)
+//                arrayQuads.append(newQuad)
+//                sOperands.insert(temporalMemoryAssignedSpace, at: 0)
+//                sTypes.insert(newType, at: 0)
+//
+//            }
+//        }
+//        if let parent = ctx.parent as? tddParser.Hiper_expresionContext {
+//            if let oper = parent.AND()?.getText() {
+//                sOperators.insert(oper, at:0)
+//                print("Oper: \(oper)")
+//            }
+//            else if let oper = parent.OR()?.getText() {
+//                sOperators.insert(oper, at:0)
+//                print("Oper: \(oper)")
+//            }
+//        }
     }
 
     /**
@@ -696,9 +754,6 @@ open class tddBaseListener: tddListener {
      * <p>The default implementation does nothing.</p>
      */
     open func enterFactor(_ ctx: tddParser.FactorContext) {
-        if ( ctx.OPEN_PAR()?.getText() != nil) {
-            sOperators.insert("(", at: 0)
-        }
         //Check for ID
         if let id = ctx.ID()?.getText() {
             guard let variable = symbols.findID(scope: scope, id: id) else {
