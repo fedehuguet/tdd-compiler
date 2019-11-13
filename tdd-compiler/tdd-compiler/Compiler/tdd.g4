@@ -50,7 +50,7 @@ body:
     variable* statement*;
 
 return_statement:
-    RETURN VALUE SEMI_COLON;
+    RETURN hiper_expresion SEMI_COLON;
 
 main:
     MAIN OPEN_PAR CLOSE_PAR OPEN_BLOCK body CLOSE_BLOCK;
@@ -67,25 +67,32 @@ statement:
     | condition
     | print
     | while_loop;
+    
+super_condition_check:
+    condition_check;
 
 condition_check:
     OPEN_PAR hiper_expresion CLOSE_PAR;
 
 condition:
-    IF condition_check OPEN_BLOCK statement* CLOSE_BLOCK
-    | IF condition_check OPEN_BLOCK statement* CLOSE_BLOCK ELSE OPEN_BLOCK statement* CLOSE_BLOCK
-    | IF condition_check OPEN_BLOCK statement* CLOSE_BLOCK (ELSEIF condition_check OPEN_BLOCK statement* CLOSE_BLOCK)+ (ELSE OPEN_BLOCK statement* CLOSE_BLOCK)?;
+    IF super_condition_check OPEN_BLOCK statement* CLOSE_BLOCK else_if_condition* else_condition?;
+
+else_if_condition:
+    ELSEIF super_condition_check OPEN_BLOCK statement* CLOSE_BLOCK;
+    
+else_condition:
+    ELSE OPEN_BLOCK statement* CLOSE_BLOCK;
 
 hiper_expresion:
     expresion
-    | expresion AND hiper_expresion
-    | expresion OR hiper_expresion;
+    | expresion AND expresion
+    | expresion OR expresion;
 
 expresion:
     exp
-    | exp LESS_THAN exp
-    | exp GREATER_THAN exp
-    | exp DIFFERENT exp;
+    | exp LESS_THAN expresion
+    | exp GREATER_THAN expresion
+    | exp DIFFERENT expresion;
 
 exp:
     termino
@@ -98,10 +105,10 @@ termino:
     | factor DIVIDE termino;
 
 factor:
-    condition_check
-    | ADD VALUE
-    | SUBSTRACT VALUE
-    | VALUE | ID;
+    SUBSTRACT VALUE
+    | VALUE | ID 
+    | OPEN_PAR hiper_expresion CLOSE_PAR
+    | ID OPEN_PAR hiper_expresion CLOSE_PAR;
 
 print:
     PRINT OPEN_PAR algo_imprimible CLOSE_PAR SEMI_COLON;
@@ -116,7 +123,7 @@ asignation:
     ID EQUALS expresion SEMI_COLON;
 
 while_loop:
-    WHILE condition_check OPEN_BLOCK statement* CLOSE_BLOCK;
+    WHILE super_condition_check OPEN_BLOCK statement* CLOSE_BLOCK;
 
 /*
     Lexer rules
@@ -160,8 +167,6 @@ IF: 'if';
 ELSE: 'else';
 ELSEIF: 'elseif';
 PRINT: 'print';
-
-ALV: 'alv';
 
 COMMA: ',';
 

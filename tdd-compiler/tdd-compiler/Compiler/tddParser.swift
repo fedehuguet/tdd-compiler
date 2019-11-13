@@ -23,11 +23,10 @@ open class tddParser: Parser {
                  OR = 18, DIFFERENT = 19, NOT = 20, EQUALITY = 21, EQUALS = 22, 
                  PARAM_HEADER = 23, RETURN_HEADER = 24, TEST_HEADER = 25, 
                  FAT_ARROW = 26, VOID = 27, MAIN = 28, RETURN = 29, WHILE = 30, 
-                 IF = 31, ELSE = 32, ELSEIF = 33, PRINT = 34, ALV = 35, 
-                 COMMA = 36, TYPE = 37, ID = 38, CONST = 39, DESCRIPTION = 40, 
-                 VALUE = 41, NUMBER = 42, STRING_VAL = 43, CHAR_VAL = 44, 
-                 INT_VAL = 45, FLOAT_VAL = 46, BOOL_VAL = 47, WHITESPACE = 48, 
-                 NEWLINE = 49
+                 IF = 31, ELSE = 32, ELSEIF = 33, PRINT = 34, COMMA = 35, 
+                 TYPE = 36, ID = 37, CONST = 38, DESCRIPTION = 39, VALUE = 40, 
+                 NUMBER = 41, STRING_VAL = 42, CHAR_VAL = 43, INT_VAL = 44, 
+                 FLOAT_VAL = 45, BOOL_VAL = 46, WHITESPACE = 47, NEWLINE = 48
 	}
 
 	public
@@ -36,19 +35,21 @@ open class tddParser: Parser {
             RULE_function_dec = 8, RULE_void_function_dec = 9, RULE_inputs = 10, 
             RULE_function_body = 11, RULE_void_function_body = 12, RULE_body = 13, 
             RULE_return_statement = 14, RULE_main = 15, RULE_variable = 16, 
-            RULE_var_declaration = 17, RULE_statement = 18, RULE_condition_check = 19, 
-            RULE_condition = 20, RULE_hiper_expresion = 21, RULE_expresion = 22, 
-            RULE_exp = 23, RULE_termino = 24, RULE_factor = 25, RULE_print = 26, 
-            RULE_algo_imprimible = 27, RULE_asignation = 28, RULE_while_loop = 29
+            RULE_var_declaration = 17, RULE_statement = 18, RULE_super_condition_check = 19, 
+            RULE_condition_check = 20, RULE_condition = 21, RULE_else_if_condition = 22, 
+            RULE_else_condition = 23, RULE_hiper_expresion = 24, RULE_expresion = 25, 
+            RULE_exp = 26, RULE_termino = 27, RULE_factor = 28, RULE_print = 29, 
+            RULE_algo_imprimible = 30, RULE_asignation = 31, RULE_while_loop = 32
 
 	public
 	static let ruleNames: [String] = [
 		"program", "function", "header", "header_body", "param", "return_test", 
 		"test", "test_inputs", "function_dec", "void_function_dec", "inputs", 
 		"function_body", "void_function_body", "body", "return_statement", "main", 
-		"variable", "var_declaration", "statement", "condition_check", "condition", 
-		"hiper_expresion", "expresion", "exp", "termino", "factor", "print", "algo_imprimible", 
-		"asignation", "while_loop"
+		"variable", "var_declaration", "statement", "super_condition_check", "condition_check", 
+		"condition", "else_if_condition", "else_condition", "hiper_expresion", 
+		"expresion", "exp", "termino", "factor", "print", "algo_imprimible", "asignation", 
+		"while_loop"
 	]
 
 	private static let _LITERAL_NAMES: [String?] = [
@@ -56,7 +57,7 @@ open class tddParser: Parser {
 		"':'", "'+'", "'-'", "'*'", "'/'", "'<'", "'>'", "'&&'", "'||'", "'!='", 
 		"'!'", "'=='", "'='", "'@param'", "'@return'", "'@test'", "'=>'", "'void'", 
 		"'main'", "'return'", "'while'", "'if'", "'else'", "'elseif'", "'print'", 
-		"'alv'", "','"
+		"','"
 	]
 	private static let _SYMBOLIC_NAMES: [String?] = [
 		nil, "OPEN_BLOCK", "CLOSE_BLOCK", "OPEN_PAR", "CLOSE_PAR", "OPEN_COMMENT", 
@@ -64,8 +65,8 @@ open class tddParser: Parser {
 		"ADD", "SUBSTRACT", "MULTIPLY", "DIVIDE", "LESS_THAN", "GREATER_THAN", 
 		"AND", "OR", "DIFFERENT", "NOT", "EQUALITY", "EQUALS", "PARAM_HEADER", 
 		"RETURN_HEADER", "TEST_HEADER", "FAT_ARROW", "VOID", "MAIN", "RETURN", 
-		"WHILE", "IF", "ELSE", "ELSEIF", "PRINT", "ALV", "COMMA", "TYPE", "ID", 
-		"CONST", "DESCRIPTION", "VALUE", "NUMBER", "STRING_VAL", "CHAR_VAL", "INT_VAL", 
+		"WHILE", "IF", "ELSE", "ELSEIF", "PRINT", "COMMA", "TYPE", "ID", "CONST", 
+		"DESCRIPTION", "VALUE", "NUMBER", "STRING_VAL", "CHAR_VAL", "INT_VAL", 
 		"FLOAT_VAL", "BOOL_VAL", "WHITESPACE", "NEWLINE"
 	]
 	public
@@ -145,7 +146,7 @@ open class tddParser: Parser {
 	    }
 		do {
 		 	try enterOuterAlt(_localctx, 1)
-		 	setState(63)
+		 	setState(69)
 		 	try _errHandler.sync(self)
 		 	_la = try _input.LA(1)
 		 	while (//closure
@@ -153,15 +154,15 @@ open class tddParser: Parser {
 		 	      let testSet: Bool = _la == tddParser.Tokens.TYPE.rawValue
 		 	      return testSet
 		 	 }()) {
-		 		setState(60)
+		 		setState(66)
 		 		try variable()
 
 
-		 		setState(65)
+		 		setState(71)
 		 		try _errHandler.sync(self)
 		 		_la = try _input.LA(1)
 		 	}
-		 	setState(69)
+		 	setState(75)
 		 	try _errHandler.sync(self)
 		 	_la = try _input.LA(1)
 		 	while (//closure
@@ -169,15 +170,15 @@ open class tddParser: Parser {
 		 	      let testSet: Bool = _la == tddParser.Tokens.OPEN_HEADER.rawValue
 		 	      return testSet
 		 	 }()) {
-		 		setState(66)
+		 		setState(72)
 		 		try function()
 
 
-		 		setState(71)
+		 		setState(77)
 		 		try _errHandler.sync(self)
 		 		_la = try _input.LA(1)
 		 	}
-		 	setState(72)
+		 	setState(78)
 		 	try main()
 
 		}
@@ -244,34 +245,34 @@ open class tddParser: Parser {
 	    		try! exitRule()
 	    }
 		do {
-		 	setState(86)
+		 	setState(92)
 		 	try _errHandler.sync(self)
 		 	switch(try getInterpreter().adaptivePredict(_input,2, _ctx)) {
 		 	case 1:
 		 		try enterOuterAlt(_localctx, 1)
-		 		setState(74)
+		 		setState(80)
 		 		try header()
-		 		setState(75)
+		 		setState(81)
 		 		try function_dec()
-		 		setState(76)
+		 		setState(82)
 		 		try match(tddParser.Tokens.OPEN_BLOCK.rawValue)
-		 		setState(77)
+		 		setState(83)
 		 		try function_body()
-		 		setState(78)
+		 		setState(84)
 		 		try match(tddParser.Tokens.CLOSE_BLOCK.rawValue)
 
 		 		break
 		 	case 2:
 		 		try enterOuterAlt(_localctx, 2)
-		 		setState(80)
+		 		setState(86)
 		 		try header()
-		 		setState(81)
+		 		setState(87)
 		 		try void_function_dec()
-		 		setState(82)
+		 		setState(88)
 		 		try match(tddParser.Tokens.OPEN_BLOCK.rawValue)
-		 		setState(83)
+		 		setState(89)
 		 		try void_function_body()
-		 		setState(84)
+		 		setState(90)
 		 		try match(tddParser.Tokens.CLOSE_BLOCK.rawValue)
 
 		 		break
@@ -326,11 +327,11 @@ open class tddParser: Parser {
 	    }
 		do {
 		 	try enterOuterAlt(_localctx, 1)
-		 	setState(88)
+		 	setState(94)
 		 	try match(tddParser.Tokens.OPEN_HEADER.rawValue)
-		 	setState(89)
+		 	setState(95)
 		 	try header_body()
-		 	setState(90)
+		 	setState(96)
 		 	try match(tddParser.Tokens.CLOSE_HEADER.rawValue)
 
 		}
@@ -394,22 +395,22 @@ open class tddParser: Parser {
 	    		try! exitRule()
 	    }
 		do {
-		 	setState(111)
+		 	setState(117)
 		 	try _errHandler.sync(self)
 		 	switch(try getInterpreter().adaptivePredict(_input,6, _ctx)) {
 		 	case 1:
 		 		try enterOuterAlt(_localctx, 1)
-		 		setState(92)
+		 		setState(98)
 		 		try match(tddParser.Tokens.DESCRIPTION.rawValue)
-		 		setState(94) 
+		 		setState(100) 
 		 		try _errHandler.sync(self)
 		 		_la = try _input.LA(1)
 		 		repeat {
-		 			setState(93)
+		 			setState(99)
 		 			try param()
 
 
-		 			setState(96); 
+		 			setState(102); 
 		 			try _errHandler.sync(self)
 		 			_la = try _input.LA(1)
 		 		} while (//closure
@@ -417,17 +418,17 @@ open class tddParser: Parser {
 		 		      let testSet: Bool = _la == tddParser.Tokens.PARAM_HEADER.rawValue
 		 		      return testSet
 		 		 }())
-		 		setState(98)
+		 		setState(104)
 		 		try return_test()
-		 		setState(100) 
+		 		setState(106) 
 		 		try _errHandler.sync(self)
 		 		_la = try _input.LA(1)
 		 		repeat {
-		 			setState(99)
+		 			setState(105)
 		 			try test()
 
 
-		 			setState(102); 
+		 			setState(108); 
 		 			try _errHandler.sync(self)
 		 			_la = try _input.LA(1)
 		 		} while (//closure
@@ -439,9 +440,9 @@ open class tddParser: Parser {
 		 		break
 		 	case 2:
 		 		try enterOuterAlt(_localctx, 2)
-		 		setState(104)
+		 		setState(110)
 		 		try match(tddParser.Tokens.DESCRIPTION.rawValue)
-		 		setState(108)
+		 		setState(114)
 		 		try _errHandler.sync(self)
 		 		_la = try _input.LA(1)
 		 		while (//closure
@@ -449,11 +450,11 @@ open class tddParser: Parser {
 		 		      let testSet: Bool = _la == tddParser.Tokens.PARAM_HEADER.rawValue
 		 		      return testSet
 		 		 }()) {
-		 			setState(105)
+		 			setState(111)
 		 			try param()
 
 
-		 			setState(110)
+		 			setState(116)
 		 			try _errHandler.sync(self)
 		 			_la = try _input.LA(1)
 		 		}
@@ -514,13 +515,13 @@ open class tddParser: Parser {
 	    }
 		do {
 		 	try enterOuterAlt(_localctx, 1)
-		 	setState(113)
+		 	setState(119)
 		 	try match(tddParser.Tokens.PARAM_HEADER.rawValue)
-		 	setState(114)
+		 	setState(120)
 		 	try match(tddParser.Tokens.TYPE.rawValue)
-		 	setState(115)
+		 	setState(121)
 		 	try match(tddParser.Tokens.ID.rawValue)
-		 	setState(116)
+		 	setState(122)
 		 	try match(tddParser.Tokens.DESCRIPTION.rawValue)
 
 		}
@@ -572,11 +573,11 @@ open class tddParser: Parser {
 	    }
 		do {
 		 	try enterOuterAlt(_localctx, 1)
-		 	setState(118)
+		 	setState(124)
 		 	try match(tddParser.Tokens.RETURN_HEADER.rawValue)
-		 	setState(119)
+		 	setState(125)
 		 	try match(tddParser.Tokens.TYPE.rawValue)
-		 	setState(120)
+		 	setState(126)
 		 	try match(tddParser.Tokens.DESCRIPTION.rawValue)
 
 		}
@@ -641,11 +642,11 @@ open class tddParser: Parser {
 	    }
 		do {
 		 	try enterOuterAlt(_localctx, 1)
-		 	setState(122)
+		 	setState(128)
 		 	try match(tddParser.Tokens.TEST_HEADER.rawValue)
-		 	setState(123)
+		 	setState(129)
 		 	try match(tddParser.Tokens.OPEN_PAR.rawValue)
-		 	setState(125)
+		 	setState(131)
 		 	try _errHandler.sync(self)
 		 	_la = try _input.LA(1)
 		 	if (//closure
@@ -653,16 +654,16 @@ open class tddParser: Parser {
 		 	      let testSet: Bool = _la == tddParser.Tokens.VALUE.rawValue
 		 	      return testSet
 		 	 }()) {
-		 		setState(124)
+		 		setState(130)
 		 		try test_inputs()
 
 		 	}
 
-		 	setState(127)
+		 	setState(133)
 		 	try match(tddParser.Tokens.CLOSE_PAR.rawValue)
-		 	setState(128)
+		 	setState(134)
 		 	try match(tddParser.Tokens.FAT_ARROW.rawValue)
-		 	setState(129)
+		 	setState(135)
 		 	try match(tddParser.Tokens.VALUE.rawValue)
 
 		}
@@ -713,22 +714,22 @@ open class tddParser: Parser {
 	    		try! exitRule()
 	    }
 		do {
-		 	setState(135)
+		 	setState(141)
 		 	try _errHandler.sync(self)
 		 	switch(try getInterpreter().adaptivePredict(_input,8, _ctx)) {
 		 	case 1:
 		 		try enterOuterAlt(_localctx, 1)
-		 		setState(131)
+		 		setState(137)
 		 		try match(tddParser.Tokens.VALUE.rawValue)
 
 		 		break
 		 	case 2:
 		 		try enterOuterAlt(_localctx, 2)
-		 		setState(132)
+		 		setState(138)
 		 		try match(tddParser.Tokens.VALUE.rawValue)
-		 		setState(133)
+		 		setState(139)
 		 		try match(tddParser.Tokens.COMMA.rawValue)
-		 		setState(134)
+		 		setState(140)
 		 		try test_inputs()
 
 		 		break
@@ -792,13 +793,13 @@ open class tddParser: Parser {
 	    }
 		do {
 		 	try enterOuterAlt(_localctx, 1)
-		 	setState(137)
+		 	setState(143)
 		 	try match(tddParser.Tokens.TYPE.rawValue)
-		 	setState(138)
+		 	setState(144)
 		 	try match(tddParser.Tokens.ID.rawValue)
-		 	setState(139)
+		 	setState(145)
 		 	try match(tddParser.Tokens.OPEN_PAR.rawValue)
-		 	setState(141)
+		 	setState(147)
 		 	try _errHandler.sync(self)
 		 	_la = try _input.LA(1)
 		 	if (//closure
@@ -806,12 +807,12 @@ open class tddParser: Parser {
 		 	      let testSet: Bool = _la == tddParser.Tokens.TYPE.rawValue
 		 	      return testSet
 		 	 }()) {
-		 		setState(140)
+		 		setState(146)
 		 		try inputs()
 
 		 	}
 
-		 	setState(143)
+		 	setState(149)
 		 	try match(tddParser.Tokens.CLOSE_PAR.rawValue)
 
 		}
@@ -872,13 +873,13 @@ open class tddParser: Parser {
 	    }
 		do {
 		 	try enterOuterAlt(_localctx, 1)
-		 	setState(145)
+		 	setState(151)
 		 	try match(tddParser.Tokens.VOID.rawValue)
-		 	setState(146)
+		 	setState(152)
 		 	try match(tddParser.Tokens.ID.rawValue)
-		 	setState(147)
+		 	setState(153)
 		 	try match(tddParser.Tokens.OPEN_PAR.rawValue)
-		 	setState(149)
+		 	setState(155)
 		 	try _errHandler.sync(self)
 		 	_la = try _input.LA(1)
 		 	if (//closure
@@ -886,12 +887,12 @@ open class tddParser: Parser {
 		 	      let testSet: Bool = _la == tddParser.Tokens.TYPE.rawValue
 		 	      return testSet
 		 	 }()) {
-		 		setState(148)
+		 		setState(154)
 		 		try inputs()
 
 		 	}
 
-		 	setState(151)
+		 	setState(157)
 		 	try match(tddParser.Tokens.CLOSE_PAR.rawValue)
 
 		}
@@ -946,26 +947,26 @@ open class tddParser: Parser {
 	    		try! exitRule()
 	    }
 		do {
-		 	setState(159)
+		 	setState(165)
 		 	try _errHandler.sync(self)
 		 	switch(try getInterpreter().adaptivePredict(_input,11, _ctx)) {
 		 	case 1:
 		 		try enterOuterAlt(_localctx, 1)
-		 		setState(153)
+		 		setState(159)
 		 		try match(tddParser.Tokens.TYPE.rawValue)
-		 		setState(154)
+		 		setState(160)
 		 		try match(tddParser.Tokens.ID.rawValue)
 
 		 		break
 		 	case 2:
 		 		try enterOuterAlt(_localctx, 2)
-		 		setState(155)
+		 		setState(161)
 		 		try match(tddParser.Tokens.TYPE.rawValue)
-		 		setState(156)
+		 		setState(162)
 		 		try match(tddParser.Tokens.ID.rawValue)
-		 		setState(157)
+		 		setState(163)
 		 		try match(tddParser.Tokens.COMMA.rawValue)
-		 		setState(158)
+		 		setState(164)
 		 		try inputs()
 
 		 		break
@@ -1016,9 +1017,9 @@ open class tddParser: Parser {
 	    }
 		do {
 		 	try enterOuterAlt(_localctx, 1)
-		 	setState(161)
+		 	setState(167)
 		 	try body()
-		 	setState(162)
+		 	setState(168)
 		 	try return_statement()
 
 		}
@@ -1062,7 +1063,7 @@ open class tddParser: Parser {
 	    }
 		do {
 		 	try enterOuterAlt(_localctx, 1)
-		 	setState(164)
+		 	setState(170)
 		 	try body()
 
 		}
@@ -1119,7 +1120,7 @@ open class tddParser: Parser {
 	    }
 		do {
 		 	try enterOuterAlt(_localctx, 1)
-		 	setState(169)
+		 	setState(175)
 		 	try _errHandler.sync(self)
 		 	_la = try _input.LA(1)
 		 	while (//closure
@@ -1127,33 +1128,33 @@ open class tddParser: Parser {
 		 	      let testSet: Bool = _la == tddParser.Tokens.TYPE.rawValue
 		 	      return testSet
 		 	 }()) {
-		 		setState(166)
+		 		setState(172)
 		 		try variable()
 
 
-		 		setState(171)
+		 		setState(177)
 		 		try _errHandler.sync(self)
 		 		_la = try _input.LA(1)
 		 	}
-		 	setState(173) 
+		 	setState(181)
 		 	try _errHandler.sync(self)
 		 	_la = try _input.LA(1)
-		 	repeat {
-		 		setState(172)
-		 		try statement()
-
-
-		 		setState(175); 
-		 		try _errHandler.sync(self)
-		 		_la = try _input.LA(1)
-		 	} while (//closure
+		 	while (//closure
 		 	 { () -> Bool in
 		 	      let testSet: Bool = {  () -> Bool in
 		 	   let testArray: [Int] = [_la, tddParser.Tokens.WHILE.rawValue,tddParser.Tokens.IF.rawValue,tddParser.Tokens.PRINT.rawValue,tddParser.Tokens.ID.rawValue]
 		 	    return  Utils.testBitLeftShiftArray(testArray, 0)
 		 	}()
 		 	      return testSet
-		 	 }())
+		 	 }()) {
+		 		setState(178)
+		 		try statement()
+
+
+		 		setState(183)
+		 		try _errHandler.sync(self)
+		 		_la = try _input.LA(1)
+		 	}
 
 		}
 		catch ANTLRException.recognition(let re) {
@@ -1171,8 +1172,8 @@ open class tddParser: Parser {
 				return getToken(tddParser.Tokens.RETURN.rawValue, 0)
 			}
 			open
-			func VALUE() -> TerminalNode? {
-				return getToken(tddParser.Tokens.VALUE.rawValue, 0)
+			func hiper_expresion() -> Hiper_expresionContext? {
+				return getRuleContext(Hiper_expresionContext.self, 0)
 			}
 			open
 			func SEMI_COLON() -> TerminalNode? {
@@ -1204,11 +1205,11 @@ open class tddParser: Parser {
 	    }
 		do {
 		 	try enterOuterAlt(_localctx, 1)
-		 	setState(177)
+		 	setState(184)
 		 	try match(tddParser.Tokens.RETURN.rawValue)
-		 	setState(178)
-		 	try match(tddParser.Tokens.VALUE.rawValue)
-		 	setState(179)
+		 	setState(185)
+		 	try hiper_expresion()
+		 	setState(186)
 		 	try match(tddParser.Tokens.SEMI_COLON.rawValue)
 
 		}
@@ -1272,17 +1273,17 @@ open class tddParser: Parser {
 	    }
 		do {
 		 	try enterOuterAlt(_localctx, 1)
-		 	setState(181)
+		 	setState(188)
 		 	try match(tddParser.Tokens.MAIN.rawValue)
-		 	setState(182)
+		 	setState(189)
 		 	try match(tddParser.Tokens.OPEN_PAR.rawValue)
-		 	setState(183)
+		 	setState(190)
 		 	try match(tddParser.Tokens.CLOSE_PAR.rawValue)
-		 	setState(184)
+		 	setState(191)
 		 	try match(tddParser.Tokens.OPEN_BLOCK.rawValue)
-		 	setState(185)
+		 	setState(192)
 		 	try body()
-		 	setState(186)
+		 	setState(193)
 		 	try match(tddParser.Tokens.CLOSE_BLOCK.rawValue)
 
 		}
@@ -1335,15 +1336,15 @@ open class tddParser: Parser {
 		do {
 			var _alt:Int
 		 	try enterOuterAlt(_localctx, 1)
-		 	setState(188)
+		 	setState(195)
 		 	try match(tddParser.Tokens.TYPE.rawValue)
-		 	setState(190); 
+		 	setState(197); 
 		 	try _errHandler.sync(self)
 		 	_alt = 1;
 		 	repeat {
 		 		switch (_alt) {
 		 		case 1:
-		 			setState(189)
+		 			setState(196)
 		 			try var_declaration()
 
 
@@ -1351,7 +1352,7 @@ open class tddParser: Parser {
 		 		default:
 		 			throw ANTLRException.recognition(e: NoViableAltException(self))
 		 		}
-		 		setState(192); 
+		 		setState(199); 
 		 		try _errHandler.sync(self)
 		 		_alt = try getInterpreter().adaptivePredict(_input,14,_ctx)
 		 	} while (_alt != 2 && _alt !=  ATN.INVALID_ALT_NUMBER)
@@ -1408,24 +1409,24 @@ open class tddParser: Parser {
 	    		try! exitRule()
 	    }
 		do {
-		 	setState(199)
+		 	setState(206)
 		 	try _errHandler.sync(self)
 		 	switch(try getInterpreter().adaptivePredict(_input,15, _ctx)) {
 		 	case 1:
 		 		try enterOuterAlt(_localctx, 1)
-		 		setState(194)
+		 		setState(201)
 		 		try match(tddParser.Tokens.ID.rawValue)
-		 		setState(195)
+		 		setState(202)
 		 		try match(tddParser.Tokens.SEMI_COLON.rawValue)
 
 		 		break
 		 	case 2:
 		 		try enterOuterAlt(_localctx, 2)
-		 		setState(196)
+		 		setState(203)
 		 		try match(tddParser.Tokens.ID.rawValue)
-		 		setState(197)
+		 		setState(204)
 		 		try match(tddParser.Tokens.COMMA.rawValue)
-		 		setState(198)
+		 		setState(205)
 		 		try var_declaration()
 
 		 		break
@@ -1483,39 +1484,83 @@ open class tddParser: Parser {
 	    		try! exitRule()
 	    }
 		do {
-		 	setState(205)
+		 	setState(212)
 		 	try _errHandler.sync(self)
 		 	switch (tddParser.Tokens(rawValue: try _input.LA(1))!) {
 		 	case .ID:
 		 		try enterOuterAlt(_localctx, 1)
-		 		setState(201)
+		 		setState(208)
 		 		try asignation()
 
 		 		break
 
 		 	case .IF:
 		 		try enterOuterAlt(_localctx, 2)
-		 		setState(202)
+		 		setState(209)
 		 		try condition()
 
 		 		break
 
 		 	case .PRINT:
 		 		try enterOuterAlt(_localctx, 3)
-		 		setState(203)
+		 		setState(210)
 		 		try print()
 
 		 		break
 
 		 	case .WHILE:
 		 		try enterOuterAlt(_localctx, 4)
-		 		setState(204)
+		 		setState(211)
 		 		try while_loop()
 
 		 		break
 		 	default:
 		 		throw ANTLRException.recognition(e: NoViableAltException(self))
 		 	}
+		}
+		catch ANTLRException.recognition(let re) {
+			_localctx.exception = re
+			_errHandler.reportError(self, re)
+			try _errHandler.recover(self, re)
+		}
+
+		return _localctx
+	}
+
+	public class Super_condition_checkContext: ParserRuleContext {
+			open
+			func condition_check() -> Condition_checkContext? {
+				return getRuleContext(Condition_checkContext.self, 0)
+			}
+		override open
+		func getRuleIndex() -> Int {
+			return tddParser.RULE_super_condition_check
+		}
+		override open
+		func enterRule(_ listener: ParseTreeListener) {
+			if let listener = listener as? tddListener {
+				listener.enterSuper_condition_check(self)
+			}
+		}
+		override open
+		func exitRule(_ listener: ParseTreeListener) {
+			if let listener = listener as? tddListener {
+				listener.exitSuper_condition_check(self)
+			}
+		}
+	}
+	@discardableResult
+	 open func super_condition_check() throws -> Super_condition_checkContext {
+		var _localctx: Super_condition_checkContext = Super_condition_checkContext(_ctx, getState())
+		try enterRule(_localctx, 38, tddParser.RULE_super_condition_check)
+		defer {
+	    		try! exitRule()
+	    }
+		do {
+		 	try enterOuterAlt(_localctx, 1)
+		 	setState(214)
+		 	try condition_check()
+
 		}
 		catch ANTLRException.recognition(let re) {
 			_localctx.exception = re
@@ -1559,17 +1604,17 @@ open class tddParser: Parser {
 	@discardableResult
 	 open func condition_check() throws -> Condition_checkContext {
 		var _localctx: Condition_checkContext = Condition_checkContext(_ctx, getState())
-		try enterRule(_localctx, 38, tddParser.RULE_condition_check)
+		try enterRule(_localctx, 40, tddParser.RULE_condition_check)
 		defer {
 	    		try! exitRule()
 	    }
 		do {
 		 	try enterOuterAlt(_localctx, 1)
-		 	setState(207)
+		 	setState(216)
 		 	try match(tddParser.Tokens.OPEN_PAR.rawValue)
-		 	setState(208)
+		 	setState(217)
 		 	try hiper_expresion()
-		 	setState(209)
+		 	setState(218)
 		 	try match(tddParser.Tokens.CLOSE_PAR.rawValue)
 
 		}
@@ -1588,48 +1633,36 @@ open class tddParser: Parser {
 				return getToken(tddParser.Tokens.IF.rawValue, 0)
 			}
 			open
-			func condition_check() -> [Condition_checkContext] {
-				return getRuleContexts(Condition_checkContext.self)
+			func super_condition_check() -> Super_condition_checkContext? {
+				return getRuleContext(Super_condition_checkContext.self, 0)
 			}
 			open
-			func condition_check(_ i: Int) -> Condition_checkContext? {
-				return getRuleContext(Condition_checkContext.self, i)
+			func OPEN_BLOCK() -> TerminalNode? {
+				return getToken(tddParser.Tokens.OPEN_BLOCK.rawValue, 0)
 			}
 			open
-			func OPEN_BLOCK() -> [TerminalNode] {
-				return getTokens(tddParser.Tokens.OPEN_BLOCK.rawValue)
+			func CLOSE_BLOCK() -> TerminalNode? {
+				return getToken(tddParser.Tokens.CLOSE_BLOCK.rawValue, 0)
 			}
 			open
-			func OPEN_BLOCK(_ i:Int) -> TerminalNode? {
-				return getToken(tddParser.Tokens.OPEN_BLOCK.rawValue, i)
+			func statement() -> [StatementContext] {
+				return getRuleContexts(StatementContext.self)
 			}
 			open
-			func body() -> [BodyContext] {
-				return getRuleContexts(BodyContext.self)
+			func statement(_ i: Int) -> StatementContext? {
+				return getRuleContext(StatementContext.self, i)
 			}
 			open
-			func body(_ i: Int) -> BodyContext? {
-				return getRuleContext(BodyContext.self, i)
+			func else_if_condition() -> [Else_if_conditionContext] {
+				return getRuleContexts(Else_if_conditionContext.self)
 			}
 			open
-			func CLOSE_BLOCK() -> [TerminalNode] {
-				return getTokens(tddParser.Tokens.CLOSE_BLOCK.rawValue)
+			func else_if_condition(_ i: Int) -> Else_if_conditionContext? {
+				return getRuleContext(Else_if_conditionContext.self, i)
 			}
 			open
-			func CLOSE_BLOCK(_ i:Int) -> TerminalNode? {
-				return getToken(tddParser.Tokens.CLOSE_BLOCK.rawValue, i)
-			}
-			open
-			func ELSE() -> TerminalNode? {
-				return getToken(tddParser.Tokens.ELSE.rawValue, 0)
-			}
-			open
-			func ELSEIF() -> [TerminalNode] {
-				return getTokens(tddParser.Tokens.ELSEIF.rawValue)
-			}
-			open
-			func ELSEIF(_ i:Int) -> TerminalNode? {
-				return getToken(tddParser.Tokens.ELSEIF.rawValue, i)
+			func else_condition() -> Else_conditionContext? {
+				return getRuleContext(Else_conditionContext.self, 0)
 			}
 		override open
 		func getRuleIndex() -> Int {
@@ -1651,110 +1684,244 @@ open class tddParser: Parser {
 	@discardableResult
 	 open func condition() throws -> ConditionContext {
 		var _localctx: ConditionContext = ConditionContext(_ctx, getState())
-		try enterRule(_localctx, 40, tddParser.RULE_condition)
+		try enterRule(_localctx, 42, tddParser.RULE_condition)
 		var _la: Int = 0
 		defer {
 	    		try! exitRule()
 	    }
 		do {
-		 	setState(249)
+		 	try enterOuterAlt(_localctx, 1)
+		 	setState(220)
+		 	try match(tddParser.Tokens.IF.rawValue)
+		 	setState(221)
+		 	try super_condition_check()
+		 	setState(222)
+		 	try match(tddParser.Tokens.OPEN_BLOCK.rawValue)
+		 	setState(226)
 		 	try _errHandler.sync(self)
-		 	switch(try getInterpreter().adaptivePredict(_input,19, _ctx)) {
-		 	case 1:
-		 		try enterOuterAlt(_localctx, 1)
-		 		setState(211)
-		 		try match(tddParser.Tokens.IF.rawValue)
-		 		setState(212)
-		 		try condition_check()
-		 		setState(213)
-		 		try match(tddParser.Tokens.OPEN_BLOCK.rawValue)
-		 		setState(214)
-		 		try body()
-		 		setState(215)
-		 		try match(tddParser.Tokens.CLOSE_BLOCK.rawValue)
-
-		 		break
-		 	case 2:
-		 		try enterOuterAlt(_localctx, 2)
-		 		setState(217)
-		 		try match(tddParser.Tokens.IF.rawValue)
-		 		setState(218)
-		 		try condition_check()
-		 		setState(219)
-		 		try match(tddParser.Tokens.OPEN_BLOCK.rawValue)
-		 		setState(220)
-		 		try body()
-		 		setState(221)
-		 		try match(tddParser.Tokens.CLOSE_BLOCK.rawValue)
-		 		setState(222)
-		 		try match(tddParser.Tokens.ELSE.rawValue)
+		 	_la = try _input.LA(1)
+		 	while (//closure
+		 	 { () -> Bool in
+		 	      let testSet: Bool = {  () -> Bool in
+		 	   let testArray: [Int] = [_la, tddParser.Tokens.WHILE.rawValue,tddParser.Tokens.IF.rawValue,tddParser.Tokens.PRINT.rawValue,tddParser.Tokens.ID.rawValue]
+		 	    return  Utils.testBitLeftShiftArray(testArray, 0)
+		 	}()
+		 	      return testSet
+		 	 }()) {
 		 		setState(223)
-		 		try match(tddParser.Tokens.OPEN_BLOCK.rawValue)
-		 		setState(224)
-		 		try body()
-		 		setState(225)
-		 		try match(tddParser.Tokens.CLOSE_BLOCK.rawValue)
+		 		try statement()
 
-		 		break
-		 	case 3:
-		 		try enterOuterAlt(_localctx, 3)
-		 		setState(227)
-		 		try match(tddParser.Tokens.IF.rawValue)
+
 		 		setState(228)
-		 		try condition_check()
-		 		setState(229)
-		 		try match(tddParser.Tokens.OPEN_BLOCK.rawValue)
-		 		setState(230)
-		 		try body()
-		 		setState(231)
-		 		try match(tddParser.Tokens.CLOSE_BLOCK.rawValue)
-		 		setState(238) 
 		 		try _errHandler.sync(self)
 		 		_la = try _input.LA(1)
-		 		repeat {
-		 			setState(232)
-		 			try match(tddParser.Tokens.ELSEIF.rawValue)
-		 			setState(233)
-		 			try condition_check()
-		 			setState(234)
-		 			try match(tddParser.Tokens.OPEN_BLOCK.rawValue)
-		 			setState(235)
-		 			try body()
-		 			setState(236)
-		 			try match(tddParser.Tokens.CLOSE_BLOCK.rawValue)
+		 	}
+		 	setState(229)
+		 	try match(tddParser.Tokens.CLOSE_BLOCK.rawValue)
+		 	setState(233)
+		 	try _errHandler.sync(self)
+		 	_la = try _input.LA(1)
+		 	while (//closure
+		 	 { () -> Bool in
+		 	      let testSet: Bool = _la == tddParser.Tokens.ELSEIF.rawValue
+		 	      return testSet
+		 	 }()) {
+		 		setState(230)
+		 		try else_if_condition()
 
 
-		 			setState(240); 
-		 			try _errHandler.sync(self)
-		 			_la = try _input.LA(1)
-		 		} while (//closure
-		 		 { () -> Bool in
-		 		      let testSet: Bool = _la == tddParser.Tokens.ELSEIF.rawValue
-		 		      return testSet
-		 		 }())
+		 		setState(235)
+		 		try _errHandler.sync(self)
+		 		_la = try _input.LA(1)
+		 	}
+		 	setState(237)
+		 	try _errHandler.sync(self)
+		 	_la = try _input.LA(1)
+		 	if (//closure
+		 	 { () -> Bool in
+		 	      let testSet: Bool = _la == tddParser.Tokens.ELSE.rawValue
+		 	      return testSet
+		 	 }()) {
+		 		setState(236)
+		 		try else_condition()
+
+		 	}
+
+
+		}
+		catch ANTLRException.recognition(let re) {
+			_localctx.exception = re
+			_errHandler.reportError(self, re)
+			try _errHandler.recover(self, re)
+		}
+
+		return _localctx
+	}
+
+	public class Else_if_conditionContext: ParserRuleContext {
+			open
+			func ELSEIF() -> TerminalNode? {
+				return getToken(tddParser.Tokens.ELSEIF.rawValue, 0)
+			}
+			open
+			func super_condition_check() -> Super_condition_checkContext? {
+				return getRuleContext(Super_condition_checkContext.self, 0)
+			}
+			open
+			func OPEN_BLOCK() -> TerminalNode? {
+				return getToken(tddParser.Tokens.OPEN_BLOCK.rawValue, 0)
+			}
+			open
+			func CLOSE_BLOCK() -> TerminalNode? {
+				return getToken(tddParser.Tokens.CLOSE_BLOCK.rawValue, 0)
+			}
+			open
+			func statement() -> [StatementContext] {
+				return getRuleContexts(StatementContext.self)
+			}
+			open
+			func statement(_ i: Int) -> StatementContext? {
+				return getRuleContext(StatementContext.self, i)
+			}
+		override open
+		func getRuleIndex() -> Int {
+			return tddParser.RULE_else_if_condition
+		}
+		override open
+		func enterRule(_ listener: ParseTreeListener) {
+			if let listener = listener as? tddListener {
+				listener.enterElse_if_condition(self)
+			}
+		}
+		override open
+		func exitRule(_ listener: ParseTreeListener) {
+			if let listener = listener as? tddListener {
+				listener.exitElse_if_condition(self)
+			}
+		}
+	}
+	@discardableResult
+	 open func else_if_condition() throws -> Else_if_conditionContext {
+		var _localctx: Else_if_conditionContext = Else_if_conditionContext(_ctx, getState())
+		try enterRule(_localctx, 44, tddParser.RULE_else_if_condition)
+		var _la: Int = 0
+		defer {
+	    		try! exitRule()
+	    }
+		do {
+		 	try enterOuterAlt(_localctx, 1)
+		 	setState(239)
+		 	try match(tddParser.Tokens.ELSEIF.rawValue)
+		 	setState(240)
+		 	try super_condition_check()
+		 	setState(241)
+		 	try match(tddParser.Tokens.OPEN_BLOCK.rawValue)
+		 	setState(245)
+		 	try _errHandler.sync(self)
+		 	_la = try _input.LA(1)
+		 	while (//closure
+		 	 { () -> Bool in
+		 	      let testSet: Bool = {  () -> Bool in
+		 	   let testArray: [Int] = [_la, tddParser.Tokens.WHILE.rawValue,tddParser.Tokens.IF.rawValue,tddParser.Tokens.PRINT.rawValue,tddParser.Tokens.ID.rawValue]
+		 	    return  Utils.testBitLeftShiftArray(testArray, 0)
+		 	}()
+		 	      return testSet
+		 	 }()) {
+		 		setState(242)
+		 		try statement()
+
+
 		 		setState(247)
 		 		try _errHandler.sync(self)
 		 		_la = try _input.LA(1)
-		 		if (//closure
-		 		 { () -> Bool in
-		 		      let testSet: Bool = _la == tddParser.Tokens.ELSE.rawValue
-		 		      return testSet
-		 		 }()) {
-		 			setState(242)
-		 			try match(tddParser.Tokens.ELSE.rawValue)
-		 			setState(243)
-		 			try match(tddParser.Tokens.OPEN_BLOCK.rawValue)
-		 			setState(244)
-		 			try body()
-		 			setState(245)
-		 			try match(tddParser.Tokens.CLOSE_BLOCK.rawValue)
-
-		 		}
-
-
-		 		break
-		 	default: break
 		 	}
+		 	setState(248)
+		 	try match(tddParser.Tokens.CLOSE_BLOCK.rawValue)
+
+		}
+		catch ANTLRException.recognition(let re) {
+			_localctx.exception = re
+			_errHandler.reportError(self, re)
+			try _errHandler.recover(self, re)
+		}
+
+		return _localctx
+	}
+
+	public class Else_conditionContext: ParserRuleContext {
+			open
+			func ELSE() -> TerminalNode? {
+				return getToken(tddParser.Tokens.ELSE.rawValue, 0)
+			}
+			open
+			func OPEN_BLOCK() -> TerminalNode? {
+				return getToken(tddParser.Tokens.OPEN_BLOCK.rawValue, 0)
+			}
+			open
+			func CLOSE_BLOCK() -> TerminalNode? {
+				return getToken(tddParser.Tokens.CLOSE_BLOCK.rawValue, 0)
+			}
+			open
+			func statement() -> [StatementContext] {
+				return getRuleContexts(StatementContext.self)
+			}
+			open
+			func statement(_ i: Int) -> StatementContext? {
+				return getRuleContext(StatementContext.self, i)
+			}
+		override open
+		func getRuleIndex() -> Int {
+			return tddParser.RULE_else_condition
+		}
+		override open
+		func enterRule(_ listener: ParseTreeListener) {
+			if let listener = listener as? tddListener {
+				listener.enterElse_condition(self)
+			}
+		}
+		override open
+		func exitRule(_ listener: ParseTreeListener) {
+			if let listener = listener as? tddListener {
+				listener.exitElse_condition(self)
+			}
+		}
+	}
+	@discardableResult
+	 open func else_condition() throws -> Else_conditionContext {
+		var _localctx: Else_conditionContext = Else_conditionContext(_ctx, getState())
+		try enterRule(_localctx, 46, tddParser.RULE_else_condition)
+		var _la: Int = 0
+		defer {
+	    		try! exitRule()
+	    }
+		do {
+		 	try enterOuterAlt(_localctx, 1)
+		 	setState(250)
+		 	try match(tddParser.Tokens.ELSE.rawValue)
+		 	setState(251)
+		 	try match(tddParser.Tokens.OPEN_BLOCK.rawValue)
+		 	setState(255)
+		 	try _errHandler.sync(self)
+		 	_la = try _input.LA(1)
+		 	while (//closure
+		 	 { () -> Bool in
+		 	      let testSet: Bool = {  () -> Bool in
+		 	   let testArray: [Int] = [_la, tddParser.Tokens.WHILE.rawValue,tddParser.Tokens.IF.rawValue,tddParser.Tokens.PRINT.rawValue,tddParser.Tokens.ID.rawValue]
+		 	    return  Utils.testBitLeftShiftArray(testArray, 0)
+		 	}()
+		 	      return testSet
+		 	 }()) {
+		 		setState(252)
+		 		try statement()
+
+
+		 		setState(257)
+		 		try _errHandler.sync(self)
+		 		_la = try _input.LA(1)
+		 	}
+		 	setState(258)
+		 	try match(tddParser.Tokens.CLOSE_BLOCK.rawValue)
+
 		}
 		catch ANTLRException.recognition(let re) {
 			_localctx.exception = re
@@ -1767,16 +1934,16 @@ open class tddParser: Parser {
 
 	public class Hiper_expresionContext: ParserRuleContext {
 			open
-			func expresion() -> ExpresionContext? {
-				return getRuleContext(ExpresionContext.self, 0)
+			func expresion() -> [ExpresionContext] {
+				return getRuleContexts(ExpresionContext.self)
+			}
+			open
+			func expresion(_ i: Int) -> ExpresionContext? {
+				return getRuleContext(ExpresionContext.self, i)
 			}
 			open
 			func AND() -> TerminalNode? {
 				return getToken(tddParser.Tokens.AND.rawValue, 0)
-			}
-			open
-			func hiper_expresion() -> Hiper_expresionContext? {
-				return getRuleContext(Hiper_expresionContext.self, 0)
 			}
 			open
 			func OR() -> TerminalNode? {
@@ -1802,38 +1969,38 @@ open class tddParser: Parser {
 	@discardableResult
 	 open func hiper_expresion() throws -> Hiper_expresionContext {
 		var _localctx: Hiper_expresionContext = Hiper_expresionContext(_ctx, getState())
-		try enterRule(_localctx, 42, tddParser.RULE_hiper_expresion)
+		try enterRule(_localctx, 48, tddParser.RULE_hiper_expresion)
 		defer {
 	    		try! exitRule()
 	    }
 		do {
-		 	setState(260)
+		 	setState(269)
 		 	try _errHandler.sync(self)
-		 	switch(try getInterpreter().adaptivePredict(_input,20, _ctx)) {
+		 	switch(try getInterpreter().adaptivePredict(_input,22, _ctx)) {
 		 	case 1:
 		 		try enterOuterAlt(_localctx, 1)
-		 		setState(251)
+		 		setState(260)
 		 		try expresion()
 
 		 		break
 		 	case 2:
 		 		try enterOuterAlt(_localctx, 2)
-		 		setState(252)
+		 		setState(261)
 		 		try expresion()
-		 		setState(253)
+		 		setState(262)
 		 		try match(tddParser.Tokens.AND.rawValue)
-		 		setState(254)
-		 		try hiper_expresion()
+		 		setState(263)
+		 		try expresion()
 
 		 		break
 		 	case 3:
 		 		try enterOuterAlt(_localctx, 3)
-		 		setState(256)
+		 		setState(265)
 		 		try expresion()
-		 		setState(257)
+		 		setState(266)
 		 		try match(tddParser.Tokens.OR.rawValue)
-		 		setState(258)
-		 		try hiper_expresion()
+		 		setState(267)
+		 		try expresion()
 
 		 		break
 		 	default: break
@@ -1850,16 +2017,16 @@ open class tddParser: Parser {
 
 	public class ExpresionContext: ParserRuleContext {
 			open
-			func exp() -> [ExpContext] {
-				return getRuleContexts(ExpContext.self)
-			}
-			open
-			func exp(_ i: Int) -> ExpContext? {
-				return getRuleContext(ExpContext.self, i)
+			func exp() -> ExpContext? {
+				return getRuleContext(ExpContext.self, 0)
 			}
 			open
 			func LESS_THAN() -> TerminalNode? {
 				return getToken(tddParser.Tokens.LESS_THAN.rawValue, 0)
+			}
+			open
+			func expresion() -> ExpresionContext? {
+				return getRuleContext(ExpresionContext.self, 0)
 			}
 			open
 			func GREATER_THAN() -> TerminalNode? {
@@ -1889,48 +2056,48 @@ open class tddParser: Parser {
 	@discardableResult
 	 open func expresion() throws -> ExpresionContext {
 		var _localctx: ExpresionContext = ExpresionContext(_ctx, getState())
-		try enterRule(_localctx, 44, tddParser.RULE_expresion)
+		try enterRule(_localctx, 50, tddParser.RULE_expresion)
 		defer {
 	    		try! exitRule()
 	    }
 		do {
-		 	setState(275)
+		 	setState(284)
 		 	try _errHandler.sync(self)
-		 	switch(try getInterpreter().adaptivePredict(_input,21, _ctx)) {
+		 	switch(try getInterpreter().adaptivePredict(_input,23, _ctx)) {
 		 	case 1:
 		 		try enterOuterAlt(_localctx, 1)
-		 		setState(262)
+		 		setState(271)
 		 		try exp()
 
 		 		break
 		 	case 2:
 		 		try enterOuterAlt(_localctx, 2)
-		 		setState(263)
+		 		setState(272)
 		 		try exp()
-		 		setState(264)
+		 		setState(273)
 		 		try match(tddParser.Tokens.LESS_THAN.rawValue)
-		 		setState(265)
-		 		try exp()
+		 		setState(274)
+		 		try expresion()
 
 		 		break
 		 	case 3:
 		 		try enterOuterAlt(_localctx, 3)
-		 		setState(267)
+		 		setState(276)
 		 		try exp()
-		 		setState(268)
+		 		setState(277)
 		 		try match(tddParser.Tokens.GREATER_THAN.rawValue)
-		 		setState(269)
-		 		try exp()
+		 		setState(278)
+		 		try expresion()
 
 		 		break
 		 	case 4:
 		 		try enterOuterAlt(_localctx, 4)
-		 		setState(271)
+		 		setState(280)
 		 		try exp()
-		 		setState(272)
+		 		setState(281)
 		 		try match(tddParser.Tokens.DIFFERENT.rawValue)
-		 		setState(273)
-		 		try exp()
+		 		setState(282)
+		 		try expresion()
 
 		 		break
 		 	default: break
@@ -1982,37 +2149,37 @@ open class tddParser: Parser {
 	@discardableResult
 	 open func exp() throws -> ExpContext {
 		var _localctx: ExpContext = ExpContext(_ctx, getState())
-		try enterRule(_localctx, 46, tddParser.RULE_exp)
+		try enterRule(_localctx, 52, tddParser.RULE_exp)
 		defer {
 	    		try! exitRule()
 	    }
 		do {
-		 	setState(286)
+		 	setState(295)
 		 	try _errHandler.sync(self)
-		 	switch(try getInterpreter().adaptivePredict(_input,22, _ctx)) {
+		 	switch(try getInterpreter().adaptivePredict(_input,24, _ctx)) {
 		 	case 1:
 		 		try enterOuterAlt(_localctx, 1)
-		 		setState(277)
+		 		setState(286)
 		 		try termino()
 
 		 		break
 		 	case 2:
 		 		try enterOuterAlt(_localctx, 2)
-		 		setState(278)
+		 		setState(287)
 		 		try termino()
-		 		setState(279)
+		 		setState(288)
 		 		try match(tddParser.Tokens.ADD.rawValue)
-		 		setState(280)
+		 		setState(289)
 		 		try exp()
 
 		 		break
 		 	case 3:
 		 		try enterOuterAlt(_localctx, 3)
-		 		setState(282)
+		 		setState(291)
 		 		try termino()
-		 		setState(283)
+		 		setState(292)
 		 		try match(tddParser.Tokens.SUBSTRACT.rawValue)
-		 		setState(284)
+		 		setState(293)
 		 		try exp()
 
 		 		break
@@ -2065,37 +2232,37 @@ open class tddParser: Parser {
 	@discardableResult
 	 open func termino() throws -> TerminoContext {
 		var _localctx: TerminoContext = TerminoContext(_ctx, getState())
-		try enterRule(_localctx, 48, tddParser.RULE_termino)
+		try enterRule(_localctx, 54, tddParser.RULE_termino)
 		defer {
 	    		try! exitRule()
 	    }
 		do {
-		 	setState(297)
+		 	setState(306)
 		 	try _errHandler.sync(self)
-		 	switch(try getInterpreter().adaptivePredict(_input,23, _ctx)) {
+		 	switch(try getInterpreter().adaptivePredict(_input,25, _ctx)) {
 		 	case 1:
 		 		try enterOuterAlt(_localctx, 1)
-		 		setState(288)
+		 		setState(297)
 		 		try factor()
 
 		 		break
 		 	case 2:
 		 		try enterOuterAlt(_localctx, 2)
-		 		setState(289)
+		 		setState(298)
 		 		try factor()
-		 		setState(290)
+		 		setState(299)
 		 		try match(tddParser.Tokens.MULTIPLY.rawValue)
-		 		setState(291)
+		 		setState(300)
 		 		try termino()
 
 		 		break
 		 	case 3:
 		 		try enterOuterAlt(_localctx, 3)
-		 		setState(293)
+		 		setState(302)
 		 		try factor()
-		 		setState(294)
+		 		setState(303)
 		 		try match(tddParser.Tokens.DIVIDE.rawValue)
-		 		setState(295)
+		 		setState(304)
 		 		try termino()
 
 		 		break
@@ -2113,24 +2280,28 @@ open class tddParser: Parser {
 
 	public class FactorContext: ParserRuleContext {
 			open
-			func condition_check() -> Condition_checkContext? {
-				return getRuleContext(Condition_checkContext.self, 0)
-			}
-			open
-			func ADD() -> TerminalNode? {
-				return getToken(tddParser.Tokens.ADD.rawValue, 0)
+			func SUBSTRACT() -> TerminalNode? {
+				return getToken(tddParser.Tokens.SUBSTRACT.rawValue, 0)
 			}
 			open
 			func VALUE() -> TerminalNode? {
 				return getToken(tddParser.Tokens.VALUE.rawValue, 0)
 			}
 			open
-			func SUBSTRACT() -> TerminalNode? {
-				return getToken(tddParser.Tokens.SUBSTRACT.rawValue, 0)
-			}
-			open
 			func ID() -> TerminalNode? {
 				return getToken(tddParser.Tokens.ID.rawValue, 0)
+			}
+			open
+			func OPEN_PAR() -> TerminalNode? {
+				return getToken(tddParser.Tokens.OPEN_PAR.rawValue, 0)
+			}
+			open
+			func hiper_expresion() -> Hiper_expresionContext? {
+				return getRuleContext(Hiper_expresionContext.self, 0)
+			}
+			open
+			func CLOSE_PAR() -> TerminalNode? {
+				return getToken(tddParser.Tokens.CLOSE_PAR.rawValue, 0)
 			}
 		override open
 		func getRuleIndex() -> Int {
@@ -2152,54 +2323,57 @@ open class tddParser: Parser {
 	@discardableResult
 	 open func factor() throws -> FactorContext {
 		var _localctx: FactorContext = FactorContext(_ctx, getState())
-		try enterRule(_localctx, 50, tddParser.RULE_factor)
+		try enterRule(_localctx, 56, tddParser.RULE_factor)
 		defer {
 	    		try! exitRule()
 	    }
 		do {
-		 	setState(306)
+		 	setState(321)
 		 	try _errHandler.sync(self)
-		 	switch (tddParser.Tokens(rawValue: try _input.LA(1))!) {
-		 	case .OPEN_PAR:
+		 	switch(try getInterpreter().adaptivePredict(_input,26, _ctx)) {
+		 	case 1:
 		 		try enterOuterAlt(_localctx, 1)
-		 		setState(299)
-		 		try condition_check()
-
-		 		break
-
-		 	case .ADD:
-		 		try enterOuterAlt(_localctx, 2)
-		 		setState(300)
-		 		try match(tddParser.Tokens.ADD.rawValue)
-		 		setState(301)
-		 		try match(tddParser.Tokens.VALUE.rawValue)
-
-		 		break
-
-		 	case .SUBSTRACT:
-		 		try enterOuterAlt(_localctx, 3)
-		 		setState(302)
+		 		setState(308)
 		 		try match(tddParser.Tokens.SUBSTRACT.rawValue)
-		 		setState(303)
+		 		setState(309)
 		 		try match(tddParser.Tokens.VALUE.rawValue)
 
 		 		break
-
-		 	case .VALUE:
-		 		try enterOuterAlt(_localctx, 4)
-		 		setState(304)
+		 	case 2:
+		 		try enterOuterAlt(_localctx, 2)
+		 		setState(310)
 		 		try match(tddParser.Tokens.VALUE.rawValue)
 
 		 		break
-
-		 	case .ID:
-		 		try enterOuterAlt(_localctx, 5)
-		 		setState(305)
+		 	case 3:
+		 		try enterOuterAlt(_localctx, 3)
+		 		setState(311)
 		 		try match(tddParser.Tokens.ID.rawValue)
 
 		 		break
-		 	default:
-		 		throw ANTLRException.recognition(e: NoViableAltException(self))
+		 	case 4:
+		 		try enterOuterAlt(_localctx, 4)
+		 		setState(312)
+		 		try match(tddParser.Tokens.OPEN_PAR.rawValue)
+		 		setState(313)
+		 		try hiper_expresion()
+		 		setState(314)
+		 		try match(tddParser.Tokens.CLOSE_PAR.rawValue)
+
+		 		break
+		 	case 5:
+		 		try enterOuterAlt(_localctx, 5)
+		 		setState(316)
+		 		try match(tddParser.Tokens.ID.rawValue)
+		 		setState(317)
+		 		try match(tddParser.Tokens.OPEN_PAR.rawValue)
+		 		setState(318)
+		 		try hiper_expresion()
+		 		setState(319)
+		 		try match(tddParser.Tokens.CLOSE_PAR.rawValue)
+
+		 		break
+		 	default: break
 		 	}
 		}
 		catch ANTLRException.recognition(let re) {
@@ -2252,21 +2426,21 @@ open class tddParser: Parser {
 	@discardableResult
 	 open func print() throws -> PrintContext {
 		var _localctx: PrintContext = PrintContext(_ctx, getState())
-		try enterRule(_localctx, 52, tddParser.RULE_print)
+		try enterRule(_localctx, 58, tddParser.RULE_print)
 		defer {
 	    		try! exitRule()
 	    }
 		do {
 		 	try enterOuterAlt(_localctx, 1)
-		 	setState(308)
+		 	setState(323)
 		 	try match(tddParser.Tokens.PRINT.rawValue)
-		 	setState(309)
+		 	setState(324)
 		 	try match(tddParser.Tokens.OPEN_PAR.rawValue)
-		 	setState(310)
+		 	setState(325)
 		 	try algo_imprimible()
-		 	setState(311)
+		 	setState(326)
 		 	try match(tddParser.Tokens.CLOSE_PAR.rawValue)
-		 	setState(312)
+		 	setState(327)
 		 	try match(tddParser.Tokens.SEMI_COLON.rawValue)
 
 		}
@@ -2316,43 +2490,43 @@ open class tddParser: Parser {
 	@discardableResult
 	 open func algo_imprimible() throws -> Algo_imprimibleContext {
 		var _localctx: Algo_imprimibleContext = Algo_imprimibleContext(_ctx, getState())
-		try enterRule(_localctx, 54, tddParser.RULE_algo_imprimible)
+		try enterRule(_localctx, 60, tddParser.RULE_algo_imprimible)
 		defer {
 	    		try! exitRule()
 	    }
 		do {
-		 	setState(323)
+		 	setState(338)
 		 	try _errHandler.sync(self)
-		 	switch(try getInterpreter().adaptivePredict(_input,25, _ctx)) {
+		 	switch(try getInterpreter().adaptivePredict(_input,27, _ctx)) {
 		 	case 1:
 		 		try enterOuterAlt(_localctx, 1)
-		 		setState(314)
+		 		setState(329)
 		 		try expresion()
 
 		 		break
 		 	case 2:
 		 		try enterOuterAlt(_localctx, 2)
-		 		setState(315)
+		 		setState(330)
 		 		try match(tddParser.Tokens.STRING_VAL.rawValue)
 
 		 		break
 		 	case 3:
 		 		try enterOuterAlt(_localctx, 3)
-		 		setState(316)
+		 		setState(331)
 		 		try expresion()
-		 		setState(317)
+		 		setState(332)
 		 		try match(tddParser.Tokens.COMMA.rawValue)
-		 		setState(318)
+		 		setState(333)
 		 		try algo_imprimible()
 
 		 		break
 		 	case 4:
 		 		try enterOuterAlt(_localctx, 4)
-		 		setState(320)
+		 		setState(335)
 		 		try match(tddParser.Tokens.STRING_VAL.rawValue)
-		 		setState(321)
+		 		setState(336)
 		 		try match(tddParser.Tokens.COMMA.rawValue)
-		 		setState(322)
+		 		setState(337)
 		 		try algo_imprimible()
 
 		 		break
@@ -2405,19 +2579,19 @@ open class tddParser: Parser {
 	@discardableResult
 	 open func asignation() throws -> AsignationContext {
 		var _localctx: AsignationContext = AsignationContext(_ctx, getState())
-		try enterRule(_localctx, 56, tddParser.RULE_asignation)
+		try enterRule(_localctx, 62, tddParser.RULE_asignation)
 		defer {
 	    		try! exitRule()
 	    }
 		do {
 		 	try enterOuterAlt(_localctx, 1)
-		 	setState(325)
+		 	setState(340)
 		 	try match(tddParser.Tokens.ID.rawValue)
-		 	setState(326)
+		 	setState(341)
 		 	try match(tddParser.Tokens.EQUALS.rawValue)
-		 	setState(327)
+		 	setState(342)
 		 	try expresion()
-		 	setState(328)
+		 	setState(343)
 		 	try match(tddParser.Tokens.SEMI_COLON.rawValue)
 
 		}
@@ -2436,20 +2610,24 @@ open class tddParser: Parser {
 				return getToken(tddParser.Tokens.WHILE.rawValue, 0)
 			}
 			open
-			func condition_check() -> Condition_checkContext? {
-				return getRuleContext(Condition_checkContext.self, 0)
+			func super_condition_check() -> Super_condition_checkContext? {
+				return getRuleContext(Super_condition_checkContext.self, 0)
 			}
 			open
 			func OPEN_BLOCK() -> TerminalNode? {
 				return getToken(tddParser.Tokens.OPEN_BLOCK.rawValue, 0)
 			}
 			open
-			func body() -> BodyContext? {
-				return getRuleContext(BodyContext.self, 0)
-			}
-			open
 			func CLOSE_BLOCK() -> TerminalNode? {
 				return getToken(tddParser.Tokens.CLOSE_BLOCK.rawValue, 0)
+			}
+			open
+			func statement() -> [StatementContext] {
+				return getRuleContexts(StatementContext.self)
+			}
+			open
+			func statement(_ i: Int) -> StatementContext? {
+				return getRuleContext(StatementContext.self, i)
 			}
 		override open
 		func getRuleIndex() -> Int {
@@ -2471,21 +2649,39 @@ open class tddParser: Parser {
 	@discardableResult
 	 open func while_loop() throws -> While_loopContext {
 		var _localctx: While_loopContext = While_loopContext(_ctx, getState())
-		try enterRule(_localctx, 58, tddParser.RULE_while_loop)
+		try enterRule(_localctx, 64, tddParser.RULE_while_loop)
+		var _la: Int = 0
 		defer {
 	    		try! exitRule()
 	    }
 		do {
 		 	try enterOuterAlt(_localctx, 1)
-		 	setState(330)
+		 	setState(345)
 		 	try match(tddParser.Tokens.WHILE.rawValue)
-		 	setState(331)
-		 	try condition_check()
-		 	setState(332)
+		 	setState(346)
+		 	try super_condition_check()
+		 	setState(347)
 		 	try match(tddParser.Tokens.OPEN_BLOCK.rawValue)
-		 	setState(333)
-		 	try body()
-		 	setState(334)
+		 	setState(351)
+		 	try _errHandler.sync(self)
+		 	_la = try _input.LA(1)
+		 	while (//closure
+		 	 { () -> Bool in
+		 	      let testSet: Bool = {  () -> Bool in
+		 	   let testArray: [Int] = [_la, tddParser.Tokens.WHILE.rawValue,tddParser.Tokens.IF.rawValue,tddParser.Tokens.PRINT.rawValue,tddParser.Tokens.ID.rawValue]
+		 	    return  Utils.testBitLeftShiftArray(testArray, 0)
+		 	}()
+		 	      return testSet
+		 	 }()) {
+		 		setState(348)
+		 		try statement()
+
+
+		 		setState(353)
+		 		try _errHandler.sync(self)
+		 		_la = try _input.LA(1)
+		 	}
+		 	setState(354)
 		 	try match(tddParser.Tokens.CLOSE_BLOCK.rawValue)
 
 		}
