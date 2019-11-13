@@ -29,7 +29,7 @@ int a;
 
 int nam(int a, int b) {
     int w, k;
-    if(a>1+1*8/7 && a<2) {
+    if(a>(1+1)*8/7 && (a<2 || a > b)) {
         print("Hola");
     } elseif(a>3) {
         print("Hola dos");

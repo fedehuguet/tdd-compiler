@@ -85,8 +85,8 @@ else_condition:
 
 hiper_expresion:
     expresion
-    | expresion AND hiper_expresion
-    | expresion OR hiper_expresion;
+    | expresion AND expresion
+    | expresion OR expresion;
 
 expresion:
     exp
@@ -105,10 +105,10 @@ termino:
     | factor DIVIDE termino;
 
 factor:
-    condition_check
-    | SUBSTRACT VALUE
+    SUBSTRACT VALUE
     | VALUE | ID 
-    | OPEN_PAR hiper_expresion CLOSE_PAR;
+    | OPEN_PAR hiper_expresion CLOSE_PAR
+    | ID OPEN_PAR hiper_expresion CLOSE_PAR;
 
 print:
     PRINT OPEN_PAR algo_imprimible CLOSE_PAR SEMI_COLON;
@@ -167,8 +167,6 @@ IF: 'if';
 ELSE: 'else';
 ELSEIF: 'elseif';
 PRINT: 'print';
-
-ALV: 'alv';
 
 COMMA: ',';
 
