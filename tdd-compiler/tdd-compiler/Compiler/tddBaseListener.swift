@@ -875,16 +875,25 @@ open class tddBaseListener: tddListener {
      * <p>The default implementation does nothing.</p>
      */
     open func enterPrint(_ ctx: tddParser.PrintContext) {
-        print("ENTER PRINT")
+        
     }
     /**
      * {@inheritDoc}
      *
      * <p>The default implementation does nothing.</p>
      */
+    /*
+     * In charge of creating a cuadruple for printing,
+     * the quad looks like: ("PRINT", -1, ADDRESS, -1);
+     */
     open func exitPrint(_ ctx: tddParser.PrintContext) {
+        // Ignore type of printing because  everything is printable
         sTypes.removeFirst()
+        let printOperand = sOperands.first!
         sOperands.removeFirst()
+        let newQuad = Quadruple(quadOperator: "PRINT", leftOperand: -1, rightOperand: printOperand, result: -1)
+        arrayQuads.append(newQuad)
+        
     }
 
     /**
