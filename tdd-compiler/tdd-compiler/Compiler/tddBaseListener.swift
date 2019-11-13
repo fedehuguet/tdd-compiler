@@ -66,7 +66,7 @@ func createTemp(type: Type) -> Int {
         return temporalMemory.addBool()
     case .char:
         return temporalMemory.addChar()
-    case .error:
+    case .error, .void:
         return -1
     }
 }
@@ -84,7 +84,7 @@ func createVariable(memory: Memory, id: String, type: Type) -> Variable {
         address = memory.addBool()
     case .char:
         address = memory.addChar()
-    case .error:
+    case .error, .void:
         address = -1
     }
     // TODO: Handle error in case the address is -1
@@ -204,13 +204,6 @@ open class tddBaseListener: tddListener {
         if tests.count > 0 {
             documentation.append("## Tests \n")
         }
-        
-//        for test in tests {
-//            print("First test")
-//            documentation.append("\(functionName)(")
-//        }
-        
-        
     }
     /**
      * {@inheritDoc}
@@ -306,6 +299,7 @@ open class tddBaseListener: tddListener {
             return
         }
         scope = functionName
+        // TODO: Solve address to a real one
         let function = Function(name: functionName, type: Type(type: typeText), scope: scope, address: 2)
         symbols.insert(function: function)
     }
@@ -321,7 +315,16 @@ open class tddBaseListener: tddListener {
      *
      * <p>The default implementation does nothing.</p>
      */
-    open func enterVoid_function_dec(_ ctx: tddParser.Void_function_decContext) { }
+    open func enterVoid_function_dec(_ ctx: tddParser.Void_function_decContext) {
+        guard let functionName = ctx.ID()?.getText() else {
+            // TODO: Some type of error
+            return
+        }
+        scope = functionName
+        // TODO: Solve address to a real one
+        let function = Function(name: functionName, type: Type(type: "void"), scope: scope, address: 2)
+        symbols.insert(function: function)
+    }
     /**
      * {@inheritDoc}
      *
@@ -402,7 +405,9 @@ open class tddBaseListener: tddListener {
      *
      * <p>The default implementation does nothing.</p>
      */
-    open func exitReturn_statement(_ ctx: tddParser.Return_statementContext) { }
+    open func exitReturn_statement(_ ctx: tddParser.Return_statementContext) {
+        // We will need to eventually remove the solved hyper expression value from operands and check if it matches to what needs to be returned
+    }
 
     /**
      * {@inheritDoc}
@@ -489,6 +494,7 @@ open class tddBaseListener: tddListener {
     
     open func exitSuper_condition_check(_ ctx: tddParser.Super_condition_checkContext) {
         let quad = Quadruple.init(quadOperator: "GOTOF", leftOperand: arrayQuads[arrayQuads.count-1].result, rightOperand: -1, result: -1)
+        sOperands.removeFirst()
         arrayQuads.append(quad)
         sJumps.insert(arrayQuads.count - 1, at: 0)
     }
@@ -932,7 +938,21 @@ open class tddBaseListener: tddListener {
      * <p>The default implementation does nothing.</p>
      */
     open func exitAsignation(_ ctx: tddParser.AsignationContext) {
-    
+        let variableToAsign = symbols.findID(scope: scope, id: ctx.ID()!.getText())
+        let leftType = variableToAsign?.type
+        let rightType = sTypes.first!
+        sTypes.removeFirst()
+        
+        if !semanticCube.checkCube(currOperator: "=", leftType: leftType!, rightType: rightType) {
+            // TODO: Handle semantic cube error
+            return
+        }
+        
+        let valueToAsignAddress = sOperands.first!
+        sOperands.removeFirst()
+        
+        let newQuad = Quadruple(quadOperator: "=", leftOperand: valueToAsignAddress, rightOperand: -1, result: variableToAsign!.address)
+        arrayQuads.append(newQuad)
     }
 
     /**
@@ -952,6 +972,7 @@ open class tddBaseListener: tddListener {
         //Generate GOTO
         let quad = Quadruple.init(quadOperator: "GOTO", leftOperand: -1, rightOperand: -1, result: sWhile.first!)
         sWhile.removeFirst()
+        sOperands.removeFirst()
         arrayQuads.append(quad)
         sGoto.insert(arrayQuads.count - 1, at: 0)
         //Solve previous quad
