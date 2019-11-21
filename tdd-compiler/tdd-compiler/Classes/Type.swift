@@ -14,6 +14,7 @@ enum Type: Int {
     case string = 3
     case bool = 4
     case char = 5
+    case void = 6
     case error = -1
 }
 
@@ -30,6 +31,8 @@ extension Type {
             self = .char
         case "float":
             self = .float
+        case "void":
+            self = .void
         default:
             self = .error
         }
