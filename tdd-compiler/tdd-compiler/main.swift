@@ -51,7 +51,7 @@ int nam(int a, int b) {
 
 int suma(int a, int b) {
     print(a);
-    return 3;
+    return nam(2,3);
 }
 
 #*

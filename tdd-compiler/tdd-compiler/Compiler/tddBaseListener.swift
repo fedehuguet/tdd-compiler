@@ -16,6 +16,7 @@ let semanticCube = SemanticCube()
 var symbols = SymbolTable()
 var scope: String = "error"
 
+var function_param_index: Int = 0
 
 //Stacks
 var sOperators = [String]()
@@ -25,6 +26,7 @@ var arrayQuads = [Quadruple]()
 var sJumps = [Int]() //Contains index of unfilled quadruple
 var sGoto = [Int]()
 var sWhile = [Int]()
+var sFunctions = [Function]()
 
 var constantsTable = [Variable]()
 
@@ -71,7 +73,7 @@ func createTemp(type: Type) -> Int {
     }
 }
 
-func createVariable(memory: Memory, id: String, type: Type) -> Variable {
+func createVariable(memory: Memory, id: String, type: Type, input: Bool = false) -> Variable {
     let address: Int!
     switch type {
     case .int:
@@ -88,7 +90,7 @@ func createVariable(memory: Memory, id: String, type: Type) -> Variable {
         address = -1
     }
     // TODO: Handle error in case the address is -1
-    return Variable(name: id, type: type, address: address)
+    return Variable(name: id, type: type, address: address, input: input)
 }
 
 func solveQuad() {
@@ -258,7 +260,7 @@ open class tddBaseListener: tddListener {
      */
     open func exitTest(_ ctx: tddParser.TestContext) {
             var testParams = [String]()
-            if let curr = ctx.test_inputs() {
+        if ctx.test_inputs() != nil {
                 var child = ctx.test_inputs()
                 while child != nil {
                     let inputContext = child as! tddParser.Test_inputsContext
@@ -340,7 +342,7 @@ open class tddBaseListener: tddListener {
             // TODO: Handle possible error
             return
         }
-        let variable = createVariable(memory: localMemory, id: name, type: Type(type: type))
+        let variable = createVariable(memory: localMemory, id: name, type: Type(type: type), input: true)
         symbols.functionsDictionary[scope]?.variables.append(variable)
     }
     /**
@@ -587,10 +589,7 @@ open class tddBaseListener: tddListener {
         print(ctx.getText())
         //Check for opening parenthesis
         if let parent = ctx.parent as? tddParser.FactorContext {
-            if let id = parent.ID()?.getText(), parent.OPEN_PAR() != nil {
-                //Function logic goes here
-            }
-            else if parent.OPEN_PAR() != nil {
+            if parent.OPEN_PAR() != nil {
                 sOperators.insert("(", at: 0)
             }
         }
@@ -604,10 +603,7 @@ open class tddBaseListener: tddListener {
         print (ctx.getText())
         //Check for closing parenthesis
         if let parent = ctx.parent as? tddParser.FactorContext {
-            if let id = parent.ID()?.getText(), parent.CLOSE_PAR() != nil {
-                //Function logic goes here
-            }
-            else if parent.CLOSE_PAR() != nil && sOperators.first == "(" {
+            if parent.CLOSE_PAR() != nil && sOperators.first == "(" {
                 sOperators.removeFirst()
             }
             else {
@@ -877,6 +873,52 @@ open class tddBaseListener: tddListener {
                 sOperators.insert(oper, at:0)
                 print("Oper: \(oper)")
             }
+        }
+    }
+    
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation does nothing.</p>
+     */
+    open func enterFunction_hiper_expresions(_ ctx: tddParser.Function_hiper_expresionsContext) {
+        //Function call starts
+        if let parent = ctx.parent as? tddParser.FactorContext {
+            function_param_index = 0
+            let function_name = parent.ID()?.getText()
+            let function = symbols.functionsDictionary[function_name!]!
+            
+        }
+        //We are reading function params
+        else if function_param_index >= 0 {
+            
+        }
+        else {
+            print("ERROR")
+        }
+    }
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation does nothing.</p>
+     */
+    open func exitFunction_hiper_expresions(_ ctx: tddParser.Function_hiper_expresionsContext) {
+        //Function call ends
+        if let parent = ctx.parent as? tddParser.FactorContext {
+            sFunctions.removeFirst()
+            sTypes.removeFirst()
+            sOperands.removeFirst()
+        }
+        //We are reading function params
+        else if function_param_index >= 0 {
+            let function = sFunctions.first!
+            if function_param_index >= function.variables.count || !function.variables[function_param_index].input {
+                print("ERROR argument quantity mismatch")
+            }
+            let call_type = sTypes.first!
+        }
+        else {
+            print("ERROR")
         }
     }
 
