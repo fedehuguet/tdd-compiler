@@ -124,10 +124,10 @@ func createQuad() -> Quadruple {
 
 func addParamQuad() -> Quadruple {
     let function = sFunctions.first!
-    if function_param_index >= function.variables.count || !function.variables[function_param_index].input {
+    if function_param_index >= function.input_total || !function.variables[function.input_total - function_param_index - 1].input {
         print("ERROR argument quantity mismatch")
     }
-    if sTypes.first! != function.variables[function_param_index].type {
+    if sTypes.first! != function.variables[function.input_total - function_param_index - 1].type {
         print("ERROR types mismatch")
     }
     
@@ -344,6 +344,10 @@ open class tddBaseListener: tddListener {
         // TODO: Solve address to a real one
         let function = Function(name: functionName, type: Type(type: typeText), scope: scope)
         symbols.insert(function: function)
+        
+        let globalFuncVariable = createVariable(memory: globalMemory, id: function.name, type: function.type)
+        function.setReturnAddress(address: globalFuncVariable.address)
+        symbols.functionsDictionary["global"]?.variables.append(globalFuncVariable)
     }
     /**
      * {@inheritDoc}
@@ -366,7 +370,6 @@ open class tddBaseListener: tddListener {
             return
         }
         scope = functionName
-        // TODO: Solve address to a real one
         let function = Function(name: functionName, type: Type(type: "void"), scope: scope)
         symbols.insert(function: function)
     }
@@ -393,6 +396,7 @@ open class tddBaseListener: tddListener {
         }
         let variable = createVariable(memory: localMemory, id: name, type: Type(type: type), input: true)
         symbols.functionsDictionary[scope]?.variables.append(variable)
+        symbols.functionsDictionary[scope]?.addInput()
     }
     /**
      * {@inheritDoc}
@@ -454,7 +458,10 @@ open class tddBaseListener: tddListener {
      * <p>The default implementation does nothing.</p>
      */
     open func exitReturn_statement(_ ctx: tddParser.Return_statementContext) {
-        // We will need to eventually remove the solved hyper expression value from operands and check if it matches to what needs to be returned
+//        let newQuad = Quadruple(quadOperator: "RETURN", leftOperand: -1, rightOperand: -1, result: sOperands.first!)
+//        arrayQuads.append(newQuad)
+//        sOperands.removeFirst()
+//        sTypes.removeFirst()
     }
 
     /**
@@ -818,14 +825,20 @@ open class tddBaseListener: tddListener {
      * <p>The default implementation does nothing.</p>
      */
     open func enterFunction_hiper_expresions(_ ctx: tddParser.Function_hiper_expresionsContext) {
+        print(ctx.getText())
         //Function call starts
         if let parent = ctx.parent as? tddParser.FactorContext {
             function_param_index = 0
             let function_name = parent.ID()?.getText()
-            let function = symbols.functionsDictionary[function_name!]!
-            sFunctions.insert(function, at: 0)
-            let newQuad = Quadruple(quadOperator: "ERA", leftOperand: function.start_quadruple, rightOperand: -1, result: -1)
-            arrayQuads.append(newQuad)
+            let function = symbols.functionsDictionary[function_name!]
+            if  function != nil && function!.type != .void {
+                sFunctions.insert(function!, at: 0)
+                let newQuad = Quadruple(quadOperator: "ERA", leftOperand: function!.start_quadruple, rightOperand: -1, result: -1)
+                arrayQuads.append(newQuad)
+            }
+            else {
+                print("Not a return function")
+            }
         }
     }
     /**
@@ -836,16 +849,27 @@ open class tddBaseListener: tddListener {
     open func exitFunction_hiper_expresions(_ ctx: tddParser.Function_hiper_expresionsContext) {
         //Function call ends
         if let _ = ctx.parent as? tddParser.FactorContext {
-            //Last parameter
-            let paramQuad = addParamQuad()
-            arrayQuads.append(paramQuad)
-            function_param_index = 0
+            //First or unique parameter is going to be processed last
+            if (sOperands.count > 0 && sTypes.count > 0) {
+                let paramQuad = addParamQuad()
+                arrayQuads.append(paramQuad)
+                function_param_index = function_param_index + 1
+            }
             let function = sFunctions.first!
+            if (function_param_index < function.input_total) {
+                print("ERROR too few arguments")
+            }
+            function_param_index = 0
             let subQuad = Quadruple(quadOperator: "GOSUB", leftOperand: function.start_quadruple, rightOperand: -1, result: -1)
             arrayQuads.append(subQuad)
+            
+            let tempReturn = createTemp(type: function.type)
+            let returnQuad = Quadruple(quadOperator: "RETURN", leftOperand: function.return_address, rightOperand: -1, result: tempReturn)
+            arrayQuads.append(returnQuad)
+            
             sFunctions.removeFirst()
         }
-        //We are reading function params
+        //Reading 2nd to nth function param are going to be processed first
         else if function_param_index >= 0 {
             let paramQuad = addParamQuad()
             arrayQuads.append(paramQuad)

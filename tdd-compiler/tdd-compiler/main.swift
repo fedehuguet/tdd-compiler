@@ -27,7 +27,7 @@ int a;
 @param int b %% B value
 *#
 
-int nam(int a, int b) {
+int nam(int a, float b) {
     int w, k;
     if(a>(1+1)*8/7 && (a<2 || a > b)) {
         print("Hola");
@@ -51,7 +51,7 @@ int nam(int a, int b) {
 
 int suma(int a, int b) {
     print(a);
-    return nam(b,4);
+    return nam(b, 4.0);
 }
 
 #*
