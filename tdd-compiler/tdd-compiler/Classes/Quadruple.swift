@@ -21,7 +21,7 @@ class Quadruple {
         self.leftOperand = leftOperand
         self.rightOperand = rightOperand
         self.result = result
-        print("Quad: \(quadOperator) left: \(leftOperand) right: \(rightOperand)")
+//        print("Quad: \(quadOperator) left: \(leftOperand) right: \(rightOperand)")
     }
     
     func fillMissingResult(result: Int) {

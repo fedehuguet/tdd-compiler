@@ -66,7 +66,7 @@ func createTemp(type: Type) -> Int {
         return temporalMemory.addBool()
     case .char:
         return temporalMemory.addChar()
-    case .error:
+    case .error, .void:
         return -1
     }
 }
@@ -84,7 +84,7 @@ func createVariable(memory: Memory, id: String, type: Type) -> Variable {
         address = memory.addBool()
     case .char:
         address = memory.addChar()
-    case .error:
+    case .error, .void:
         address = -1
     }
     // TODO: Handle error in case the address is -1
@@ -94,6 +94,30 @@ func createVariable(memory: Memory, id: String, type: Type) -> Variable {
 func solveQuad() {
     arrayQuads[sJumps.first!].fillMissingResult(result: arrayQuads.count)
     sJumps.removeFirst()
+}
+
+func createQuad() -> Quadruple {
+    let currentOperator = sOperators.first!
+     sOperators.removeFirst()
+     let rightOperand = sOperands.first!
+     let rightType = sTypes.first!
+     sTypes.removeFirst()
+     sOperands.removeFirst()
+    let leftOperand = sOperands.first!
+    let leftType = sTypes.first!
+    sTypes.removeFirst()
+    sOperands.removeFirst()
+     if !semanticCube.checkCube(currOperator: currentOperator, leftType: leftType, rightType: rightType) {
+         // TODO: There was a semantic error with the typing
+     }
+    
+    let newType = semanticCube.getResultType(currOperator: currentOperator, leftType: leftType, rightType: rightType)
+     let temporalMemoryAssignedSpace = createTemp(type:newType)
+     let newQuad = Quadruple(quadOperator: currentOperator, leftOperand: leftOperand, rightOperand: rightOperand, result: temporalMemoryAssignedSpace)
+    sOperands.insert(temporalMemoryAssignedSpace, at: 0)
+    sTypes.insert(newType, at: 0)
+    
+    return newQuad
 }
 
 /**
@@ -204,13 +228,6 @@ open class tddBaseListener: tddListener {
         if tests.count > 0 {
             documentation.append("## Tests \n")
         }
-        
-//        for test in tests {
-//            print("First test")
-//            documentation.append("\(functionName)(")
-//        }
-        
-        
     }
     /**
      * {@inheritDoc}
@@ -266,7 +283,6 @@ open class tddBaseListener: tddListener {
                     child = child?.test_inputs()
             }
         }
-        print(testParams)
         if testParams.count > 0 {
             documentation.append("- **\(docCurrFunName)**(")
         }
@@ -306,6 +322,7 @@ open class tddBaseListener: tddListener {
             return
         }
         scope = functionName
+        // TODO: Solve address to a real one
         let function = Function(name: functionName, type: Type(type: typeText), scope: scope, address: 2)
         symbols.insert(function: function)
     }
@@ -321,7 +338,16 @@ open class tddBaseListener: tddListener {
      *
      * <p>The default implementation does nothing.</p>
      */
-    open func enterVoid_function_dec(_ ctx: tddParser.Void_function_decContext) { }
+    open func enterVoid_function_dec(_ ctx: tddParser.Void_function_decContext) {
+        guard let functionName = ctx.ID()?.getText() else {
+            // TODO: Some type of error
+            return
+        }
+        scope = functionName
+        // TODO: Solve address to a real one
+        let function = Function(name: functionName, type: Type(type: "void"), scope: scope, address: 2)
+        symbols.insert(function: function)
+    }
     /**
      * {@inheritDoc}
      *
@@ -402,7 +428,9 @@ open class tddBaseListener: tddListener {
      *
      * <p>The default implementation does nothing.</p>
      */
-    open func exitReturn_statement(_ ctx: tddParser.Return_statementContext) { }
+    open func exitReturn_statement(_ ctx: tddParser.Return_statementContext) {
+        // We will need to eventually remove the solved hyper expression value from operands and check if it matches to what needs to be returned
+    }
 
     /**
      * {@inheritDoc}
@@ -489,6 +517,7 @@ open class tddBaseListener: tddListener {
     
     open func exitSuper_condition_check(_ ctx: tddParser.Super_condition_checkContext) {
         let quad = Quadruple.init(quadOperator: "GOTOF", leftOperand: arrayQuads[arrayQuads.count-1].result, rightOperand: -1, result: -1)
+        sOperands.removeFirst()
         arrayQuads.append(quad)
         sJumps.insert(arrayQuads.count - 1, at: 0)
     }
@@ -584,7 +613,6 @@ open class tddBaseListener: tddListener {
      * <p>The default implementation does nothing.</p>
      */
     open func enterHiper_expresion(_ ctx: tddParser.Hiper_expresionContext) {
-        print(ctx.getText())
         //Check for opening parenthesis
         if let parent = ctx.parent as? tddParser.FactorContext {
             if let id = parent.ID()?.getText(), parent.OPEN_PAR() != nil {
@@ -611,66 +639,22 @@ open class tddBaseListener: tddListener {
                 sOperators.removeFirst()
             }
             else {
-                print("ERRORRRRR")
+                // TODO: Report  error
+                return
             }
         }
         if let oper = ctx.AND()?.getText() {
             sOperators.insert(oper, at:0)
-            print("Oper: \(oper)")
-            let currentOperator = sOperators.first!
-             sOperators.removeFirst()
-             let leftOperand = sOperands.first!
-             let leftType = sTypes.first!
-             sTypes.removeFirst()
-             sOperands.removeFirst()
-             let rightOperand = sOperands.first!
-             let rightType = sTypes.first!
-             sTypes.removeFirst()
-             sOperands.removeFirst()
-             // Could potentially do some refactoring 🤔
-             if !semanticCube.checkCube(currOperator: currentOperator, leftType: leftType, rightType: rightType) {
-                 // TODO: There was a semantic error with the typing
-             }
-
-            let newType = semanticCube.getResultType(currOperator: currentOperator, leftType: leftType, rightType: rightType)
-             let temporalMemoryAssignedSpace = createTemp(type:newType)
-             if newType == .error {
-                 print("Auxilio")
-             }
-             let newQuad = Quadruple(quadOperator: currentOperator, leftOperand: leftOperand, rightOperand: rightOperand, result: temporalMemoryAssignedSpace)
+            // Create Quadruple
+            let newQuad = createQuad()
              arrayQuads.append(newQuad)
-             sOperands.insert(temporalMemoryAssignedSpace, at: 0)
-             sTypes.insert(newType, at: 0)
+
         }
         else if let oper = ctx.OR()?.getText() {
             sOperators.insert(oper, at:0)
-            print("Oper: \(oper)")
-            let currentOperator = sOperators.first!
-             sOperators.removeFirst()
-             let leftOperand = sOperands.first!
-             let leftType = sTypes.first!
-             sTypes.removeFirst()
-             sOperands.removeFirst()
-             let rightOperand = sOperands.first!
-             let rightType = sTypes.first!
-             sTypes.removeFirst()
-             sOperands.removeFirst()
-             // Could potentially do some refactoring 🤔
-             if !semanticCube.checkCube(currOperator: currentOperator, leftType: leftType, rightType: rightType) {
-                 // TODO: There was a semantic error with the typing
-             }
-
-            let newType = semanticCube.getResultType(currOperator: currentOperator, leftType: leftType, rightType: rightType)
-             let temporalMemoryAssignedSpace = createTemp(type:newType)
-             if newType == .error {
-                 print("Auxilio")
-             }
-             let newQuad = Quadruple(quadOperator: currentOperator, leftOperand: leftOperand, rightOperand: rightOperand, result: temporalMemoryAssignedSpace)
+            let newQuad = createQuad()
              arrayQuads.append(newQuad)
-             sOperands.insert(temporalMemoryAssignedSpace, at: 0)
-             sTypes.insert(newType, at: 0)
         }
-        print("AAAA")
     }
 
     /**
@@ -699,47 +683,20 @@ open class tddBaseListener: tddListener {
      */
     open func exitExp(_ ctx: tddParser.ExpContext) {
         if (!sOperators.isEmpty) {
-            //TODO gen quadruple with sOperators.first!
             if(sOperators.first! == ">" || sOperators.first! == "<" || sOperators.first! == "!=") {
-                let currentOperator = sOperators.first!
-                sOperators.removeFirst()
-                let leftOperand = sOperands.first!
-                let leftType = sTypes.first!
-                sTypes.removeFirst()
-                sOperands.removeFirst()
-                let rightOperand = sOperands.first!
-                let rightType = sTypes.first!
-                sTypes.removeFirst()
-                sOperands.removeFirst()
-                if !semanticCube.checkCube(currOperator: currentOperator, leftType: leftType, rightType: rightType) {
-                    // TODO: Semantic error on types
-                    print("semantic cube error")
-                }
-                let newType = semanticCube.getResultType(currOperator: currentOperator, leftType: leftType, rightType: rightType)
-                if newType == .error {
-                    print("Auxilio")
-                }
-                let temporalMemoryAssignedSpace = createTemp(type:newType)
-                let newQuad = Quadruple(quadOperator: currentOperator, leftOperand: leftOperand, rightOperand: rightOperand, result: temporalMemoryAssignedSpace)
-                sOperands.insert(temporalMemoryAssignedSpace, at: 0)
-                print("inserted \(temporalMemoryAssignedSpace) into sOperands")
-                sTypes.insert(newType, at: 0)
+                let newQuad = createQuad()
                 arrayQuads.append(newQuad)
-                //print(sOperators.first!)
             }
         }
         if let parent = ctx.parent as? tddParser.ExpresionContext {
             if let oper = parent.LESS_THAN()?.getText() {
                 sOperators.insert(oper, at:0)
-                print("Oper: \(oper)")
             }
             else if let oper = parent.GREATER_THAN()?.getText() {
                 sOperators.insert(oper, at:0)
-                print("Oper: \(oper)")
             }
             else if let oper = parent.DIFFERENT()?.getText() {
                 sOperators.insert(oper, at:0)
-                print("Oper: \(oper)")
             }
         }
     }
@@ -759,29 +716,7 @@ open class tddBaseListener: tddListener {
         if (!sOperators.isEmpty) {
             //TODO gen quadruple with sOperators.first!
             if(sOperators.first! == "+" || sOperators.first! == "-") {
-                let currentOperator = sOperators.first!
-                sOperators.removeFirst()
-                let leftOperand = sOperands.first!
-                let leftType = sTypes.first!
-                sTypes.removeFirst()
-                sOperands.removeFirst()
-                let rightOperand = sOperands.first!
-                let rightType = sTypes.first!
-                sTypes.removeFirst()
-                sOperands.removeFirst()
-                if !semanticCube.checkCube(currOperator: currentOperator, leftType: leftType, rightType: rightType) {
-                    // TODO: Semantic error on types
-                    print("semantic cube error")
-                }
-                let newType = semanticCube.getResultType(currOperator: currentOperator, leftType: leftType, rightType: rightType)
-                if newType == .error {
-                    print("Auxilio")
-                }
-                let temporalMemoryAssignedSpace = createTemp(type:newType)
-                let newQuad = Quadruple(quadOperator: currentOperator, leftOperand: leftOperand, rightOperand: rightOperand, result: temporalMemoryAssignedSpace)
-                sOperands.insert(temporalMemoryAssignedSpace, at: 0)
-                print("inserted \(temporalMemoryAssignedSpace) into sOperands")
-                sTypes.insert(newType, at: 0)
+               let newQuad = createQuad()
                 arrayQuads.append(newQuad)
 
             }
@@ -789,11 +724,9 @@ open class tddBaseListener: tddListener {
         if let parent = ctx.parent as? tddParser.ExpContext {
             if let oper = parent.ADD()?.getText() {
                 sOperators.insert(oper, at:0)
-                print("Oper: \(oper)")
             }
             else if let oper = parent.SUBSTRACT()?.getText() {
                 sOperators.insert(oper, at:0)
-                print("Oper: \(oper)")
             }
         }
     }
@@ -812,19 +745,17 @@ open class tddBaseListener: tddListener {
             }
             
             sOperands.insert(variable.address, at:0)
-            print("inserted \(variable.name) into sOperands")
             sTypes.insert(variable.type, at:0)
         }
         //Check for negative constant
         else if ctx.SUBSTRACT()?.getText() != nil {
             guard let value = ctx.VALUE()?.getText() else {
-                // TODO: Erro
+                // TODO: Error
                 return
             }
             let variable = createVariable(memory: constantMemory, id: "-\(value)", type: findType(value: value))
             constantsTable.append(variable)
             sOperands.insert(variable.address, at:0)
-            print("inserted \(variable.name) into sOperands")
             sTypes.insert(variable.type, at:0)
         }
         //Check for constant
@@ -832,7 +763,6 @@ open class tddBaseListener: tddListener {
             let variable = createVariable(memory: constantMemory, id: value, type: findType(value: value))
             constantsTable.append(variable)
             sOperands.insert(variable.address, at:0)
-            print("inserted \(variable.name) into sOperands")
             sTypes.insert(variable.type, at:0)
         }
     }
@@ -845,37 +775,17 @@ open class tddBaseListener: tddListener {
         if (!sOperators.isEmpty) {
             //TODO gen quadruple with sOperators.first!
             if(sOperators.first! == "*" || sOperators.first! == "/") {
-                let currentOperator = sOperators.first!
-                sOperators.removeFirst()
-                let leftOperand = sOperands.first!
-                let leftType = sTypes.first!
-                sTypes.removeFirst()
-                sOperands.removeFirst()
-                let rightOperand = sOperands.first!
-                let rightType = sTypes.first!
-                sTypes.removeFirst()
-                sOperands.removeFirst()
-                if !semanticCube.checkCube(currOperator: currentOperator, leftType: leftType, rightType: rightType) {
-                    // TODO: Semantic error on types
-                }
-                let newType = semanticCube.getResultType(currOperator: currentOperator, leftType: leftType, rightType: rightType)
-                let temporalMemoryAssignedSpace = createTemp(type: newType)
-                let newQuad = Quadruple(quadOperator: currentOperator, leftOperand: leftOperand, rightOperand: rightOperand, result: temporalMemoryAssignedSpace)
+               let newQuad = createQuad()
                 arrayQuads.append(newQuad)
-                sOperands.insert(newQuad.result, at: 0)
-                sTypes.insert(newType, at: 0)
-                //print(sOperators.first!)
 
             }
         }
         if let parent = ctx.parent as? tddParser.TerminoContext {
             if let oper = parent.MULTIPLY()?.getText() {
                 sOperators.insert(oper, at:0)
-                print("Oper: \(oper)")
             }
             else if let oper = parent.DIVIDE()?.getText() {
                 sOperators.insert(oper, at:0)
-                print("Oper: \(oper)")
             }
         }
     }
@@ -932,7 +842,21 @@ open class tddBaseListener: tddListener {
      * <p>The default implementation does nothing.</p>
      */
     open func exitAsignation(_ ctx: tddParser.AsignationContext) {
-    
+        let variableToAsign = symbols.findID(scope: scope, id: ctx.ID()!.getText())
+        let leftType = variableToAsign?.type
+        let rightType = sTypes.first!
+        sTypes.removeFirst()
+        
+        if !semanticCube.checkCube(currOperator: "=", leftType: leftType!, rightType: rightType) {
+            // TODO: Handle semantic cube error
+            return
+        }
+        
+        let valueToAsignAddress = sOperands.first!
+        sOperands.removeFirst()
+        
+        let newQuad = Quadruple(quadOperator: "=", leftOperand: valueToAsignAddress, rightOperand: -1, result: variableToAsign!.address)
+        arrayQuads.append(newQuad)
     }
 
     /**
@@ -952,6 +876,7 @@ open class tddBaseListener: tddListener {
         //Generate GOTO
         let quad = Quadruple.init(quadOperator: "GOTO", leftOperand: -1, rightOperand: -1, result: sWhile.first!)
         sWhile.removeFirst()
+        sOperands.removeFirst()
         arrayQuads.append(quad)
         sGoto.insert(arrayQuads.count - 1, at: 0)
         //Solve previous quad
