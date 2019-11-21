@@ -49,8 +49,24 @@ class VirtualMachine {
                 print(quad)
             case "==":
                 print(quad)
+            case "VERIFY":
+                print(quad)
+            case "ERA":
+                print(quad)
+            case "GOSUB":
+                print(quad)
+            case "PARAMETRO":
+                print(quad)
+            case "RETURN":
+                print(quad)
+            case "ENDPROC":
+                print(quad)
+            case "END":
+                print(quad)
             default:
+                // Shoouldn't happen but maybe should do some type of error
                 print("Unexpected operator")
+                print(quad)
             }
         }
         
