@@ -122,6 +122,23 @@ func createQuad() -> Quadruple {
     return newQuad
 }
 
+func addParamQuad() -> Quadruple {
+    let function = sFunctions.first!
+    if function_param_index >= function.variables.count || !function.variables[function_param_index].input {
+        print("ERROR argument quantity mismatch")
+    }
+    if sTypes.first! != function.variables[function_param_index].type {
+        print("ERROR types mismatch")
+    }
+    
+    let temporalMemoryAssignedSpace = createTemp(type: sTypes.first!)
+    let newQuad = Quadruple(quadOperator: "parameter", leftOperand: sOperands.first!, rightOperand: -1, result: temporalMemoryAssignedSpace)
+    sTypes.removeFirst()
+    sOperands.removeFirst()
+    
+    return newQuad
+}
+
 /**
  * This class provides an empty implementation of {@link tddListener},
  * which can be extended to create a listener which only needs to handle a subset
@@ -136,7 +153,7 @@ open class tddBaseListener: tddListener {
      */
     open func enterProgram(_ ctx: tddParser.ProgramContext) {
         scope = "global"
-        let function = Function(name: scope, type: .int, scope: scope, address: 1)
+        let function = Function(name: scope, type: .int, scope: scope)
         symbols.insert(function: function)
         
     }
@@ -325,7 +342,7 @@ open class tddBaseListener: tddListener {
         }
         scope = functionName
         // TODO: Solve address to a real one
-        let function = Function(name: functionName, type: Type(type: typeText), scope: scope, address: 2)
+        let function = Function(name: functionName, type: Type(type: typeText), scope: scope)
         symbols.insert(function: function)
     }
     /**
@@ -333,7 +350,10 @@ open class tddBaseListener: tddListener {
      *
      * <p>The default implementation does nothing.</p>
      */
-    open func exitFunction_dec(_ ctx: tddParser.Function_decContext) { }
+    open func exitFunction_dec(_ ctx: tddParser.Function_decContext) {
+        let function = symbols.functionsDictionary[scope]!
+        function.fillInitialQuad(start_quadruple: arrayQuads.count)
+    }
 
     /**
      * {@inheritDoc}
@@ -347,7 +367,7 @@ open class tddBaseListener: tddListener {
         }
         scope = functionName
         // TODO: Solve address to a real one
-        let function = Function(name: functionName, type: Type(type: "void"), scope: scope, address: 2)
+        let function = Function(name: functionName, type: Type(type: "void"), scope: scope)
         symbols.insert(function: function)
     }
     /**
@@ -355,7 +375,10 @@ open class tddBaseListener: tddListener {
      *
      * <p>The default implementation does nothing.</p>
      */
-    open func exitVoid_function_dec(_ ctx: tddParser.Void_function_decContext) { }
+    open func exitVoid_function_dec(_ ctx: tddParser.Void_function_decContext) {
+        let function = symbols.functionsDictionary[scope]!
+        function.fillInitialQuad(start_quadruple: arrayQuads.count)
+    }
 
     /**
      * {@inheritDoc}
@@ -441,7 +464,7 @@ open class tddBaseListener: tddListener {
      */
     open func enterMain(_ ctx: tddParser.MainContext) {
         scope = "main"
-        let function = Function(name: scope, type: .int, scope: scope, address: 1)
+        let function = Function(name: scope, type: .int, scope: scope)
         symbols.insert(function: function)
     }
     /**
@@ -449,7 +472,10 @@ open class tddBaseListener: tddListener {
      *
      * <p>The default implementation does nothing.</p>
      */
-    open func exitMain(_ ctx: tddParser.MainContext) { }
+    open func exitMain(_ ctx: tddParser.MainContext) {
+        let function = symbols.functionsDictionary[scope]!
+        function.fillInitialQuad(start_quadruple: arrayQuads.count)
+    }
 
     /**
      * {@inheritDoc}
@@ -797,14 +823,9 @@ open class tddBaseListener: tddListener {
             function_param_index = 0
             let function_name = parent.ID()?.getText()
             let function = symbols.functionsDictionary[function_name!]!
-            
-        }
-        //We are reading function params
-        else if function_param_index >= 0 {
-            
-        }
-        else {
-            print("ERROR")
+            sFunctions.insert(function, at: 0)
+            let newQuad = Quadruple(quadOperator: "ERA", leftOperand: function.start_quadruple, rightOperand: -1, result: -1)
+            arrayQuads.append(newQuad)
         }
     }
     /**
@@ -814,18 +835,21 @@ open class tddBaseListener: tddListener {
      */
     open func exitFunction_hiper_expresions(_ ctx: tddParser.Function_hiper_expresionsContext) {
         //Function call ends
-        if let parent = ctx.parent as? tddParser.FactorContext {
+        if let _ = ctx.parent as? tddParser.FactorContext {
+            //Last parameter
+            let paramQuad = addParamQuad()
+            arrayQuads.append(paramQuad)
+            function_param_index = 0
+            let function = sFunctions.first!
+            let subQuad = Quadruple(quadOperator: "GOSUB", leftOperand: function.start_quadruple, rightOperand: -1, result: -1)
+            arrayQuads.append(subQuad)
             sFunctions.removeFirst()
-            sTypes.removeFirst()
-            sOperands.removeFirst()
         }
         //We are reading function params
         else if function_param_index >= 0 {
-            let function = sFunctions.first!
-            if function_param_index >= function.variables.count || !function.variables[function_param_index].input {
-                print("ERROR argument quantity mismatch")
-            }
-            let call_type = sTypes.first!
+            let paramQuad = addParamQuad()
+            arrayQuads.append(paramQuad)
+            function_param_index = function_param_index + 1
         }
         else {
             print("ERROR")
