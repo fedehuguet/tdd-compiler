@@ -168,6 +168,7 @@ open class tddBaseListener: tddListener {
             guard let oper = quad.quadOperator, let left = quad.leftOperand, let right = quad.rightOperand, let res = quad.result else {
                 return
             }
+            print(sOperands.count)
             print("operator \(oper) left: \(left) right \(right) result: \(res)")
         }
         
@@ -458,10 +459,10 @@ open class tddBaseListener: tddListener {
      * <p>The default implementation does nothing.</p>
      */
     open func exitReturn_statement(_ ctx: tddParser.Return_statementContext) {
-//        let newQuad = Quadruple(quadOperator: "RETURN", leftOperand: -1, rightOperand: -1, result: sOperands.first!)
-//        arrayQuads.append(newQuad)
-//        sOperands.removeFirst()
-//        sTypes.removeFirst()
+        let newQuad = Quadruple(quadOperator: "RETURN", leftOperand: -1, rightOperand: -1, result: sOperands.first!)
+        arrayQuads.append(newQuad)
+        sOperands.removeFirst()
+        sTypes.removeFirst()
     }
 
     /**
@@ -551,8 +552,9 @@ open class tddBaseListener: tddListener {
     open func enterSuper_condition_check(_ ctx: tddParser.Super_condition_checkContext) { }
     
     open func exitSuper_condition_check(_ ctx: tddParser.Super_condition_checkContext) {
-        let quad = Quadruple.init(quadOperator: "GOTOF", leftOperand: arrayQuads[arrayQuads.count-1].result, rightOperand: -1, result: -1)
+        sTypes.removeFirst()
         sOperands.removeFirst()
+        let quad = Quadruple.init(quadOperator: "GOTOF", leftOperand: arrayQuads[arrayQuads.count-1].result, rightOperand: -1, result: -1)
         arrayQuads.append(quad)
         sJumps.insert(arrayQuads.count - 1, at: 0)
     }
@@ -864,7 +866,7 @@ open class tddBaseListener: tddListener {
             arrayQuads.append(subQuad)
             
             let tempReturn = createTemp(type: function.type)
-            let returnQuad = Quadruple(quadOperator: "RETURN", leftOperand: function.return_address, rightOperand: -1, result: tempReturn)
+            let returnQuad = Quadruple(quadOperator: "=", leftOperand: function.return_address, rightOperand: -1, result: tempReturn)
             arrayQuads.append(returnQuad)
             
             sFunctions.removeFirst()
@@ -966,7 +968,6 @@ open class tddBaseListener: tddListener {
         //Generate GOTO
         let quad = Quadruple.init(quadOperator: "GOTO", leftOperand: -1, rightOperand: -1, result: sWhile.first!)
         sWhile.removeFirst()
-        sOperands.removeFirst()
         arrayQuads.append(quad)
         sGoto.insert(arrayQuads.count - 1, at: 0)
         //Solve previous quad
