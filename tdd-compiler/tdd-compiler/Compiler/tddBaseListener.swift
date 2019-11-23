@@ -879,8 +879,8 @@ open class tddBaseListener: tddListener {
             let returnQuad = Quadruple(quadOperator: "=", leftOperand: function.return_address, rightOperand: -1, result: tempReturn)
             arrayQuads.append(returnQuad)
             
-            sOperands.append(tempReturn)
-            sTypes.append(function.type)
+            sOperands.insert(tempReturn, at: 0)
+            sTypes.insert(function.type, at: 0)
         }
         //Reading 2nd to nth function param are going to be processed first
         else if function_param_index >= 0 {
