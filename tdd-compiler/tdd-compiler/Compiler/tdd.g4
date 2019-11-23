@@ -108,7 +108,11 @@ factor:
     SUBSTRACT VALUE
     | VALUE | ID 
     | OPEN_PAR hiper_expresion CLOSE_PAR
-    | ID OPEN_PAR hiper_expresion CLOSE_PAR;
+    | ID OPEN_PAR function_hiper_expresions? CLOSE_PAR;
+    
+function_hiper_expresions:
+    | hiper_expresion
+    | hiper_expresion COMMA function_hiper_expresions;
 
 print:
     PRINT OPEN_PAR algo_imprimible CLOSE_PAR SEMI_COLON;
