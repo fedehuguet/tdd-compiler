@@ -717,19 +717,28 @@ open class tddBaseListener: tddListener {
      */
     open func exitExp(_ ctx: tddParser.ExpContext) {
         if (!sOperators.isEmpty) {
-            if(sOperators.first! == ">" || sOperators.first! == "<" || sOperators.first! == "!=") {
+            if(sOperators.first! == "==" || sOperators.first! == "!=" || sOperators.first! == "<" || sOperators.first! == ">" || sOperators.first! == "<=" || sOperators.first! == ">=") {
                 let newQuad = createQuad()
                 arrayQuads.append(newQuad)
             }
         }
         if let parent = ctx.parent as? tddParser.ExpresionContext {
-            if let oper = parent.LESS_THAN()?.getText() {
+            if let oper = parent.EQUALITY()?.getText() {
+                sOperators.insert(oper, at:0)
+            }
+            else if let oper = parent.DIFFERENT()?.getText() {
+                sOperators.insert(oper, at:0)
+            }
+            else if let oper = parent.LESS_THAN()?.getText() {
                 sOperators.insert(oper, at:0)
             }
             else if let oper = parent.GREATER_THAN()?.getText() {
                 sOperators.insert(oper, at:0)
             }
-            else if let oper = parent.DIFFERENT()?.getText() {
+            else if let oper = parent.LESS_EQUAL()?.getText() {
+                sOperators.insert(oper, at:0)
+            }
+            else if let oper = parent.GREATER_EQUAL()?.getText() {
                 sOperators.insert(oper, at:0)
             }
         }
@@ -771,6 +780,7 @@ open class tddBaseListener: tddListener {
      * <p>The default implementation does nothing.</p>
      */
     open func enterFactor(_ ctx: tddParser.FactorContext) {
+        print(ctx.getText())
         //Check for ID
         if let id = ctx.ID()?.getText() {
             guard let variable = symbols.findID(scope: scope, id: id) else {
