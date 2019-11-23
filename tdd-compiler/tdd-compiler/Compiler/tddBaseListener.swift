@@ -771,6 +771,7 @@ open class tddBaseListener: tddListener {
      * <p>The default implementation does nothing.</p>
      */
     open func enterFactor(_ ctx: tddParser.FactorContext) {
+        print(ctx.getText())
         //Check for ID
         if let id = ctx.ID()?.getText() {
             guard let variable = symbols.findID(scope: scope, id: id) else {
