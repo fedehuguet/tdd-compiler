@@ -168,7 +168,6 @@ open class tddBaseListener: tddListener {
             guard let oper = quad.quadOperator, let left = quad.leftOperand, let right = quad.rightOperand, let res = quad.result else {
                 return
             }
-            print(sOperands.count)
             print("operator \(oper) left: \(left) right \(right) result: \(res)")
         }
         
@@ -459,6 +458,10 @@ open class tddBaseListener: tddListener {
      * <p>The default implementation does nothing.</p>
      */
     open func exitReturn_statement(_ ctx: tddParser.Return_statementContext) {
+        let return_type = symbols.functionsDictionary[scope]?.type
+        if (sTypes.first! != return_type) {
+            print("Return type does not match function")
+        }
         let newQuad = Quadruple(quadOperator: "RETURN", leftOperand: -1, rightOperand: -1, result: sOperands.first!)
         arrayQuads.append(newQuad)
         sOperands.removeFirst()
