@@ -36,7 +36,7 @@ bool nam(int a, float b) {
     } elseif(a>4) {
         print("Hola tres");
     }
-    return true;
+    return 3;
 }
 
 #*

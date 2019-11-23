@@ -861,18 +861,26 @@ open class tddBaseListener: tddListener {
                 function_param_index = function_param_index + 1
             }
             let function = sFunctions.first!
+            sFunctions.removeFirst()
+            
             if (function_param_index < function.input_total) {
                 print("ERROR too few arguments")
             }
-            function_param_index = 0
+            function_param_index = 0 //Reset params count
+            
             let subQuad = Quadruple(quadOperator: "GOSUB", leftOperand: function.start_quadruple, rightOperand: -1, result: -1)
             arrayQuads.append(subQuad)
+            
+            //Remove from sOperands ID of function
+            sOperands.removeFirst()
+            sTypes.removeFirst()
             
             let tempReturn = createTemp(type: function.type)
             let returnQuad = Quadruple(quadOperator: "=", leftOperand: function.return_address, rightOperand: -1, result: tempReturn)
             arrayQuads.append(returnQuad)
             
-            sFunctions.removeFirst()
+            sOperands.append(tempReturn)
+            sTypes.append(function.type)
         }
         //Reading 2nd to nth function param are going to be processed first
         else if function_param_index >= 0 {
