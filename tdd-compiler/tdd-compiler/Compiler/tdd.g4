@@ -66,7 +66,8 @@ statement:
     asignation
     | condition
     | print
-    | while_loop;
+    | while_loop
+    | void_func_call;
     
 super_condition_check:
     condition_check;
@@ -126,6 +127,9 @@ asignation:
 
 while_loop:
     WHILE super_condition_check OPEN_BLOCK statement* CLOSE_BLOCK;
+    
+void_func_call:
+    ID OPEN_PAR function_hiper_expresions? CLOSE_PAR SEMI_COLON;
 
 /*
     Lexer rules

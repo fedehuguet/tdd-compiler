@@ -414,4 +414,16 @@ public protocol tddListener: ParseTreeListener {
 	   - ctx: the parse tree
 	 */
 	func exitWhile_loop(_ ctx: tddParser.While_loopContext)
+	/**
+	 * Enter a parse tree produced by {@link tddParser#void_func_call}.
+	 - Parameters:
+	   - ctx: the parse tree
+	 */
+	func enterVoid_func_call(_ ctx: tddParser.Void_func_callContext)
+	/**
+	 * Exit a parse tree produced by {@link tddParser#void_func_call}.
+	 - Parameters:
+	   - ctx: the parse tree
+	 */
+	func exitVoid_func_call(_ ctx: tddParser.Void_func_callContext)
 }
