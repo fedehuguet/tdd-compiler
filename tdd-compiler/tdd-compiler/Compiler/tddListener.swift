@@ -223,6 +223,78 @@ public protocol tddListener: ParseTreeListener {
 	 */
 	func exitVar_declaration(_ ctx: tddParser.Var_declarationContext)
 	/**
+	 * Enter a parse tree produced by {@link tddParser#non_atomic}.
+	 - Parameters:
+	   - ctx: the parse tree
+	 */
+	func enterNon_atomic(_ ctx: tddParser.Non_atomicContext)
+	/**
+	 * Exit a parse tree produced by {@link tddParser#non_atomic}.
+	 - Parameters:
+	   - ctx: the parse tree
+	 */
+	func exitNon_atomic(_ ctx: tddParser.Non_atomicContext)
+	/**
+	 * Enter a parse tree produced by {@link tddParser#na_declaration}.
+	 - Parameters:
+	   - ctx: the parse tree
+	 */
+	func enterNa_declaration(_ ctx: tddParser.Na_declarationContext)
+	/**
+	 * Exit a parse tree produced by {@link tddParser#na_declaration}.
+	 - Parameters:
+	   - ctx: the parse tree
+	 */
+	func exitNa_declaration(_ ctx: tddParser.Na_declarationContext)
+	/**
+	 * Enter a parse tree produced by {@link tddParser#array_dimension_dec}.
+	 - Parameters:
+	   - ctx: the parse tree
+	 */
+	func enterArray_dimension_dec(_ ctx: tddParser.Array_dimension_decContext)
+	/**
+	 * Exit a parse tree produced by {@link tddParser#array_dimension_dec}.
+	 - Parameters:
+	   - ctx: the parse tree
+	 */
+	func exitArray_dimension_dec(_ ctx: tddParser.Array_dimension_decContext)
+	/**
+	 * Enter a parse tree produced by {@link tddParser#matrix_dimension_dec}.
+	 - Parameters:
+	   - ctx: the parse tree
+	 */
+	func enterMatrix_dimension_dec(_ ctx: tddParser.Matrix_dimension_decContext)
+	/**
+	 * Exit a parse tree produced by {@link tddParser#matrix_dimension_dec}.
+	 - Parameters:
+	   - ctx: the parse tree
+	 */
+	func exitMatrix_dimension_dec(_ ctx: tddParser.Matrix_dimension_decContext)
+	/**
+	 * Enter a parse tree produced by {@link tddParser#array_dimension}.
+	 - Parameters:
+	   - ctx: the parse tree
+	 */
+	func enterArray_dimension(_ ctx: tddParser.Array_dimensionContext)
+	/**
+	 * Exit a parse tree produced by {@link tddParser#array_dimension}.
+	 - Parameters:
+	   - ctx: the parse tree
+	 */
+	func exitArray_dimension(_ ctx: tddParser.Array_dimensionContext)
+	/**
+	 * Enter a parse tree produced by {@link tddParser#matrix_dimension}.
+	 - Parameters:
+	   - ctx: the parse tree
+	 */
+	func enterMatrix_dimension(_ ctx: tddParser.Matrix_dimensionContext)
+	/**
+	 * Exit a parse tree produced by {@link tddParser#matrix_dimension}.
+	 - Parameters:
+	   - ctx: the parse tree
+	 */
+	func exitMatrix_dimension(_ ctx: tddParser.Matrix_dimensionContext)
+	/**
 	 * Enter a parse tree produced by {@link tddParser#statement}.
 	 - Parameters:
 	   - ctx: the parse tree

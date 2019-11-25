@@ -61,6 +61,29 @@ variable:
 var_declaration:
     ID SEMI_COLON
     | ID COMMA var_declaration;
+    
+non_atomic:
+    TYPE na_declaration+;
+    
+na_declaration:
+    ID array_dimension_dec SEMI_COLON
+    | ID array_dimension_dec COMMA na_declaration
+    | ID matrix_dimension_dec SEMI_COLON
+    | ID matrix_dimension_dec COMMA na_declaration;
+
+array_dimension_dec:
+    OPEN_BRACKET INT_VAL CLOSE_BRACKET;
+    
+matrix_dimension_dec:
+    OPEN_BRACKET INT_VAL CLOSE_BRACKET
+    OPEN_BRACKET INT_VAL CLOSE_BRACKET;
+    
+array_dimension:
+        OPEN_BRACKET hiper_expresion CLOSE_BRACKET;
+        
+matrix_dimension:
+        OPEN_BRACKET hiper_expresion CLOSE_BRACKET
+        OPEN_BRACKET hiper_expresion CLOSE_BRACKET;
 
 statement:
     asignation
@@ -138,6 +161,8 @@ void_func_call:
 //Reserved characters
 OPEN_BLOCK: '{';
 CLOSE_BLOCK: '}';
+OPEN_BRACKET: '[';
+CLOSE_BRACKET: ']';
 OPEN_PAR: '(';
 CLOSE_PAR: ')';
 OPEN_COMMENT: '/*';
