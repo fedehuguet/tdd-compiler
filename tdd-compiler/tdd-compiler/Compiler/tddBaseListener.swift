@@ -71,6 +71,19 @@ func createTemp(type: Type) -> Int {
     }
 }
 
+func getConstant(name: String) -> Variable {
+    for constant in constantsTable {
+        if constant.name == name {
+            return constant
+        }
+    }
+    let variable = createVariable(memory: constantMemory, id: "-\(name)", type: findType(value: name))
+    constantsTable.append(variable)
+    return variable
+}
+
+
+
 func createVariable(memory: Memory, id: String, type: Type) -> Variable {
     let address: Int!
     switch type {
@@ -488,20 +501,41 @@ open class tddBaseListener: tddListener {
      *
      * <p>The default implementation does nothing.</p>
      */
-    open func exitNa_declaration(_ ctx: tddParser.Na_declarationContext) { }
+    open func exitNa_declaration(_ ctx: tddParser.Na_declarationContext) {
+        var parent = ctx.parent
+               while(!((parent as? tddParser.Non_atomicContext) != nil)) {
+                   parent = parent?.parent
+               }
+               guard let type = (parent as! tddParser.Non_atomicContext).TYPE(), let id = ctx.ID() else {
+                   print("error")
+                   return
+               }
+               let variable: Variable!
+               if scope == "global" {
+                   variable = createVariable(memory: globalMemory, id: id.getText(), type: Type(type: type.getText()))
+               } else {
+                      variable = createVariable(memory: localMemory, id: id.getText(), type: Type(type: type.getText()))
+               }
+               symbols.functionsDictionary[scope]?.variables.append(variable)
+    }
 
     /**
      * {@inheritDoc}
      *
      * <p>The default implementation does nothing.</p>
      */
-    open func enterArray_dimension_dec(_ ctx: tddParser.Array_dimension_decContext) { }
+    open func enterArray_dimension_dec(_ ctx: tddParser.Array_dimension_decContext) {
+        print(ctx.getText())
+        print(ctx.INT_VAL()!)
+    }
     /**
      * {@inheritDoc}
      *
      * <p>The default implementation does nothing.</p>
      */
-    open func exitArray_dimension_dec(_ ctx: tddParser.Array_dimension_decContext) { }
+    open func exitArray_dimension_dec(_ ctx: tddParser.Array_dimension_decContext) {
+        
+    }
 
     /**
      * {@inheritDoc}
@@ -831,15 +865,16 @@ open class tddBaseListener: tddListener {
                 // TODO: Error
                 return
             }
-            let variable = createVariable(memory: constantMemory, id: "-\(value)", type: findType(value: value))
-            constantsTable.append(variable)
+            let address = 0
+         
+           let variable = getConstant(name: value)
+               
             sOperands.insert(variable.address, at:0)
             sTypes.insert(variable.type, at:0)
         }
         //Check for constant
         else if let value = ctx.VALUE()?.getText() {
-            let variable = createVariable(memory: constantMemory, id: value, type: findType(value: value))
-            constantsTable.append(variable)
+            let variable = getConstant(name: value)
             sOperands.insert(variable.address, at:0)
             sTypes.insert(variable.type, at:0)
         }
