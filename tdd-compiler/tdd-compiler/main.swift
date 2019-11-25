@@ -11,10 +11,9 @@ import Antlr4
 
 let code2: String = """
     main() {
-        int a;
-        if (a > 3) {
-            print("Hola");
-        }
+        int arr[3], mat[4][5];
+        int a1;
+        a1 = 2 * 8;
     }
 
 """
@@ -96,7 +95,7 @@ main(){
 """
 
 do {
-    let lexer = tddLexer(ANTLRInputStream(code))
+    let lexer = tddLexer(ANTLRInputStream(code2))
     let tokens = CommonTokenStream(lexer)
     let parser = try tddParser(tokens)
     let tree = try parser.program()
