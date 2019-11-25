@@ -73,13 +73,31 @@ func createTemp(type: Type) -> Int {
     }
 }
 
-func getConstant(name: String) -> Variable {
+func getNegativeConstant(name: String) -> Variable {
     for constant in constantsTable {
         if constant.name == name {
             return constant
         }
     }
     let variable = createVariable(memory: constantMemory, id: "-\(name)", type: findType(value: name))
+    constantsTable.append(variable)
+    return variable
+}
+
+func getConstant(name: String) -> Variable {
+    for constant in constantsTable {
+        if constant.name == name {
+            return constant
+        }
+    }
+    let type = findType(value: name)
+    let variable : Variable
+    if type == .string {
+        // Avoid double quotes on strings 
+        variable = createVariable(memory: constantMemory, id: name.replacingOccurrences(of: "\"", with: ""), type: type)
+    } else {
+        variable = createVariable(memory: constantMemory, id: "\(name)", type: type)
+    }
     constantsTable.append(variable)
     return variable
 }
@@ -913,10 +931,7 @@ open class tddBaseListener: tddListener {
                 // TODO: Error
                 return
             }
-            let address = 0
-         
-           let variable = getConstant(name: value)
-               
+           let variable = getNegativeConstant(name: value)
             sOperands.insert(variable.address, at:0)
             sTypes.insert(variable.type, at:0)
         }
