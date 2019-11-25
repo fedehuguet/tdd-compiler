@@ -164,11 +164,11 @@ open class tddBaseListener: tddListener {
      */
     open func exitProgram(_ ctx: tddParser.ProgramContext) {
         print("QUADRUPLOS")
-        for quad in arrayQuads {
+        for (index, quad) in arrayQuads.enumerated() {
             guard let oper = quad.quadOperator, let left = quad.leftOperand, let right = quad.rightOperand, let res = quad.result else {
                 return
             }
-            print("operator \(oper) left: \(left) right \(right) result: \(res)")
+            print("\(index): operator \(oper) left: \(left) right \(right) result: \(res)")
         }
         
         print(documentation)
@@ -186,6 +186,8 @@ open class tddBaseListener: tddListener {
      * <p>The default implementation does nothing.</p>
      */
     open func exitFunction(_ ctx: tddParser.FunctionContext) {
+        let endProc = Quadruple(quadOperator: "ENDPROC", leftOperand: -1, rightOperand: -1, result: -1)
+        arrayQuads.append(endProc)
         localMemory.clean()
     }
 
@@ -843,12 +845,13 @@ open class tddBaseListener: tddListener {
      */
     open func enterFunction_hiper_expresions(_ ctx: tddParser.Function_hiper_expresionsContext) {
         //Function with return call starts
+        print(ctx.getText())
         if let parent = ctx.parent as? tddParser.FactorContext {
             sOperators.insert("(", at: 0)
             function_param_index = 0
             let function_name = parent.ID()?.getText()
             let function = symbols.functionsDictionary[function_name!]
-            if  function != nil && function!.type != .void {
+            if  function != nil {
                 sFunctions.insert(function!, at: 0)
                 let newQuad = Quadruple(quadOperator: "ERA", leftOperand: function!.start_quadruple, rightOperand: -1, result: -1)
                 arrayQuads.append(newQuad)
@@ -863,7 +866,7 @@ open class tddBaseListener: tddListener {
             function_param_index = 0
             let function_name = parent.ID()?.getText()
             let function = symbols.functionsDictionary[function_name!]
-            if  function != nil && function!.type != .void {
+            if  function != nil {
                 sFunctions.insert(function!, at: 0)
                 let newQuad = Quadruple(quadOperator: "ERA", leftOperand: function!.start_quadruple, rightOperand: -1, result: -1)
                 arrayQuads.append(newQuad)
@@ -927,10 +930,6 @@ open class tddBaseListener: tddListener {
             
             let subQuad = Quadruple(quadOperator: "GOSUB", leftOperand: function.start_quadruple, rightOperand: -1, result: -1)
             arrayQuads.append(subQuad)
-            
-            //Remove from sOperands ID of function
-            sOperands.removeFirst()
-            sTypes.removeFirst()
             
             sOperators.removeFirst()//Remove last )
             temporalMemory.clean()
