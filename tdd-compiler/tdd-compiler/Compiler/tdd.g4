@@ -4,7 +4,7 @@ grammar tdd;
 */
 
 program:
-    variable* function* main;
+    (variable | non_atomic)* function* main;
 
 function:
     header function_dec OPEN_BLOCK function_body CLOSE_BLOCK
@@ -47,7 +47,7 @@ void_function_body:
     body;
 
 body:
-    variable* statement*;
+    (variable | non_atomic)* statement*;
 
 return_statement:
     RETURN hiper_expresion SEMI_COLON;
