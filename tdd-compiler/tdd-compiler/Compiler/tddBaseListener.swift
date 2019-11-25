@@ -463,6 +463,84 @@ open class tddBaseListener: tddListener {
     open func exitVariable(_ ctx: tddParser.VariableContext) {
        
     }
+    
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation does nothing.</p>
+     */
+    open func enterNon_atomic(_ ctx: tddParser.Non_atomicContext) { }
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation does nothing.</p>
+     */
+    open func exitNon_atomic(_ ctx: tddParser.Non_atomicContext) { }
+
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation does nothing.</p>
+     */
+    open func enterNa_declaration(_ ctx: tddParser.Na_declarationContext) { }
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation does nothing.</p>
+     */
+    open func exitNa_declaration(_ ctx: tddParser.Na_declarationContext) { }
+
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation does nothing.</p>
+     */
+    open func enterArray_dimension_dec(_ ctx: tddParser.Array_dimension_decContext) { }
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation does nothing.</p>
+     */
+    open func exitArray_dimension_dec(_ ctx: tddParser.Array_dimension_decContext) { }
+
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation does nothing.</p>
+     */
+    open func enterMatrix_dimension_dec(_ ctx: tddParser.Matrix_dimension_decContext) { }
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation does nothing.</p>
+     */
+    open func exitMatrix_dimension_dec(_ ctx: tddParser.Matrix_dimension_decContext) { }
+
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation does nothing.</p>
+     */
+    open func enterArray_dimension(_ ctx: tddParser.Array_dimensionContext) { }
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation does nothing.</p>
+     */
+    open func exitArray_dimension(_ ctx: tddParser.Array_dimensionContext) { }
+
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation does nothing.</p>
+     */
+    open func enterMatrix_dimension(_ ctx: tddParser.Matrix_dimensionContext) { }
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation does nothing.</p>
+     */
+    open func exitMatrix_dimension(_ ctx: tddParser.Matrix_dimensionContext) { }
 
     /**
      * {@inheritDoc}
