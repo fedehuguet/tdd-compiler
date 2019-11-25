@@ -55,7 +55,8 @@ int nam(int a, float b) {
 
 int suma(int a, int b) {
     print(a);
-    return nam(nam(2,4.0), 4.0) + nam(2,4.0);
+    a = nam(nam(2,4.0), 4.0) + nam(2,4.0);
+    return a;
 }
 
 #*
@@ -90,6 +91,7 @@ main(){
         a = a - 1;
     }
     print(4+2);
+    noReturnParams(a,"hola");
 }
 """
 

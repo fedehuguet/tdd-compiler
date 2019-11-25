@@ -12,6 +12,9 @@ class VirtualMachine {
     let quadruples : [Quadruple]
     let currentQuadIndex = 0
     
+    var sLocalMemory = [Memory]()
+    var sTemporalMemory = [Memory]()
+    
     init(quadruples: [Quadruple]!) {
         self.quadruples = quadruples
     }

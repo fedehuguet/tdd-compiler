@@ -58,4 +58,12 @@ class Memory {
         return retVal
     }
     
+    func clean() {
+        integerCounter = 0
+        floatCounter = 0
+        stringCounter = 0
+        charCounter = 0
+        boolCounter = 0
+    }
+    
 }
