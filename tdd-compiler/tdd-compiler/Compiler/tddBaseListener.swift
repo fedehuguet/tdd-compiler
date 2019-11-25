@@ -185,7 +185,9 @@ open class tddBaseListener: tddListener {
      *
      * <p>The default implementation does nothing.</p>
      */
-    open func exitFunction(_ ctx: tddParser.FunctionContext) { }
+    open func exitFunction(_ ctx: tddParser.FunctionContext) {
+        localMemory.clean()
+    }
 
     /**
      * {@inheritDoc}
@@ -466,6 +468,7 @@ open class tddBaseListener: tddListener {
         arrayQuads.append(newQuad)
         sOperands.removeFirst()
         sTypes.removeFirst()
+        temporalMemory.clean()
     }
 
     /**
@@ -557,6 +560,7 @@ open class tddBaseListener: tddListener {
     open func exitSuper_condition_check(_ ctx: tddParser.Super_condition_checkContext) {
         sTypes.removeFirst()
         sOperands.removeFirst()
+        temporalMemory.clean()
         let quad = Quadruple.init(quadOperator: "GOTOF", leftOperand: arrayQuads[arrayQuads.count-1].result, rightOperand: -1, result: -1)
         arrayQuads.append(quad)
         sJumps.insert(arrayQuads.count - 1, at: 0)
@@ -666,7 +670,6 @@ open class tddBaseListener: tddListener {
      * <p>The default implementation does nothing.</p>
      */
     open func exitHiper_expresion(_ ctx: tddParser.Hiper_expresionContext) {
-        print (ctx.getText())
         //Check for closing parenthesis
         if let parent = ctx.parent as? tddParser.FactorContext {
             if parent.CLOSE_PAR() != nil && sOperators.first == "(" {
@@ -780,7 +783,6 @@ open class tddBaseListener: tddListener {
      * <p>The default implementation does nothing.</p>
      */
     open func enterFactor(_ ctx: tddParser.FactorContext) {
-        print(ctx.getText())
         //Check for ID
         if let id = ctx.ID()?.getText() {
             guard let variable = symbols.findID(scope: scope, id: id) else {
@@ -840,7 +842,6 @@ open class tddBaseListener: tddListener {
      * <p>The default implementation does nothing.</p>
      */
     open func enterFunction_hiper_expresions(_ ctx: tddParser.Function_hiper_expresionsContext) {
-        print(ctx.getText())
         //Function call starts
         if let parent = ctx.parent as? tddParser.FactorContext {
             sOperators.insert("(", at: 0)
@@ -927,6 +928,7 @@ open class tddBaseListener: tddListener {
         sTypes.removeFirst()
         let printOperand = sOperands.first!
         sOperands.removeFirst()
+        temporalMemory.clean()
         let newQuad = Quadruple(quadOperator: "PRINT", leftOperand: -1, rightOperand: printOperand, result: -1)
         arrayQuads.append(newQuad)
         
@@ -969,6 +971,7 @@ open class tddBaseListener: tddListener {
         
         let valueToAsignAddress = sOperands.first!
         sOperands.removeFirst()
+        temporalMemory.clean()
         
         let newQuad = Quadruple(quadOperator: "=", leftOperand: valueToAsignAddress, rightOperand: -1, result: variableToAsign!.address)
         arrayQuads.append(newQuad)
