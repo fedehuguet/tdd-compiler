@@ -843,6 +843,7 @@ open class tddBaseListener: tddListener {
         print(ctx.getText())
         //Function call starts
         if let parent = ctx.parent as? tddParser.FactorContext {
+            sOperators.insert("(", at: 0)
             function_param_index = 0
             let function_name = parent.ID()?.getText()
             let function = symbols.functionsDictionary[function_name!]
@@ -863,7 +864,7 @@ open class tddBaseListener: tddListener {
      */
     open func exitFunction_hiper_expresions(_ ctx: tddParser.Function_hiper_expresionsContext) {
         //Function call ends
-        if let _ = ctx.parent as? tddParser.FactorContext {
+        if let parent = ctx.parent as? tddParser.FactorContext {
             //First or unique parameter is going to be processed last
             if (sOperands.count > 0 && sTypes.count > 0) {
                 let paramQuad = addParamQuad()
@@ -891,6 +892,7 @@ open class tddBaseListener: tddListener {
             
             sOperands.insert(tempReturn, at: 0)
             sTypes.insert(function.type, at: 0)
+            sOperators.removeFirst()
         }
         //Reading 2nd to nth function param are going to be processed first
         else if function_param_index >= 0 {
