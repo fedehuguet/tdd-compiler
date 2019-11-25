@@ -9,17 +9,16 @@
 import Foundation
 import Antlr4
 
-let code2: String = """
+let code: String = """
     main() {
         int a;
-        if (a > 3) {
-            print("Hola");
-        }
+        a = 3 * a;
+        print(a)
     }
 
 """
 
-let code: String = """
+let code2: String = """
 int a;
 #*
 %% Ala a

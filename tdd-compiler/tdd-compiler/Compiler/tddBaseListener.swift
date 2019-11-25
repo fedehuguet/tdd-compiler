@@ -155,6 +155,9 @@ open class tddBaseListener: tddListener {
         scope = "global"
         let function = Function(name: scope, type: .int, scope: scope)
         symbols.insert(function: function)
+        //Instert jump to main
+        let jumtToMain = Quadruple(quadOperator: "GOTO", leftOperand: -1, rightOperand: -1, result: -1)
+        arrayQuads.append(jumtToMain)
         
     }
     /**
@@ -482,6 +485,8 @@ open class tddBaseListener: tddListener {
         scope = "main"
         let function = Function(name: scope, type: .int, scope: scope)
         symbols.insert(function: function)
+        //Solve jump to Main
+        arrayQuads[0].fillMissingResult(result: arrayQuads.count)
     }
     /**
      * {@inheritDoc}
