@@ -104,19 +104,19 @@ func getConstant(name: String) -> Variable {
 
 
 
-func createVariable(memory: Memory, id: String, type: Type, input: Bool = false) -> Variable {
+func createVariable(memory: Memory, id: String, type: Type, input: Bool = false, size: Int = 1) -> Variable {
     let address: Int!
     switch type {
     case .int:
-        address = memory.addInt()
+        address = memory.addInt(size: size)
     case .float:
-        address = memory.addFloat()
+        address = memory.addFloat(size: size)
     case .string:
-        address = memory.addString()
+        address = memory.addString(size: size)
     case .bool:
-        address = memory.addBool()
+        address = memory.addBool(size: size)
     case .char:
-        address = memory.addChar()
+        address = memory.addChar(size: size)
     case .error, .void:
         address = -1
     }
@@ -564,6 +564,7 @@ open class tddBaseListener: tddListener {
      * <p>The default implementation does nothing.</p>
      */
     open func exitNa_declaration(_ ctx: tddParser.Na_declarationContext) {
+        
         var parent = ctx.parent
                while(!((parent as? tddParser.Non_atomicContext) != nil)) {
                    parent = parent?.parent
@@ -572,11 +573,24 @@ open class tddBaseListener: tddListener {
                    print("error")
                    return
                }
-               let variable: Variable!
+        let variable: Variable!
+        var size = 1
+
+        if let arrayDimenInfo = ctx.children![1] as? tddParser.Array_dimension_decContext {
+            
+            size = Int(arrayDimenInfo.VALUE()!.getText()) ?? 1
+        } else if let matrixDimenInfo = ctx.children![1] as? tddParser.Matrix_dimension_decContext {
+            print(matrixDimenInfo.VALUE()[0].getText())
+            print(matrixDimenInfo.VALUE()[1].getText())
+            let x = Int(matrixDimenInfo.VALUE()[0].getText()) ?? 1
+            let y = Int(matrixDimenInfo.VALUE()[1].getText()) ?? 1
+            size = x * y
+
+        }
                if scope == "global" {
-                   variable = createVariable(memory: globalMemory, id: id.getText(), type: Type(type: type.getText()))
+                   variable = createVariable(memory: globalMemory, id: id.getText(), type: Type(type: type.getText()), size: size)
                } else {
-                      variable = createVariable(memory: localMemory, id: id.getText(), type: Type(type: type.getText()))
+                variable = createVariable(memory: localMemory, id: id.getText(), type: Type(type: type.getText()), size: size)
                }
                symbols.functionsDictionary[scope]?.variables.append(variable)
     }
@@ -588,7 +602,7 @@ open class tddBaseListener: tddListener {
      */
     open func enterArray_dimension_dec(_ ctx: tddParser.Array_dimension_decContext) {
         print(ctx.getText())
-        print(ctx.INT_VAL()!)
+        print(ctx.VALUE()!)
     }
     /**
      * {@inheritDoc}

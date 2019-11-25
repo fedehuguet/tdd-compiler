@@ -72,11 +72,11 @@ na_declaration:
     | ID matrix_dimension_dec COMMA na_declaration;
 
 array_dimension_dec:
-    OPEN_BRACKET INT_VAL CLOSE_BRACKET;
+    OPEN_BRACKET VALUE CLOSE_BRACKET;
     
 matrix_dimension_dec:
-    OPEN_BRACKET INT_VAL CLOSE_BRACKET
-    OPEN_BRACKET INT_VAL CLOSE_BRACKET;
+    OPEN_BRACKET VALUE CLOSE_BRACKET
+    OPEN_BRACKET VALUE CLOSE_BRACKET;
     
 array_dimension:
         OPEN_BRACKET hiper_expresion CLOSE_BRACKET;
@@ -209,14 +209,13 @@ ID: LOWER_CASE (LOWER_CASE | UPPPER_CASE | '_')* NUMBER?;
 CONST: UPPPER_CASE (UPPPER_CASE | '_')* NUMBER?;
 DESCRIPTION: DESC (LOWER_CASE | UPPPER_CASE | WHITESPACE)+;
 
-
+INT_VAL: [0-9]+;
 NUMBER: DIGIT+;
 
 fragment DESC: '%%';
 
 STRING_VAL: '"'(.*?)'"';
 CHAR_VAL: '\'' (.?) '\'';
-INT_VAL: NUMBER;
 FLOAT_VAL: NUMBER '.' NUMBER;
 
 fragment INT: 'int';
