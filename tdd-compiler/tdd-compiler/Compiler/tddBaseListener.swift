@@ -842,8 +842,23 @@ open class tddBaseListener: tddListener {
      * <p>The default implementation does nothing.</p>
      */
     open func enterFunction_hiper_expresions(_ ctx: tddParser.Function_hiper_expresionsContext) {
-        //Function call starts
+        //Function with return call starts
         if let parent = ctx.parent as? tddParser.FactorContext {
+            sOperators.insert("(", at: 0)
+            function_param_index = 0
+            let function_name = parent.ID()?.getText()
+            let function = symbols.functionsDictionary[function_name!]
+            if  function != nil && function!.type != .void {
+                sFunctions.insert(function!, at: 0)
+                let newQuad = Quadruple(quadOperator: "ERA", leftOperand: function!.start_quadruple, rightOperand: -1, result: -1)
+                arrayQuads.append(newQuad)
+            }
+            else {
+                print("Not a return function")
+            }
+        }
+        //Void function call starts
+        else if let parent = ctx.parent as? tddParser.Void_func_callContext {
             sOperators.insert("(", at: 0)
             function_param_index = 0
             let function_name = parent.ID()?.getText()
@@ -893,7 +908,32 @@ open class tddBaseListener: tddListener {
             
             sOperands.insert(tempReturn, at: 0)
             sTypes.insert(function.type, at: 0)
-            sOperators.removeFirst()
+            sOperators.removeFirst() //Remove last )
+        }
+        else if let parent = ctx.parent as? tddParser.Void_func_callContext {
+            //First or unique parameter is going to be processed last
+            if (sOperands.count > 0 && sTypes.count > 0) {
+                let paramQuad = addParamQuad()
+                arrayQuads.append(paramQuad)
+                function_param_index = function_param_index + 1
+            }
+            let function = sFunctions.first!
+            sFunctions.removeFirst()
+            
+            if (function_param_index < function.input_total) {
+                print("ERROR too few arguments")
+            }
+            function_param_index = 0 //Reset params count
+            
+            let subQuad = Quadruple(quadOperator: "GOSUB", leftOperand: function.start_quadruple, rightOperand: -1, result: -1)
+            arrayQuads.append(subQuad)
+            
+            //Remove from sOperands ID of function
+            sOperands.removeFirst()
+            sTypes.removeFirst()
+            
+            sOperators.removeFirst()//Remove last )
+            temporalMemory.clean()
         }
         //Reading 2nd to nth function param are going to be processed first
         else if function_param_index >= 0 {
@@ -1001,6 +1041,19 @@ open class tddBaseListener: tddListener {
             solveQuad()
         }
     }
+    
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation does nothing.</p>
+     */
+    open func enterVoid_func_call(_ ctx: tddParser.Void_func_callContext) { }
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation does nothing.</p>
+     */
+    open func exitVoid_func_call(_ ctx: tddParser.Void_func_callContext) { }
 
     /**
      * {@inheritDoc}
