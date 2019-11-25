@@ -66,7 +66,8 @@ statement:
     asignation
     | condition
     | print
-    | while_loop;
+    | while_loop
+    | void_func_call;
     
 super_condition_check:
     condition_check;
@@ -90,9 +91,7 @@ hiper_expresion:
 
 expresion:
     exp
-    | exp LESS_THAN expresion
-    | exp GREATER_THAN expresion
-    | exp DIFFERENT expresion;
+    | exp (EQUALITY | DIFFERENT | LESS_THAN | GREATER_THAN | LESS_EQUAL | GREATER_EQUAL) expresion;
 
 exp:
     termino
@@ -108,7 +107,11 @@ factor:
     SUBSTRACT VALUE
     | VALUE | ID 
     | OPEN_PAR hiper_expresion CLOSE_PAR
-    | ID OPEN_PAR hiper_expresion CLOSE_PAR;
+    | ID OPEN_PAR function_hiper_expresions? CLOSE_PAR;
+    
+function_hiper_expresions:
+    | hiper_expresion
+    | hiper_expresion COMMA function_hiper_expresions;
 
 print:
     PRINT OPEN_PAR algo_imprimible CLOSE_PAR SEMI_COLON;
@@ -124,6 +127,9 @@ asignation:
 
 while_loop:
     WHILE super_condition_check OPEN_BLOCK statement* CLOSE_BLOCK;
+    
+void_func_call:
+    ID OPEN_PAR function_hiper_expresions? CLOSE_PAR SEMI_COLON;
 
 /*
     Lexer rules
@@ -146,6 +152,8 @@ MULTIPLY: '*';
 DIVIDE: '/';
 LESS_THAN: '<';
 GREATER_THAN: '>';
+LESS_EQUAL: '<=';
+GREATER_EQUAL: '>=';
 AND: '&&';
 OR: '||';
 DIFFERENT: '!=';
@@ -171,11 +179,11 @@ PRINT: 'print';
 COMMA: ',';
 
 TYPE: (INT | FLOAT | BOOL | STR | CHAR);
+VALUE: (STRING_VAL | CHAR_VAL | INT_VAL | FLOAT_VAL | TRUE | FALSE);
 ID: LOWER_CASE (LOWER_CASE | UPPPER_CASE | '_')* NUMBER?;
 CONST: UPPPER_CASE (UPPPER_CASE | '_')* NUMBER?;
 DESCRIPTION: DESC (LOWER_CASE | UPPPER_CASE | WHITESPACE)+;
 
-VALUE: (STRING_VAL | CHAR_VAL | INT_VAL | FLOAT_VAL | BOOL_VAL);
 
 NUMBER: DIGIT+;
 
@@ -185,7 +193,6 @@ STRING_VAL: '"'(.*?)'"';
 CHAR_VAL: '\'' (.?) '\'';
 INT_VAL: NUMBER;
 FLOAT_VAL: NUMBER '.' NUMBER;
-BOOL_VAL: (FALSE | TRUE);
 
 fragment INT: 'int';
 fragment FLOAT: 'float';

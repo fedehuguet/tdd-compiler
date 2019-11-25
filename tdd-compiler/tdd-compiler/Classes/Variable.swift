@@ -12,10 +12,12 @@ class Variable {
     let name: String
     let type: Type
     let address: Int
+    let input: Bool
     
-    init(name: String, type: Type, address: Int) {
+    init(name: String, type: Type, address: Int, input: Bool) {
         self.name = name
         self.type = type
         self.address = address
+        self.input = input
     }
 }

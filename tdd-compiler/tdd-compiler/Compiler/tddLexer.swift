@@ -18,12 +18,13 @@ open class tddLexer: Lexer {
 	static let OPEN_BLOCK=1, CLOSE_BLOCK=2, OPEN_PAR=3, CLOSE_PAR=4, OPEN_COMMENT=5, 
             CLOSE_COMMENT=6, OPEN_HEADER=7, CLOSE_HEADER=8, SEMI_COLON=9, 
             COLON=10, ADD=11, SUBSTRACT=12, MULTIPLY=13, DIVIDE=14, LESS_THAN=15, 
-            GREATER_THAN=16, AND=17, OR=18, DIFFERENT=19, NOT=20, EQUALITY=21, 
-            EQUALS=22, PARAM_HEADER=23, RETURN_HEADER=24, TEST_HEADER=25, 
-            FAT_ARROW=26, VOID=27, MAIN=28, RETURN=29, WHILE=30, IF=31, 
-            ELSE=32, ELSEIF=33, PRINT=34, COMMA=35, TYPE=36, ID=37, CONST=38, 
-            DESCRIPTION=39, VALUE=40, NUMBER=41, STRING_VAL=42, CHAR_VAL=43, 
-            INT_VAL=44, FLOAT_VAL=45, BOOL_VAL=46, WHITESPACE=47, NEWLINE=48
+            GREATER_THAN=16, LESS_EQUAL=17, GREATER_EQUAL=18, AND=19, OR=20, 
+            DIFFERENT=21, NOT=22, EQUALITY=23, EQUALS=24, PARAM_HEADER=25, 
+            RETURN_HEADER=26, TEST_HEADER=27, FAT_ARROW=28, VOID=29, MAIN=30, 
+            RETURN=31, WHILE=32, IF=33, ELSE=34, ELSEIF=35, PRINT=36, COMMA=37, 
+            TYPE=38, VALUE=39, ID=40, CONST=41, DESCRIPTION=42, NUMBER=43, 
+            STRING_VAL=44, CHAR_VAL=45, INT_VAL=46, FLOAT_VAL=47, WHITESPACE=48, 
+            NEWLINE=49
 
 	public
 	static let channelNames: [String] = [
@@ -40,30 +41,30 @@ open class tddLexer: Lexer {
 		"OPEN_BLOCK", "CLOSE_BLOCK", "OPEN_PAR", "CLOSE_PAR", "OPEN_COMMENT", 
 		"CLOSE_COMMENT", "OPEN_HEADER", "CLOSE_HEADER", "SEMI_COLON", "COLON", 
 		"ADD", "SUBSTRACT", "MULTIPLY", "DIVIDE", "LESS_THAN", "GREATER_THAN", 
-		"AND", "OR", "DIFFERENT", "NOT", "EQUALITY", "EQUALS", "PARAM_HEADER", 
-		"RETURN_HEADER", "TEST_HEADER", "FAT_ARROW", "VOID", "MAIN", "RETURN", 
-		"WHILE", "IF", "ELSE", "ELSEIF", "PRINT", "COMMA", "TYPE", "ID", "CONST", 
-		"DESCRIPTION", "VALUE", "NUMBER", "DESC", "STRING_VAL", "CHAR_VAL", "INT_VAL", 
-		"FLOAT_VAL", "BOOL_VAL", "INT", "FLOAT", "CHAR", "STR", "BOOL", "FALSE", 
-		"TRUE", "LOWER_CASE", "UPPPER_CASE", "DIGIT", "WHITESPACE", "NEWLINE"
+		"LESS_EQUAL", "GREATER_EQUAL", "AND", "OR", "DIFFERENT", "NOT", "EQUALITY", 
+		"EQUALS", "PARAM_HEADER", "RETURN_HEADER", "TEST_HEADER", "FAT_ARROW", 
+		"VOID", "MAIN", "RETURN", "WHILE", "IF", "ELSE", "ELSEIF", "PRINT", "COMMA", 
+		"TYPE", "VALUE", "ID", "CONST", "DESCRIPTION", "NUMBER", "DESC", "STRING_VAL", 
+		"CHAR_VAL", "INT_VAL", "FLOAT_VAL", "INT", "FLOAT", "CHAR", "STR", "BOOL", 
+		"FALSE", "TRUE", "LOWER_CASE", "UPPPER_CASE", "DIGIT", "WHITESPACE", "NEWLINE"
 	]
 
 	private static let _LITERAL_NAMES: [String?] = [
 		nil, "'{'", "'}'", "'('", "')'", "'/*'", "'*/'", "'#*'", "'*#'", "';'", 
-		"':'", "'+'", "'-'", "'*'", "'/'", "'<'", "'>'", "'&&'", "'||'", "'!='", 
-		"'!'", "'=='", "'='", "'@param'", "'@return'", "'@test'", "'=>'", "'void'", 
-		"'main'", "'return'", "'while'", "'if'", "'else'", "'elseif'", "'print'", 
-		"','"
+		"':'", "'+'", "'-'", "'*'", "'/'", "'<'", "'>'", "'<='", "'>='", "'&&'", 
+		"'||'", "'!='", "'!'", "'=='", "'='", "'@param'", "'@return'", "'@test'", 
+		"'=>'", "'void'", "'main'", "'return'", "'while'", "'if'", "'else'", "'elseif'", 
+		"'print'", "','"
 	]
 	private static let _SYMBOLIC_NAMES: [String?] = [
 		nil, "OPEN_BLOCK", "CLOSE_BLOCK", "OPEN_PAR", "CLOSE_PAR", "OPEN_COMMENT", 
 		"CLOSE_COMMENT", "OPEN_HEADER", "CLOSE_HEADER", "SEMI_COLON", "COLON", 
 		"ADD", "SUBSTRACT", "MULTIPLY", "DIVIDE", "LESS_THAN", "GREATER_THAN", 
-		"AND", "OR", "DIFFERENT", "NOT", "EQUALITY", "EQUALS", "PARAM_HEADER", 
-		"RETURN_HEADER", "TEST_HEADER", "FAT_ARROW", "VOID", "MAIN", "RETURN", 
-		"WHILE", "IF", "ELSE", "ELSEIF", "PRINT", "COMMA", "TYPE", "ID", "CONST", 
-		"DESCRIPTION", "VALUE", "NUMBER", "STRING_VAL", "CHAR_VAL", "INT_VAL", 
-		"FLOAT_VAL", "BOOL_VAL", "WHITESPACE", "NEWLINE"
+		"LESS_EQUAL", "GREATER_EQUAL", "AND", "OR", "DIFFERENT", "NOT", "EQUALITY", 
+		"EQUALS", "PARAM_HEADER", "RETURN_HEADER", "TEST_HEADER", "FAT_ARROW", 
+		"VOID", "MAIN", "RETURN", "WHILE", "IF", "ELSE", "ELSEIF", "PRINT", "COMMA", 
+		"TYPE", "VALUE", "ID", "CONST", "DESCRIPTION", "NUMBER", "STRING_VAL", 
+		"CHAR_VAL", "INT_VAL", "FLOAT_VAL", "WHITESPACE", "NEWLINE"
 	]
 	public
 	static let VOCABULARY = Vocabulary(_LITERAL_NAMES, _SYMBOLIC_NAMES)

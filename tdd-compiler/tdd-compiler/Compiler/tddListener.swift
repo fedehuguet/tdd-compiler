@@ -355,6 +355,18 @@ public protocol tddListener: ParseTreeListener {
 	 */
 	func exitFactor(_ ctx: tddParser.FactorContext)
 	/**
+	 * Enter a parse tree produced by {@link tddParser#function_hiper_expresions}.
+	 - Parameters:
+	   - ctx: the parse tree
+	 */
+	func enterFunction_hiper_expresions(_ ctx: tddParser.Function_hiper_expresionsContext)
+	/**
+	 * Exit a parse tree produced by {@link tddParser#function_hiper_expresions}.
+	 - Parameters:
+	   - ctx: the parse tree
+	 */
+	func exitFunction_hiper_expresions(_ ctx: tddParser.Function_hiper_expresionsContext)
+	/**
 	 * Enter a parse tree produced by {@link tddParser#print}.
 	 - Parameters:
 	   - ctx: the parse tree
@@ -402,4 +414,16 @@ public protocol tddListener: ParseTreeListener {
 	   - ctx: the parse tree
 	 */
 	func exitWhile_loop(_ ctx: tddParser.While_loopContext)
+	/**
+	 * Enter a parse tree produced by {@link tddParser#void_func_call}.
+	 - Parameters:
+	   - ctx: the parse tree
+	 */
+	func enterVoid_func_call(_ ctx: tddParser.Void_func_callContext)
+	/**
+	 * Exit a parse tree produced by {@link tddParser#void_func_call}.
+	 - Parameters:
+	   - ctx: the parse tree
+	 */
+	func exitVoid_func_call(_ ctx: tddParser.Void_func_callContext)
 }
