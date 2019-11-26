@@ -11,9 +11,9 @@ import Antlr4
 
 let code: String = """
     main() {
-        int a;
-        a = 3 * a;
-        print(a)
+        float a;
+        a = 3 + 2.0;
+        print(a);
     }
 
 """
