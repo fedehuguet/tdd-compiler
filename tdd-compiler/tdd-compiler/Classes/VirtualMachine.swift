@@ -59,7 +59,7 @@ class VirtualMachine {
     }
     
     func printFunc(quad: Quadruple) {
-        let (result, _) = findValType(address: quad.result)
+        let (result, _) = findValType(address: quad.rightOperand)
         print("PRINT \(result)")
     }
     
@@ -168,7 +168,194 @@ class VirtualMachine {
         saveValue(address: quad.result, value: leftOperand)
     }
     
-   
+   func greaterThan(quad: Quadruple){
+       let (leftOperand, leftType) = findValType(address: quad.leftOperand)
+       let (rightOperand, rightType) = findValType(address: quad.rightOperand)
+       
+       if !semanticCube.checkCube(currOperator: quad.quadOperator, leftType: leftType, rightType: rightType) {
+           // TODO: There was a semantic error with the typing
+       }
+       var result : Any
+       if leftType == .float && rightType == .float {
+           result = (leftOperand as! Double) > (rightOperand as! Double)
+       }
+       else if leftType == .float {
+           result = (leftOperand as! Double) > Double((rightOperand as! Int))
+       }
+       else if rightType == .float {
+           result = Double((leftOperand as! Int)) > (rightOperand as! Double)
+       }
+       else {
+           result = (leftOperand as! Int) > (rightOperand as! Int)
+       }
+       print(result)
+       saveValue(address: quad.result, value: result)
+   }
+    func lessThan(quad: Quadruple){
+        let (leftOperand, leftType) = findValType(address: quad.leftOperand)
+        let (rightOperand, rightType) = findValType(address: quad.rightOperand)
+        
+        if !semanticCube.checkCube(currOperator: quad.quadOperator, leftType: leftType, rightType: rightType) {
+            // TODO: There was a semantic error with the typing
+        }
+        var result : Any
+        if leftType == .float && rightType == .float {
+            result = (leftOperand as! Double) < (rightOperand as! Double)
+        }
+        else if leftType == .float {
+            result = (leftOperand as! Double) < Double((rightOperand as! Int))
+        }
+        else if rightType == .float {
+            result = Double((leftOperand as! Int)) < (rightOperand as! Double)
+        }
+        else {
+            result = (leftOperand as! Int) < (rightOperand as! Int)
+        }
+        print(result)
+        saveValue(address: quad.result, value: result)
+    }
+    
+    func greatEq(quad: Quadruple){
+        let (leftOperand, leftType) = findValType(address: quad.leftOperand)
+        let (rightOperand, rightType) = findValType(address: quad.rightOperand)
+        
+        if !semanticCube.checkCube(currOperator: quad.quadOperator, leftType: leftType, rightType: rightType) {
+            // TODO: There was a semantic error with the typing
+        }
+        var result : Any
+        if leftType == .float && rightType == .float {
+            result = (leftOperand as! Double) >= (rightOperand as! Double)
+        }
+        else if leftType == .float {
+            result = (leftOperand as! Double) >= Double((rightOperand as! Int))
+        }
+        else if rightType == .float {
+            result = Double((leftOperand as! Int)) >= (rightOperand as! Double)
+        }
+        else {
+            result = (leftOperand as! Int) >= (rightOperand as! Int)
+        }
+        print(result)
+        saveValue(address: quad.result, value: result)
+    }
+    
+    func lessEq(quad: Quadruple){
+        let (leftOperand, leftType) = findValType(address: quad.leftOperand)
+        let (rightOperand, rightType) = findValType(address: quad.rightOperand)
+        
+        if !semanticCube.checkCube(currOperator: quad.quadOperator, leftType: leftType, rightType: rightType) {
+            // TODO: There was a semantic error with the typing
+        }
+        var result : Any
+        if leftType == .float && rightType == .float {
+            result = (leftOperand as! Double) <= (rightOperand as! Double)
+        }
+        else if leftType == .float {
+            result = (leftOperand as! Double) <= Double((rightOperand as! Int))
+        }
+        else if rightType == .float {
+            result = Double((leftOperand as! Int)) <= (rightOperand as! Double)
+        }
+        else {
+            result = (leftOperand as! Int) <= (rightOperand as! Int)
+        }
+        print(result)
+        saveValue(address: quad.result, value: result)
+    }
+    
+    func diff(quad: Quadruple){
+        let (leftOperand, leftType) = findValType(address: quad.leftOperand)
+        let (rightOperand, rightType) = findValType(address: quad.rightOperand)
+        
+        if !semanticCube.checkCube(currOperator: quad.quadOperator, leftType: leftType, rightType: rightType) {
+            // TODO: There was a semantic error with the typing
+        }
+        var result : Any
+        if leftType == .string && rightType == .string {
+            result = (leftOperand as! String) != (rightOperand as! String)
+        }
+        else if leftType == .char && rightType == .char {
+            result = (leftOperand as! Character) != (rightOperand as! Character)
+        }
+        else if leftType == .bool && rightType == .bool {
+            result = (leftOperand as! Bool) != (rightOperand as! Bool)
+        }
+        else if leftType == .float && rightType == .float {
+            result = (leftOperand as! Double) != (rightOperand as! Double)
+        }
+        else if leftType == .float {
+            result = (leftOperand as! Double) != Double((rightOperand as! Int))
+        }
+        else if rightType == .float {
+            result = Double((leftOperand as! Int)) != (rightOperand as! Double)
+        }
+        else {
+            result = (leftOperand as! Int) != (rightOperand as! Int)
+        }
+        print(result)
+        saveValue(address: quad.result, value: result)
+    }
+    
+    func equal(quad: Quadruple){
+        let (leftOperand, leftType) = findValType(address: quad.leftOperand)
+        let (rightOperand, rightType) = findValType(address: quad.rightOperand)
+        
+        if !semanticCube.checkCube(currOperator: quad.quadOperator, leftType: leftType, rightType: rightType) {
+            // TODO: There was a semantic error with the typing
+        }
+        var result : Any
+        if leftType == .string && rightType == .string {
+            result = (leftOperand as! String) == (rightOperand as! String)
+        }
+        else if leftType == .char && rightType == .char {
+            result = (leftOperand as! Character) == (rightOperand as! Character)
+        }
+        else if leftType == .bool && rightType == .bool {
+            result = (leftOperand as! Bool) == (rightOperand as! Bool)
+        }
+        else if leftType == .float && rightType == .float {
+            result = (leftOperand as! Double) == (rightOperand as! Double)
+        }
+        else if leftType == .float {
+            result = (leftOperand as! Double) == Double((rightOperand as! Int))
+        }
+        else if rightType == .float {
+            result = Double((leftOperand as! Int)) == (rightOperand as! Double)
+        }
+        else {
+            result = (leftOperand as! Int) == (rightOperand as! Int)
+        }
+        print(result)
+        saveValue(address: quad.result, value: result)
+    }
+    
+    func and(quad: Quadruple){
+        let (leftOperand, leftType) = findValType(address: quad.leftOperand)
+        let (rightOperand, rightType) = findValType(address: quad.rightOperand)
+        
+        if !semanticCube.checkCube(currOperator: quad.quadOperator, leftType: leftType, rightType: rightType) {
+            // TODO: There was a semantic error with the typing
+        }
+        var result : Any
+        result = (leftOperand as! Bool) && (rightOperand as! Bool)
+        print(result)
+        saveValue(address: quad.result, value: result)
+    }
+    
+    func or(quad: Quadruple){
+        let (leftOperand, leftType) = findValType(address: quad.leftOperand)
+        let (rightOperand, rightType) = findValType(address: quad.rightOperand)
+        
+        if !semanticCube.checkCube(currOperator: quad.quadOperator, leftType: leftType, rightType: rightType) {
+            // TODO: There was a semantic error with the typing
+        }
+        var result : Any
+        result = (leftOperand as! Bool) || (rightOperand as! Bool)
+        print(result)
+        saveValue(address: quad.result, value: result)
+    }
+    
+    
     func execute() {
         
         while currentQuadIndex < quadruples.count {
@@ -177,51 +364,86 @@ class VirtualMachine {
             case "PRINT":
                 print(quad)
                 printFunc(quad: quad)
+                break
             case "+":
                 printQuad(quad: quad)
                 add(quad: quad)
+                break
             case "-":
                 printQuad(quad: quad)
                 substract(quad: quad)
+                break
             case "*":
                 printQuad(quad: quad)
                 multiply(quad: quad)
+                break
             case "/":
                 printQuad(quad: quad)
                 divide(quad: quad)
+                break
             case "=":
                 print(quad)
                 asign(quad: quad)
+                break
             case ">":
-               print(quad)
+                printQuad(quad: quad)
+                greaterThan(quad: quad)
+                break
             case "<":
-               print(quad)
+                printQuad(quad: quad)
+                lessThan(quad: quad)
+                break
+            case ">=":
+                printQuad(quad: quad)
+                greatEq(quad: quad)
+                break
+            case "<=":
+                printQuad(quad: quad)
+                lessEq(quad: quad)
+                break
             case "!=":
-               print(quad)
+                printQuad(quad: quad)
+                diff(quad: quad)
+                break
             case "==":
-               print(quad)
+                printQuad(quad: quad)
+                equal(quad: quad)
+                break
             case "&&":
-                print(quad)
+                printQuad(quad: quad)
+                and(quad: quad)
+                break
             case "||":
-                print(quad)
+                printQuad(quad: quad)
+                or(quad: quad)
+                break
             case "GOTO":
-                print(quad)
+                printQuad(quad: quad)
+                break
             case "GOTOF":
                 print(quad)
+                break
             case "VERIFY":
                 print(quad)
+                break
             case "ERA":
                 print(quad)
+                break
             case "GOSUB":
                 print(quad)
+                break
             case "PARAMETRO":
                 print(quad)
+                break
             case "RETURN":
                 print(quad)
+                break
             case "ENDPROC":
                 print(quad)
+                break
             case "END":
                 print(quad)
+                break
             default:
                 // Shoouldn't happen but maybe should do some type of error
                 print("Unexpected operator")

@@ -39,7 +39,7 @@ class SemanticCube {
                 [Type.bool, Type.bool, Type.error, Type.error, Type.error],
                 [Type.bool, Type.bool, Type.error, Type.error, Type.error],
                 [Type.error, Type.error, Type.error, Type.error, Type.error],
-                [Type.error, Type.error, Type.error, Type.bool, Type.error],
+                [Type.error, Type.error, Type.error, Type.error, Type.error],
                 [Type.error, Type.error, Type.error, Type.error, Type.error],
             ],
             // &&, ||

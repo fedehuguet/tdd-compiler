@@ -12,8 +12,10 @@ import Antlr4
 let code: String = """
     main() {
         float a;
+        bool b;
         a = 3 + 2.0;
         print(a);
+        b = true && false;
     }
 
 """
