@@ -128,7 +128,9 @@ termino:
 
 factor:
     SUBSTRACT VALUE
-    | VALUE | ID 
+    | VALUE | ID
+    | ID array_dimension
+    | ID matrix_dimension
     | OPEN_PAR hiper_expresion CLOSE_PAR
     | ID OPEN_PAR function_hiper_expresions? CLOSE_PAR;
     

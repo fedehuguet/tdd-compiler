@@ -52,7 +52,7 @@ class VirtualMachine {
                 print(quad)
             case "==":
                 print(quad)
-            case "VERIFY":
+            case "VER":
                 print(quad)
             case "ERA":
                 print(quad)

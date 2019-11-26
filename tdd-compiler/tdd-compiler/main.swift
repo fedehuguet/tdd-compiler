@@ -12,7 +12,8 @@ import Antlr4
 let code2: String = """
     main() {
         int arr[3], mat[4][5];
-        int a1;
+        int a1, a2;
+        a2 = arr[0] + mat[3][4];
         a1 = 2 * 8;
     }
 
