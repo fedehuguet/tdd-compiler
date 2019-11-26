@@ -363,6 +363,16 @@ class VirtualMachine {
         saveValue(address: quad.result, value: leftOperand)
     }
     
+    func return_func(quad: Quadruple) {
+        //Asign temporal to global
+        let (temporal, _) = findValType(address: quad.leftOperand)
+        print(temporal)
+        saveValue(address: quad.result, value: temporal)
+        //Pop and jump
+        currentQuadIndex = sJumps.first!
+        sJumps.removeFirst()
+    }
+    
     
     func execute() {
         
@@ -467,8 +477,9 @@ class VirtualMachine {
                 break
             case "RETURN":
                 printQuad(quad: quad)
-                currentQuadIndex = sJumps.first!
-                sJumps.removeFirst()
+                return_func(quad: quad)
+                sLocalMemory.removeFirst()
+                sTemporalMemory.removeFirst()
                 break
             case "ENDPROC":
                 printQuad(quad: quad)

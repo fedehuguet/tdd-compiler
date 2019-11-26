@@ -176,7 +176,7 @@ open class tddBaseListener: tddListener {
         print(documentation)
         //Temporal VM test
         let vm = VirtualMachine(quadruples: arrayQuads, constantMemory: constantVals)
-        vm.execute()
+        //vm.execute()
     }
 
     /**
@@ -467,11 +467,11 @@ open class tddBaseListener: tddListener {
      * <p>The default implementation does nothing.</p>
      */
     open func exitReturn_statement(_ ctx: tddParser.Return_statementContext) {
-        let return_type = symbols.functionsDictionary[scope]?.type
-        if (sTypes.first! != return_type) {
+        let function = symbols.functionsDictionary[scope]
+        if (sTypes.first! != function?.type) {
             print("Return type does not match function")
         }
-        let newQuad = Quadruple(quadOperator: "RETURN", leftOperand: -1, rightOperand: -1, result: sOperands.first!)
+        let newQuad = Quadruple(quadOperator: "RETURN", leftOperand: sOperands.first!, rightOperand: -1, result: function!.return_address)
         arrayQuads.append(newQuad)
         sOperands.removeFirst()
         sTypes.removeFirst()

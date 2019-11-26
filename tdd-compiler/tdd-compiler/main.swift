@@ -11,30 +11,26 @@ import Antlr4
 
 let code: String = """
     #*
-    %% A void function with no params
+    %% Ala a
+    @param int  a %% A value
+    @param int b %% B value
     *#
 
-    void noReturn(float a, int b) {
-        a = a + 1;
-        print(a);
-        print(b);
+    int prueba(int a) {
+        a = a - 1;
+        return prueba(a);
     }
+
     main() {
-        float a;
-        bool b;
-        string
-        a = (3 + 2.0)/2.1*3 + 5;
-        
-        print(a);
-        b = true && false;
-        noReturn(a, 3);
-        print(a);
+        int b;
+        b = prueba(3);
     }
 
 """
 
 let code2: String = """
 int a;
+
 #*
 %% Ala a
 @param int  a %% A value
@@ -69,8 +65,7 @@ int nam(int a, float b) {
 
 int suma(int a, int b) {
     print(a);
-    a = nam(nam(2,4.0), 4.0) + nam(2,4.0);
-    return a;
+    return nam(2,4.0);
 }
 
 #*
