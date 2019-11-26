@@ -2652,8 +2652,8 @@ open class tddParser: Parser {
 				return getToken(tddParser.Tokens.EQUALS.rawValue, 0)
 			}
 			open
-			func expresion() -> ExpresionContext? {
-				return getRuleContext(ExpresionContext.self, 0)
+			func hiper_expresion() -> Hiper_expresionContext? {
+				return getRuleContext(Hiper_expresionContext.self, 0)
 			}
 			open
 			func SEMI_COLON() -> TerminalNode? {
@@ -2690,7 +2690,7 @@ open class tddParser: Parser {
 		 	setState(347)
 		 	try match(tddParser.Tokens.EQUALS.rawValue)
 		 	setState(348)
-		 	try expresion()
+		 	try hiper_expresion()
 		 	setState(349)
 		 	try match(tddParser.Tokens.SEMI_COLON.rawValue)
 
