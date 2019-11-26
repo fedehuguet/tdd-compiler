@@ -10,11 +10,22 @@ import Foundation
 import Antlr4
 
 let code2: String = """
+
+#*
+%% Arrays can not be sent as parameters
+@param int arr %% array
+*#
+void failFunction(int arr){
+    print("Hola!");
+
+}
     main() {
         int arr[3], mat[4][5];
-        int a1, a2;
-        a2 = arr[0] + mat[3][4];
-        a1 = 2 * 8;
+        int a1, a2, x;
+        x = 1;
+        a2 = arr[x] * mat[99][4];
+        a1 = 2.4 * 8.4;
+    failFunction(arr);
     }
 
 """

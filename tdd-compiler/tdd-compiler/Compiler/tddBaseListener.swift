@@ -171,6 +171,10 @@ func addParamQuad() -> Quadruple {
     if sTypes.first! != function.variables[function.input_total - function_param_index - 1].type {
         print("ERROR types mismatch")
     }
+    // Potential way to not allow arrays as parameters
+//    if function.variables[function.input_total - function_param_index - 1].dimensionated {
+//        print("Error, no dimensionated variables as parameters")
+//    }
     
     let temporalMemoryAssignedSpace = createTemp(type: sTypes.first!)
     let newQuad = Quadruple(quadOperator: "parameter", leftOperand: sOperands.first!, rightOperand: -1, result: temporalMemoryAssignedSpace)
@@ -590,6 +594,7 @@ open class tddBaseListener: tddListener {
 
         if let arrayDimenInfo = ctx.children![1] as? tddParser.Array_dimension_decContext {
             x = Int(arrayDimenInfo.VALUE()!.getText()) ?? 1
+            size = x
         } else if let matrixDimenInfo = ctx.children![1] as? tddParser.Matrix_dimension_decContext {
             x = Int(matrixDimenInfo.VALUE()[0].getText()) ?? 1
             y = Int(matrixDimenInfo.VALUE()[1].getText()) ?? 1
@@ -643,10 +648,8 @@ open class tddBaseListener: tddListener {
      * <p>The default implementation does nothing.</p>
      */
     open func enterArray_dimension(_ ctx: tddParser.Array_dimensionContext) {
-        print(ctx.getText())
         solvingDimen = .array
-//        let actualAddress = pendingArrayAddresses.first +
-//        sOperands.insert(<#T##newElement: Int##Int#>, at: <#T##Int#>)
+
 
     }
     /**
@@ -658,12 +661,15 @@ open class tddBaseListener: tddListener {
         print(ctx.getText())
         // Crear cuadruplo de VER
         let indexAddress = sOperands.first!
-        let index = 0
         // TODO: Get real address for array (Sumarle el desplazamiento)
         let verQuad = Quadruple(quadOperator: "VER", leftOperand: indexAddress, rightOperand: 0, result: pendingArrayAddresses.first!.1.0)
         sOperands.removeFirst()
         arrayQuads.append(verQuad)
-        sOperands.insert(pendingArrayAddresses.first!.0 + index, at: 0)
+        // Use formula x + DirBase to get address
+        let tmpAddress = createTemp(type: .int)
+        let addQuad = Quadruple(quadOperator: "+", leftOperand: pendingArrayAddresses.first!.0, rightOperand: indexAddress, result: tmpAddress)
+        arrayQuads.append(addQuad)
+        sOperands.insert(tmpAddress, at: 0)
         pendingArrayAddresses.removeFirst()
         solvingDimen = .none
     }
@@ -686,15 +692,35 @@ open class tddBaseListener: tddListener {
         // Crear primer cuadruplo de VER
         let indexAddress = sOperands.first!
         // TODO: Get real address for array (Sumarle el desplazamiento)
-        let index = 0
         let verQuad = Quadruple(quadOperator: "VER", leftOperand: indexAddress, rightOperand: 0, result: pendingArrayAddresses.first!.1.1)
         sOperands.removeFirst()
                arrayQuads.append(verQuad)
+        
+        
         let indexAddress2 = sOperands.first!
         let verQuad2 = Quadruple(quadOperator: "VER", leftOperand: indexAddress2, rightOperand: 0, result: pendingArrayAddresses.first!.1.0)
         arrayQuads.append(verQuad2)
         sOperands.removeFirst()
-               sOperands.insert(pendingArrayAddresses.first!.0 + index, at: 0)
+        
+        // Use formula x * d2 + y + DirBase to get address
+        
+        let x = indexAddress2
+        let y = indexAddress
+        let d2 = pendingArrayAddresses.first!.1.1
+        let dirBase = pendingArrayAddresses.first!.0
+        let tmp1 = createTemp(type: .int)
+        let multQuad = Quadruple(quadOperator: "*", leftOperand: getConstant(name: String(d2)).address, rightOperand: x, result: tmp1)
+        
+        arrayQuads.append(multQuad)
+        
+        let tmp2 = createTemp(type: .int)
+        let addQuad = Quadruple(quadOperator: "+", leftOperand: tmp1, rightOperand: y, result: tmp2)
+        arrayQuads.append(addQuad)
+        
+        let tmp3 = createTemp(type: .int)
+        let addQuad2 = Quadruple(quadOperator: "+", leftOperand: tmp2, rightOperand: dirBase, result: tmp3)
+        arrayQuads.append(addQuad2)
+               sOperands.insert(tmp3, at: 0)
                pendingArrayAddresses.removeFirst()
         solvingDimen = .none
         
@@ -1016,7 +1042,7 @@ open class tddBaseListener: tddListener {
     open func exitFactor(_ ctx: tddParser.FactorContext) {
         if (!sOperators.isEmpty) {
             //TODO gen quadruple with sOperators.first!
-            if(sOperators.first! == "*" || sOperators.first! == "/") {
+            if((sOperators.first! == "*" || sOperators.first! == "/") && solvingDimen == .none) {
                let newQuad = createQuad()
                 arrayQuads.append(newQuad)
 
