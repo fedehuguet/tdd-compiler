@@ -14,19 +14,21 @@ let code: String = """
     %% A void function with no params
     *#
 
-    void noReturn() {
-        int a;
-        a = 0;
+    void noReturn(float a, int b) {
         a = a + 1;
         print(a);
+        print(b);
     }
     main() {
         float a;
         bool b;
-        a = 3 + 2.0;
+        string
+        a = (3 + 2.0)/2.1*3 + 5;
+        
         print(a);
         b = true && false;
-        noReturn();
+        noReturn(a, 3);
+        print(a);
     }
 
 """

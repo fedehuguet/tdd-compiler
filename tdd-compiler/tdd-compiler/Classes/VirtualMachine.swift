@@ -14,10 +14,11 @@ class VirtualMachine {
 
     var globalMemory = ExecMemory(dirBase: 0)
     let constantMemory : ExecMemory
-    var sTemporalMemory = [ExecMemory]()
-    var sLocalMemory = [ExecMemory]()
-    
+    var sTemporalMemory = [ExecMemory(dirBase: 20000)]
+    var sLocalMemory = [ExecMemory(dirBase: 30000)]
     let semanticCube = SemanticCube()
+    
+    var sJumps = [Int]()
     
     init(quadruples: [Quadruple]!, constantMemory: ExecMemory) {
         self.quadruples = quadruples
@@ -28,13 +29,13 @@ class VirtualMachine {
         print("\(quad.leftOperand!) \(quad.quadOperator!) \(quad.rightOperand!)")
     }
     
-    func findValType(address: Int) -> (Any, Type) {
+    func findValType(address: Int, param: Bool = false) -> (Any, Type) {
         if (address >= 30000) {
-            return (sLocalMemory.first?.getVal(address: address))!
+            return param ? (sLocalMemory[1].getVal(address: address)) : (sLocalMemory.first?.getVal(address: address))!
         }
         else if (address >= 20000) {
             print(sTemporalMemory)
-            return (sTemporalMemory.first?.getVal(address: address))!
+            return param ? (sTemporalMemory[1].getVal(address: address)) : (sTemporalMemory.first?.getVal(address: address))!
         }
         else if (address >= 10000) {
             return constantMemory.getVal(address: address)
@@ -356,6 +357,12 @@ class VirtualMachine {
         saveValue(address: quad.result, value: result)
     }
     
+    func param_asign(quad: Quadruple){
+        let (leftOperand, _) = findValType(address: quad.leftOperand, param: true)
+        print(leftOperand)
+        saveValue(address: quad.result, value: leftOperand)
+    }
+    
     
     func execute() {
         
@@ -434,8 +441,6 @@ class VirtualMachine {
                 break
             case "GOTO":
                 printQuad(quad: quad)
-                sLocalMemory.insert(ExecMemory(dirBase: 30000), at: 0)
-                sTemporalMemory.insert(ExecMemory(dirBase: 20000), at: 0)
                 currentQuadIndex = quad.result
                 break
             case "GOTOF":
@@ -446,27 +451,31 @@ class VirtualMachine {
                 break
             case "ERA":
                 printQuad(quad: quad)
+                sLocalMemory.insert(ExecMemory(dirBase: 30000), at: 0)
+                sTemporalMemory.insert(ExecMemory(dirBase: 20000), at: 0)
                 currentQuadIndex = currentQuadIndex + 1
                 break
             case "GOSUB":
                 printQuad(quad: quad)
-                sLocalMemory.insert(ExecMemory(dirBase: 30000), at: 0)
-                sTemporalMemory.insert(ExecMemory(dirBase: 20000), at: 0)
+                sJumps.insert(currentQuadIndex + 1, at: 0)
                 currentQuadIndex = quad.leftOperand
                 break
-            case "PARAMETRO":
+            case "PARAM":
                 printQuad(quad: quad)
+                param_asign(quad: quad)
                 currentQuadIndex = currentQuadIndex + 1
                 break
             case "RETURN":
                 printQuad(quad: quad)
-                currentQuadIndex = currentQuadIndex + 1
+                currentQuadIndex = sJumps.first!
+                sJumps.removeFirst()
                 break
             case "ENDPROC":
                 printQuad(quad: quad)
                 sLocalMemory.removeFirst()
                 sTemporalMemory.removeFirst()
-                currentQuadIndex = 200
+                currentQuadIndex = sJumps.first!
+                sJumps.removeFirst()
                 break
             case "END":
                 printQuad(quad: quad)
