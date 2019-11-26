@@ -10,12 +10,23 @@ import Foundation
 import Antlr4
 
 let code: String = """
+    #*
+    %% A void function with no params
+    *#
+
+    void noReturn() {
+        int a;
+        a = 0;
+        a = a + 1;
+        print(a);
+    }
     main() {
         float a;
         bool b;
         a = 3 + 2.0;
         print(a);
         b = true && false;
+        noReturn();
     }
 
 """

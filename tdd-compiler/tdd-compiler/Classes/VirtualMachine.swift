@@ -14,8 +14,8 @@ class VirtualMachine {
 
     var globalMemory = ExecMemory(dirBase: 0)
     let constantMemory : ExecMemory
-    var sTemporalMemory = [ExecMemory(dirBase: 20000)]
-    var sLocalMemory = [ExecMemory(dirBase: 30000)]
+    var sTemporalMemory = [ExecMemory]()
+    var sLocalMemory = [ExecMemory]()
     
     let semanticCube = SemanticCube()
     
@@ -33,6 +33,7 @@ class VirtualMachine {
             return (sLocalMemory.first?.getVal(address: address))!
         }
         else if (address >= 20000) {
+            print(sTemporalMemory)
             return (sTemporalMemory.first?.getVal(address: address))!
         }
         else if (address >= 10000) {
@@ -364,92 +365,119 @@ class VirtualMachine {
             case "PRINT":
                 print(quad)
                 printFunc(quad: quad)
+                currentQuadIndex = currentQuadIndex + 1
                 break
             case "+":
                 printQuad(quad: quad)
                 add(quad: quad)
+                currentQuadIndex = currentQuadIndex + 1
                 break
             case "-":
                 printQuad(quad: quad)
                 substract(quad: quad)
+                currentQuadIndex = currentQuadIndex + 1
                 break
             case "*":
                 printQuad(quad: quad)
                 multiply(quad: quad)
+                currentQuadIndex = currentQuadIndex + 1
                 break
             case "/":
                 printQuad(quad: quad)
                 divide(quad: quad)
+                currentQuadIndex = currentQuadIndex + 1
                 break
             case "=":
-                print(quad)
+                printQuad(quad: quad)
                 asign(quad: quad)
+                currentQuadIndex = currentQuadIndex + 1
                 break
             case ">":
                 printQuad(quad: quad)
                 greaterThan(quad: quad)
+                currentQuadIndex = currentQuadIndex + 1
                 break
             case "<":
                 printQuad(quad: quad)
                 lessThan(quad: quad)
+                currentQuadIndex = currentQuadIndex + 1
                 break
             case ">=":
                 printQuad(quad: quad)
                 greatEq(quad: quad)
+                currentQuadIndex = currentQuadIndex + 1
                 break
             case "<=":
                 printQuad(quad: quad)
                 lessEq(quad: quad)
+                currentQuadIndex = currentQuadIndex + 1
                 break
             case "!=":
                 printQuad(quad: quad)
                 diff(quad: quad)
+                currentQuadIndex = currentQuadIndex + 1
                 break
             case "==":
                 printQuad(quad: quad)
                 equal(quad: quad)
+                currentQuadIndex = currentQuadIndex + 1
                 break
             case "&&":
                 printQuad(quad: quad)
                 and(quad: quad)
+                currentQuadIndex = currentQuadIndex + 1
                 break
             case "||":
                 printQuad(quad: quad)
                 or(quad: quad)
+                currentQuadIndex = currentQuadIndex + 1
                 break
             case "GOTO":
                 printQuad(quad: quad)
+                sLocalMemory.insert(ExecMemory(dirBase: 30000), at: 0)
+                sTemporalMemory.insert(ExecMemory(dirBase: 20000), at: 0)
+                currentQuadIndex = quad.result
                 break
             case "GOTOF":
-                print(quad)
+                printQuad(quad: quad)
                 break
             case "VERIFY":
-                print(quad)
+                printQuad(quad: quad)
                 break
             case "ERA":
-                print(quad)
+                printQuad(quad: quad)
+                currentQuadIndex = currentQuadIndex + 1
                 break
             case "GOSUB":
-                print(quad)
+                printQuad(quad: quad)
+                sLocalMemory.insert(ExecMemory(dirBase: 30000), at: 0)
+                sTemporalMemory.insert(ExecMemory(dirBase: 20000), at: 0)
+                currentQuadIndex = quad.leftOperand
                 break
             case "PARAMETRO":
-                print(quad)
+                printQuad(quad: quad)
+                currentQuadIndex = currentQuadIndex + 1
                 break
             case "RETURN":
-                print(quad)
+                printQuad(quad: quad)
+                currentQuadIndex = currentQuadIndex + 1
                 break
             case "ENDPROC":
-                print(quad)
+                printQuad(quad: quad)
+                sLocalMemory.removeFirst()
+                sTemporalMemory.removeFirst()
+                currentQuadIndex = 200
                 break
             case "END":
-                print(quad)
+                printQuad(quad: quad)
+                sLocalMemory.removeFirst()
+                sTemporalMemory.removeFirst()
                 break
             default:
                 // Shoouldn't happen but maybe should do some type of error
                 print("Unexpected operator")
                 print(quad)
             }
-            currentQuadIndex = currentQuadIndex + 1
         }
     }
     
