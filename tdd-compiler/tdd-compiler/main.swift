@@ -30,7 +30,7 @@ void failFunction(int arr){
 
 """
 
-let code: String = """
+let code2: String = """
 int a;
 #*
 %% Ala a

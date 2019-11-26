@@ -38,8 +38,6 @@ var sFunctions = [Function]()
 // (Base address of array or matrix , (First dimension, second dimension))
 var pendingArrayAddresses = [(Int, (Int, Int))]()
 
-var constantsTable = [Variable]()
-
 var documentation = "# Documentation \n"
 var docCurrFunName = ""
 
@@ -48,6 +46,8 @@ let globalMemory = Memory(dirBase: 0)
 let constantMemory = Memory(dirBase: 10000)
 let temporalMemory = Memory(dirBase: 20000)
 let localMemory = Memory(dirBase: 30000)
+
+var constantVals = ExecMemory(dirBase: 10000)
 
 func findType(value: String) -> Type {
     var sType : String = "int"
@@ -200,6 +200,9 @@ open class tddBaseListener: tddListener {
         scope = "global"
         let function = Function(name: scope, type: .int, scope: scope)
         symbols.insert(function: function)
+        //Instert jump to main
+        let jumtToMain = Quadruple(quadOperator: "GOTO", leftOperand: -1, rightOperand: -1, result: -1)
+        arrayQuads.append(jumtToMain)
         
     }
     /**
@@ -217,6 +220,9 @@ open class tddBaseListener: tddListener {
         }
         
         print(documentation)
+        //Temporal VM test
+        let vm = VirtualMachine(quadruples: arrayQuads, constantMemory: constantVals)
+        vm.execute()
     }
 
     /**
@@ -527,6 +533,8 @@ open class tddBaseListener: tddListener {
         scope = "main"
         let function = Function(name: scope, type: .int, scope: scope)
         symbols.insert(function: function)
+        //Solve jump to Main
+        arrayQuads[0].fillMissingResult(result: arrayQuads.count)
     }
     /**
      * {@inheritDoc}
@@ -1023,13 +1031,15 @@ open class tddBaseListener: tddListener {
                 // TODO: Error
                 return
             }
-           let variable = getNegativeConstant(name: value)
+            let variable = createVariable(memory: constantMemory, id: "-\(value)", type: findType(value: value))
+            constantVals.saveToVals(address: variable.address, value: variable.name)
             sOperands.insert(variable.address, at:0)
             sTypes.insert(variable.type, at:0)
         }
         //Check for constant
         else if let value = ctx.VALUE()?.getText() {
-            let variable = getConstant(name: value)
+            let variable = createVariable(memory: constantMemory, id: value, type: findType(value: value))
+            constantVals.saveToVals(address: variable.address, value: variable.name)
             sOperands.insert(variable.address, at:0)
             sTypes.insert(variable.type, at:0)
         }

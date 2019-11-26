@@ -148,7 +148,7 @@ algo_imprimible:
     | STRING_VAL COMMA algo_imprimible;
 
 asignation:
-    ID EQUALS expresion SEMI_COLON;
+    ID EQUALS hiper_expresion SEMI_COLON;
 
 while_loop:
     WHILE super_condition_check OPEN_BLOCK statement* CLOSE_BLOCK;
