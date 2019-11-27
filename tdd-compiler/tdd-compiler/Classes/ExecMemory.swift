@@ -17,16 +17,17 @@ class ExecMemory {
     }
     
     func saveToVals(address: Int, value: String) {
-        if (address - self.dirBase >= 8000) {
+        if (abs(address) - self.dirBase >= 8000) {
             self.values[address] = value == "true"
         }
-        else if (address - self.dirBase >= 6000) {
+        else if (abs(address) - self.dirBase >= 6000) {
             self.values[address] = value as! Character
         }
-        else if (address - self.dirBase >= 4000) {
-            self.values[address] = value
+        else if (abs(address) - self.dirBase >= 4000) {
+            let trimmedStr = value[1..<value.count-1]
+            self.values[address] = trimmedStr
         }
-        else if (address - self.dirBase >= 2000) {
+        else if (abs(address) - self.dirBase >= 2000) {
             self.values[address] = Double(value)
         }
         else {
@@ -35,16 +36,16 @@ class ExecMemory {
     }
     
     func saveToValsExec(address: Int, value: Any) {
-        if (address - self.dirBase >= 8000) {
+        if (abs(address) - self.dirBase >= 8000) {
             self.values[address] = value as! Bool
         }
-        else if (address - self.dirBase >= 6000) {
+        else if (abs(address) - self.dirBase >= 6000) {
             self.values[address] = value as! Character
         }
-        else if (address - self.dirBase >= 4000) {
+        else if (abs(address) - self.dirBase >= 4000) {
             self.values[address] = value as! String
         }
-        else if (address - self.dirBase >= 2000) {
+        else if (abs(address) - self.dirBase >= 2000) {
             self.values[address] = value as! Double
         }
         else {
@@ -53,35 +54,17 @@ class ExecMemory {
         
     }
     
-    func getType(address: Int) -> (Type) {
-        if (address - self.dirBase >= 8000) {
-            return .bool
-        }
-        else if (address - self.dirBase >= 6000) {
-            return .char
-        }
-        else if (address - self.dirBase >= 4000) {
-            return .string
-        }
-        else if (address - self.dirBase >= 2000) {
-            return .float
-        }
-        else {
-            return .int
-        }
-    }
-    
     func getVal(address: Int) -> (Any, Type) {
-        if (address - self.dirBase >= 8000) {
+        if (abs(address) - self.dirBase >= 8000) {
             return (values[address]!, .bool)
         }
-        else if (address - self.dirBase >= 6000) {
+        else if (abs(address) - self.dirBase >= 6000) {
             return (values[address]!, .char)
         }
-        else if (address - self.dirBase >= 4000) {
+        else if (abs(address) - self.dirBase >= 4000) {
             return (values[address]!, .string)
         }
-        else if (address - self.dirBase >= 2000) {
+        else if (abs(address) - self.dirBase >= 2000) {
             return (values[address]!, .float)
         }
         else {

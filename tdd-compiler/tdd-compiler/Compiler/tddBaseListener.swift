@@ -36,7 +36,7 @@ var sGoto = [Int]()
 var sWhile = [Int]()
 var sFunctions = [Function]()
 // (Base address of array or matrix , (First dimension, second dimension))
-var pendingArrayAddresses = [(Int, (Int, Int))]()
+var pendingArrayAddresses = [Variable]()
 
 var documentation = "# Documentation \n"
 var docCurrFunName = ""
@@ -662,16 +662,16 @@ open class tddBaseListener: tddListener {
         // Crear cuadruplo de VER
         let indexAddress = sOperands.first!
         // TODO: Get real address for array (Sumarle el desplazamiento)
-        let verQuad = Quadruple(quadOperator: "VER", leftOperand: indexAddress, rightOperand: 0, result: pendingArrayAddresses.first!.1.0)
+        let verQuad = Quadruple(quadOperator: "VER", leftOperand: indexAddress, rightOperand: 0, result: pendingArrayAddresses.first!.x)
         sOperands.removeFirst()
         sTypes.removeFirst()
         arrayQuads.append(verQuad)
         // Use formula x + DirBase to get address
-        let tmpAddress = createTemp(type: .int)
-        let addQuad = Quadruple(quadOperator: "+arr", leftOperand: indexAddress, rightOperand: pendingArrayAddresses.first!.0, result: tmpAddress)
+        let tmpAddress = -1 * createTemp(type: .int)
+        let addQuad = Quadruple(quadOperator: "+arr", leftOperand: indexAddress, rightOperand: pendingArrayAddresses.first!.address, result: tmpAddress)
         arrayQuads.append(addQuad)
         sOperands.insert(tmpAddress, at: 0)
-        sTypes.insert(.int, at:0)
+        sTypes.insert(pendingArrayAddresses.first!.type, at:0)
         pendingArrayAddresses.removeFirst()
         solvingDimen = .none
         
@@ -695,13 +695,13 @@ open class tddBaseListener: tddListener {
         // Crear primer cuadruplo de VER
         let indexAddress = sOperands.first!
         // TODO: Get real address for array (Sumarle el desplazamiento)
-        let verQuad = Quadruple(quadOperator: "VER", leftOperand: indexAddress, rightOperand: 0, result: pendingArrayAddresses.first!.1.1)
+        let verQuad = Quadruple(quadOperator: "VER", leftOperand: indexAddress, rightOperand: 0, result: pendingArrayAddresses.first!.y)
         sOperands.removeFirst()
                arrayQuads.append(verQuad)
         
         
         let indexAddress2 = sOperands.first!
-        let verQuad2 = Quadruple(quadOperator: "VER", leftOperand: indexAddress2, rightOperand: 0, result: pendingArrayAddresses.first!.1.0)
+        let verQuad2 = Quadruple(quadOperator: "VER", leftOperand: indexAddress2, rightOperand: 0, result: pendingArrayAddresses.first!.x)
         arrayQuads.append(verQuad2)
         sOperands.removeFirst()
         
@@ -709,8 +709,8 @@ open class tddBaseListener: tddListener {
         
         let x = indexAddress2
         let y = indexAddress
-        let d2 = pendingArrayAddresses.first!.1.1
-        let dirBase = pendingArrayAddresses.first!.0
+        let d2 = pendingArrayAddresses.first!.y
+        let dirBase = pendingArrayAddresses.first!.address
         let tmp1 = createTemp(type: .int)
         let multQuad = Quadruple(quadOperator: "*", leftOperand: constantVals.getAddressForVal(val: d2), rightOperand: x, result: tmp1)
         
@@ -720,11 +720,12 @@ open class tddBaseListener: tddListener {
         let addQuad = Quadruple(quadOperator: "+", leftOperand: tmp1, rightOperand: y, result: tmp2)
         arrayQuads.append(addQuad)
         
-        let tmp3 = createTemp(type: .int)
+        let tmp3 = -1 * createTemp(type: .int)
         let addQuad2 = Quadruple(quadOperator: "+arr", leftOperand: tmp2, rightOperand: dirBase, result: tmp3)
         arrayQuads.append(addQuad2)
-               sOperands.insert(tmp3, at: 0)
-               pendingArrayAddresses.removeFirst()
+        sOperands.insert(tmp3, at: 0)
+        sTypes.insert(pendingArrayAddresses.first!.type, at: 0)
+        pendingArrayAddresses.removeFirst()
         solvingDimen = .none
         
     }
@@ -1014,7 +1015,7 @@ open class tddBaseListener: tddListener {
                 return
             }
             if variable.dimensionated {
-                pendingArrayAddresses.append((variable.address, (variable.x,variable.y)))
+                pendingArrayAddresses.append(variable)
             } else {
                 sOperands.insert(variable.address, at:0)
                 sTypes.insert(variable.type, at:0)
@@ -1223,14 +1224,14 @@ open class tddBaseListener: tddListener {
                            //Compile error var does not exist
                            return
                        }
-                pendingArrayAddresses.append((variable.address, (variable.x,variable.y)))            }
+                pendingArrayAddresses.append(variable)            }
         } else if let matrixInfo = ctx.matrix_dimension() {
             if let id = ctx.ID()?.getText() {
                     guard let variable = symbols.findID(scope: scope, id: id) else {
                                 //Compile error var does not exist
                                 return
                             }
-                    pendingArrayAddresses.append((variable.address, (variable.x,variable.y)))
+                    pendingArrayAddresses.append(variable)
                }
         }
     }
@@ -1253,11 +1254,6 @@ open class tddBaseListener: tddListener {
             let variable = symbols.findID(scope: scope, id: ctx.ID()!.getText())!
             variableToAsign = variable.address
             varType = variable.type
-            if !semanticCube.checkCube(currOperator: "=", leftType: valueType!, rightType: varType) {
-                // TODO: Handle semantic cube error
-                return
-            }
-            newQuad = Quadruple(quadOperator: "=", leftOperand: value, rightOperand: -1, result: variableToAsign)
         }
         else {
             //IS array
@@ -1265,16 +1261,15 @@ open class tddBaseListener: tddListener {
             sOperands.removeFirst()
             varType = sTypes.first!
             sTypes.removeFirst()
-            if !semanticCube.checkCube(currOperator: "=", leftType: valueType!, rightType: varType) {
-                // TODO: Handle semantic cube error
-                return
-            }
-            newQuad = Quadruple(quadOperator: "=arr", leftOperand: value, rightOperand: -1, result: variableToAsign)
-
+        }
+        
+        if !semanticCube.checkCube(currOperator: "=", leftType: valueType!, rightType: varType) {
+            // TODO: Handle semantic cube error
+            return
         }
         
         temporalMemory.clean()
-        
+        newQuad = Quadruple(quadOperator: "=", leftOperand: value, rightOperand: -1, result: variableToAsign)
         arrayQuads.append(newQuad)
     }
 

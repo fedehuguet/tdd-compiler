@@ -32,32 +32,70 @@ class VirtualMachine {
     }
     
     func findValType(address: Int) -> (Any, Type) {
-        if (address >= 30000) {
-            return sLocalMemory.first!.getVal(address: address)
-        }
-        else if (address >= 20000) {
-            return sTemporalMemory.first!.getVal(address: address)
-        }
-        else if (address >= 10000) {
-            return constantMemory.getVal(address: address)
+        if (address < 0) {
+            if (abs(address) >= 30000) {
+                let (newAdd,_) = sLocalMemory.first!.getVal(address: address)
+                return findValType(address: (newAdd as! Int))
+            }
+            else if (abs(address) >= 20000) {
+                let (newAdd,_) = sTemporalMemory.first!.getVal(address: address)
+                return findValType(address: (newAdd as! Int))
+            }
+            else if (abs(address) >= 10000) {
+                let (newAdd,_) = constantMemory.getVal(address: address)
+                return findValType(address: (newAdd as! Int))
+            }
+            else {
+                let (newAdd,_) = globalMemory.getVal(address: address)
+                return findValType(address: (newAdd as! Int))
+            }
         }
         else {
-            return globalMemory.getVal(address: address)
+            if (address >= 30000) {
+                return sLocalMemory.first!.getVal(address: address)
+            }
+            else if (address >= 20000) {
+                return sTemporalMemory.first!.getVal(address: address)
+            }
+            else if (address >= 10000) {
+                return constantMemory.getVal(address: address)
+            }
+            else {
+                return globalMemory.getVal(address: address)
+            }
         }
     }
     
     func saveValue(address: Int, value: Any, param: Bool = false) {
-        if (address >= 30000) {
-            param ? paramLocal.saveToValsExec(address: address, value: value) : sLocalMemory.first!.saveToValsExec(address: address, value: value)
-        }
-        else if (address >= 20000) {
-            param ? paramTemporal.saveToValsExec(address: address, value: value) : sTemporalMemory.first!.saveToValsExec(address: address, value: value)
-        }
-        else if (address >= 10000) {
-            constantMemory.saveToValsExec(address: address, value: value)
+        if (address < 0) {
+            if (abs(address) >= 30000) {
+                let (currAddress,_) = sLocalMemory.first!.getVal(address: address)
+                return saveValue(address: (currAddress as! Int), value: value)
+            }
+            else if (abs(address) >= 20000) {
+                let (currAddress,_) = sTemporalMemory.first!.getVal(address: address)
+                return saveValue(address: (currAddress as! Int), value: value)
+            }
+            else if (abs(address) >= 10000) {
+                constantMemory.saveToValsExec(address: address, value: value)
+            }
+            else {
+                globalMemory.saveToValsExec(address: address, value: value)
+            }
         }
         else {
-            globalMemory.saveToValsExec(address: address, value: value)
+            if (address >= 30000) {
+                param ? paramLocal.saveToValsExec(address: address, value: value) : sLocalMemory.first!.saveToValsExec(address: address, value: value)
+            }
+            else if (address >= 20000) {
+                param ? paramTemporal.saveToValsExec(address: address, value: value) : sTemporalMemory.first!.saveToValsExec(address: address, value: value)
+            }
+            else if (address >= 10000) {
+                constantMemory.saveToValsExec(address: address, value: value)
+            }
+            else {
+                globalMemory.saveToValsExec(address: address, value: value)
+            }
         }
     }
     
@@ -376,18 +414,26 @@ class VirtualMachine {
         }
     }
     
-    func addArrayBase(quad: Quadruple) {
-        let (shift, _) = findValType(address: quad.leftOperand)
-        let address = (shift as! Int) + quad.rightOperand
-        
-        saveValue(address: quad.result, value: address)
+    func saveAddressValue(address: Int, value: Any) {
+        if (abs(address) >= 30000) {
+            sLocalMemory.first!.saveToValsExec(address: address, value: value)
+        }
+        else if (abs(address) >= 20000) {
+            sTemporalMemory.first!.saveToValsExec(address: address, value: value)
+        }
+        else if (abs(address) >= 10000) {
+            constantMemory.saveToValsExec(address: address, value: value)
+        }
+        else {
+            globalMemory.saveToValsExec(address: address, value: value)
+        }
     }
     
-    func equalArray(quad: Quadruple) {
-        let (value, _) = findValType(address: quad.leftOperand)
-        let (saveAddress, _) = findValType(address: quad.result)
+    func addArrayBase(quad: Quadruple) {
+        let (shift, _) = findValType(address: quad.leftOperand)
+        let address =  abs((shift as! Int)) + quad.rightOperand
         
-        saveValue(address: (saveAddress as! Int), value: value)
+        saveAddressValue(address: quad.result, value: address)
     }
     
     
@@ -463,10 +509,6 @@ class VirtualMachine {
                 break
             case "+arr":
                 addArrayBase(quad: quad)
-                currentQuadIndex = currentQuadIndex + 1
-                break
-            case "=arr":
-                equalArray(quad: quad)
                 currentQuadIndex = currentQuadIndex + 1
                 break
             case "ERA":

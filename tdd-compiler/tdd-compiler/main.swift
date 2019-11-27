@@ -14,14 +14,23 @@ let code: String = """
 
     main() {
         int b;
-        int arr[5];
+        string hello, world;
+        int y,x;
+        string arr[5];
+        string mat[5][5];
         b = 4;
-        while (b >= 0){
-        arr[b] = b;
-        b = b - 1;
+        y = 2;
+        hello = "Hello";
+
+        while (y >= 0){
+            x = 2;
+            while (x >= 0){
+                mat[y][x] = hello;
+                print(mat[y][x]);
+                x = x - 1;
+            }
+            y = y - 1;
         }
-        b = arr[1];
-        print(b);
     }
 
 """
