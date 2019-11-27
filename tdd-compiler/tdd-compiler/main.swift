@@ -16,14 +16,30 @@ let code: String = """
     @param int b %% B value
     *#
 
-    int prueba(int a) {
-        a = a - 1;
-        return prueba(a);
+    int fibo(int n) {
+        if (n == 0 || n == 1) {
+            return n;
+        }
+        return fibo(n - 1) + fibo(n - 2);
+    }
+#*
+   %% Ala a
+   @param int  n %% A value
+   *#
+    int fact(int n ) {
+        if (n == 1) {
+            return 1;
+        }
+        return n * fact(n - 1);
     }
 
     main() {
         int b;
-        b = prueba(3);
+        b = fact(3);
+        while (b > 0) {
+            print(b);
+            b = b - 1;
+        }
     }
 
 """

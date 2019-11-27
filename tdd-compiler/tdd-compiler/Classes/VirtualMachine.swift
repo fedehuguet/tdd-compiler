@@ -14,8 +14,10 @@ class VirtualMachine {
 
     var globalMemory = ExecMemory(dirBase: 0)
     let constantMemory : ExecMemory
-    var sTemporalMemory = [ExecMemory(dirBase: 20000)]
     var sLocalMemory = [ExecMemory(dirBase: 30000)]
+    var paramLocal = ExecMemory(dirBase: -1)
+    var sTemporalMemory = [ExecMemory(dirBase: 20000)]
+    var paramTemporal = ExecMemory(dirBase: -1)
     let semanticCube = SemanticCube()
     
     var sJumps = [Int]()
@@ -29,13 +31,13 @@ class VirtualMachine {
         print("\(quad.leftOperand!) \(quad.quadOperator!) \(quad.rightOperand!)")
     }
     
-    func findValType(address: Int, param: Bool = false) -> (Any, Type) {
+    func findValType(address: Int) -> (Any, Type) {
         if (address >= 30000) {
-            return param ? (sLocalMemory[1].getVal(address: address)) : (sLocalMemory.first?.getVal(address: address))!
+            return sLocalMemory.first!.getVal(address: address)
         }
         else if (address >= 20000) {
             print(sTemporalMemory)
-            return param ? (sTemporalMemory[1].getVal(address: address)) : (sTemporalMemory.first?.getVal(address: address))!
+            return sTemporalMemory.first!.getVal(address: address)
         }
         else if (address >= 10000) {
             return constantMemory.getVal(address: address)
@@ -45,15 +47,15 @@ class VirtualMachine {
         }
     }
     
-    func saveValue(address: Int, value: Any) {
+    func saveValue(address: Int, value: Any, param: Bool = false) {
         if (address >= 30000) {
-            sLocalMemory.first?.saveToValsExec(address: address, value: value)
+            param ? paramLocal.saveToValsExec(address: address, value: value) : sLocalMemory.first!.saveToValsExec(address: address, value: value)
         }
         else if (address >= 20000) {
-            sTemporalMemory.first?.saveToValsExec(address: address, value: value)
+            param ? paramTemporal.saveToValsExec(address: address, value: value) : sTemporalMemory.first!.saveToValsExec(address: address, value: value)
         }
         else if (address >= 10000) {
-            constantVals.saveToValsExec(address: address, value: value)
+            constantMemory.saveToValsExec(address: address, value: value)
         }
         else {
             globalMemory.saveToValsExec(address: address, value: value)
@@ -358,9 +360,9 @@ class VirtualMachine {
     }
     
     func param_asign(quad: Quadruple){
-        let (leftOperand, _) = findValType(address: quad.leftOperand, param: true)
+        let (leftOperand, _) = findValType(address: quad.leftOperand)
         print(leftOperand)
-        saveValue(address: quad.result, value: leftOperand)
+        saveValue(address: quad.result, value: leftOperand, param: true)
     }
     
     func return_func(quad: Quadruple) {
@@ -371,6 +373,16 @@ class VirtualMachine {
         //Pop and jump
         currentQuadIndex = sJumps.first!
         sJumps.removeFirst()
+    }
+    
+    func gotoF(quad: Quadruple) {
+        let (boolTest, _) = findValType(address: quad.leftOperand)
+        if !(boolTest as! Bool) {
+            currentQuadIndex = quad.result
+        }
+        else {
+            currentQuadIndex = currentQuadIndex + 1
+        }
     }
     
     
@@ -455,18 +467,24 @@ class VirtualMachine {
                 break
             case "GOTOF":
                 printQuad(quad: quad)
+                gotoF(quad: quad)
                 break
             case "VERIFY":
                 printQuad(quad: quad)
                 break
             case "ERA":
                 printQuad(quad: quad)
-                sLocalMemory.insert(ExecMemory(dirBase: 30000), at: 0)
-                sTemporalMemory.insert(ExecMemory(dirBase: 20000), at: 0)
+                paramLocal = ExecMemory(dirBase: 30000)
+                paramTemporal = ExecMemory(dirBase: 20000)
                 currentQuadIndex = currentQuadIndex + 1
                 break
             case "GOSUB":
                 printQuad(quad: quad)
+                sLocalMemory.insert(paramLocal, at: 0)
+                sTemporalMemory.insert(paramTemporal, at: 0)
+                //Reset params memory
+                paramLocal = ExecMemory(dirBase: -1)
+                paramTemporal = ExecMemory(dirBase: -1)
                 sJumps.insert(currentQuadIndex + 1, at: 0)
                 currentQuadIndex = quad.leftOperand
                 break
@@ -492,6 +510,7 @@ class VirtualMachine {
                 printQuad(quad: quad)
                 sLocalMemory.removeFirst()
                 sTemporalMemory.removeFirst()
+                currentQuadIndex = currentQuadIndex + 1
                 break
             default:
                 // Shoouldn't happen but maybe should do some type of error

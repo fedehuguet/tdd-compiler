@@ -165,6 +165,9 @@ open class tddBaseListener: tddListener {
      * <p>The default implementation does nothing.</p>
      */
     open func exitProgram(_ ctx: tddParser.ProgramContext) {
+        let endProg = Quadruple(quadOperator: "END", leftOperand: -1, rightOperand: -1, result: -1)
+        arrayQuads.append(endProg)
+        localMemory.clean()
         print("QUADRUPLOS")
         for (index, quad) in arrayQuads.enumerated() {
             guard let oper = quad.quadOperator, let left = quad.leftOperand, let right = quad.rightOperand, let res = quad.result else {
@@ -176,7 +179,7 @@ open class tddBaseListener: tddListener {
         print(documentation)
         //Temporal VM test
         let vm = VirtualMachine(quadruples: arrayQuads, constantMemory: constantVals)
-        //vm.execute()
+        vm.execute()
     }
 
     /**
@@ -379,7 +382,7 @@ open class tddBaseListener: tddListener {
             return
         }
         scope = functionName
-        let function = Function(name: functionName, type: Type(type: "void"), scope: scope)
+        let function = Function(name: functionName, type: .void, scope: scope)
         symbols.insert(function: function)
     }
     /**
@@ -413,32 +416,6 @@ open class tddBaseListener: tddListener {
      * <p>The default implementation does nothing.</p>
      */
     open func exitInputs(_ ctx: tddParser.InputsContext) { }
-
-    /**
-     * {@inheritDoc}
-     *
-     * <p>The default implementation does nothing.</p>
-     */
-    open func enterFunction_body(_ ctx: tddParser.Function_bodyContext) { }
-    /**
-     * {@inheritDoc}
-     *
-     * <p>The default implementation does nothing.</p>
-     */
-    open func exitFunction_body(_ ctx: tddParser.Function_bodyContext) { }
-
-    /**
-     * {@inheritDoc}
-     *
-     * <p>The default implementation does nothing.</p>
-     */
-    open func enterVoid_function_body(_ ctx: tddParser.Void_function_bodyContext) { }
-    /**
-     * {@inheritDoc}
-     *
-     * <p>The default implementation does nothing.</p>
-     */
-    open func exitVoid_function_body(_ ctx: tddParser.Void_function_bodyContext) { }
 
     /**
      * {@inheritDoc}
@@ -485,7 +462,7 @@ open class tddBaseListener: tddListener {
      */
     open func enterMain(_ ctx: tddParser.MainContext) {
         scope = "main"
-        let function = Function(name: scope, type: .int, scope: scope)
+        let function = Function(name: scope, type: .void, scope: scope)
         symbols.insert(function: function)
         //Solve jump to Main
         arrayQuads[0].fillMissingResult(result: arrayQuads.count)
@@ -858,7 +835,7 @@ open class tddBaseListener: tddListener {
             sfunction_param_index.insert(0, at: 0)
             let function_name = parent.ID()?.getText()
             let function = symbols.functionsDictionary[function_name!]
-            if  function != nil {
+            if  function != nil && function?.type != .void{
                 sFunctions.insert(function!, at: 0)
                 let newQuad = Quadruple(quadOperator: "ERA", leftOperand: function!.start_quadruple, rightOperand: -1, result: -1)
                 arrayQuads.append(newQuad)
@@ -873,13 +850,13 @@ open class tddBaseListener: tddListener {
             sfunction_param_index.insert(0, at: 0)
             let function_name = parent.ID()?.getText()
             let function = symbols.functionsDictionary[function_name!]
-            if  function != nil {
+            if  function != nil && function?.type == .void {
                 sFunctions.insert(function!, at: 0)
                 let newQuad = Quadruple(quadOperator: "ERA", leftOperand: function!.start_quadruple, rightOperand: -1, result: -1)
                 arrayQuads.append(newQuad)
             }
             else {
-                print("Not a return function")
+                print("Not a void function")
             }
         }
     }

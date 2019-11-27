@@ -7,8 +7,8 @@ program:
     variable* function* main;
 
 function:
-    header function_dec OPEN_BLOCK function_body CLOSE_BLOCK
-    | header void_function_dec OPEN_BLOCK void_function_body CLOSE_BLOCK;
+    header function_dec OPEN_BLOCK body CLOSE_BLOCK
+    | header void_function_dec OPEN_BLOCK body CLOSE_BLOCK;
 
 header:
     OPEN_HEADER header_body CLOSE_HEADER;
@@ -40,12 +40,6 @@ inputs:
     TYPE ID
     | TYPE ID COMMA inputs;
 
-function_body:
-    body return_statement;
-
-void_function_body:
-    body;
-
 body:
     variable* statement*;
 
@@ -67,7 +61,8 @@ statement:
     | condition
     | print
     | while_loop
-    | void_func_call;
+    | void_func_call
+    | return_statement;
     
 super_condition_check:
     condition_check;

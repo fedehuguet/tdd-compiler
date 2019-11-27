@@ -139,30 +139,6 @@ public protocol tddListener: ParseTreeListener {
 	 */
 	func exitInputs(_ ctx: tddParser.InputsContext)
 	/**
-	 * Enter a parse tree produced by {@link tddParser#function_body}.
-	 - Parameters:
-	   - ctx: the parse tree
-	 */
-	func enterFunction_body(_ ctx: tddParser.Function_bodyContext)
-	/**
-	 * Exit a parse tree produced by {@link tddParser#function_body}.
-	 - Parameters:
-	   - ctx: the parse tree
-	 */
-	func exitFunction_body(_ ctx: tddParser.Function_bodyContext)
-	/**
-	 * Enter a parse tree produced by {@link tddParser#void_function_body}.
-	 - Parameters:
-	   - ctx: the parse tree
-	 */
-	func enterVoid_function_body(_ ctx: tddParser.Void_function_bodyContext)
-	/**
-	 * Exit a parse tree produced by {@link tddParser#void_function_body}.
-	 - Parameters:
-	   - ctx: the parse tree
-	 */
-	func exitVoid_function_body(_ ctx: tddParser.Void_function_bodyContext)
-	/**
 	 * Enter a parse tree produced by {@link tddParser#body}.
 	 - Parameters:
 	   - ctx: the parse tree
