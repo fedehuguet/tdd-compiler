@@ -3078,6 +3078,14 @@ open class tddParser: Parser {
 			func SEMI_COLON() -> TerminalNode? {
 				return getToken(tddParser.Tokens.SEMI_COLON.rawValue, 0)
 			}
+			open
+			func array_dimension() -> Array_dimensionContext? {
+				return getRuleContext(Array_dimensionContext.self, 0)
+			}
+			open
+			func matrix_dimension() -> Matrix_dimensionContext? {
+				return getRuleContext(Matrix_dimensionContext.self, 0)
+			}
 		override open
 		func getRuleIndex() -> Int {
 			return tddParser.RULE_asignation
@@ -3103,16 +3111,51 @@ open class tddParser: Parser {
 	    		try! exitRule()
 	    }
 		do {
-		 	try enterOuterAlt(_localctx, 1)
-		 	setState(404)
-		 	try match(tddParser.Tokens.ID.rawValue)
-		 	setState(405)
-		 	try match(tddParser.Tokens.EQUALS.rawValue)
-		 	setState(406)
-		 	try hiper_expresion()
-		 	setState(407)
-		 	try match(tddParser.Tokens.SEMI_COLON.rawValue)
+		 	setState(421)
+		 	try _errHandler.sync(self)
+		 	switch(try getInterpreter().adaptivePredict(_input,34, _ctx)) {
+		 	case 1:
+		 		try enterOuterAlt(_localctx, 1)
+		 		setState(404)
+		 		try match(tddParser.Tokens.ID.rawValue)
+		 		setState(405)
+		 		try match(tddParser.Tokens.EQUALS.rawValue)
+		 		setState(406)
+		 		try hiper_expresion()
+		 		setState(407)
+		 		try match(tddParser.Tokens.SEMI_COLON.rawValue)
 
+		 		break
+		 	case 2:
+		 		try enterOuterAlt(_localctx, 2)
+		 		setState(409)
+		 		try match(tddParser.Tokens.ID.rawValue)
+		 		setState(410)
+		 		try array_dimension()
+		 		setState(411)
+		 		try match(tddParser.Tokens.EQUALS.rawValue)
+		 		setState(412)
+		 		try hiper_expresion()
+		 		setState(413)
+		 		try match(tddParser.Tokens.SEMI_COLON.rawValue)
+
+		 		break
+		 	case 3:
+		 		try enterOuterAlt(_localctx, 3)
+		 		setState(415)
+		 		try match(tddParser.Tokens.ID.rawValue)
+		 		setState(416)
+		 		try matrix_dimension()
+		 		setState(417)
+		 		try match(tddParser.Tokens.EQUALS.rawValue)
+		 		setState(418)
+		 		try hiper_expresion()
+		 		setState(419)
+		 		try match(tddParser.Tokens.SEMI_COLON.rawValue)
+
+		 		break
+		 	default: break
+		 	}
 		}
 		catch ANTLRException.recognition(let re) {
 			_localctx.exception = re
@@ -3175,13 +3218,13 @@ open class tddParser: Parser {
 	    }
 		do {
 		 	try enterOuterAlt(_localctx, 1)
-		 	setState(409)
+		 	setState(423)
 		 	try match(tddParser.Tokens.WHILE.rawValue)
-		 	setState(410)
+		 	setState(424)
 		 	try super_condition_check()
-		 	setState(411)
+		 	setState(425)
 		 	try match(tddParser.Tokens.OPEN_BLOCK.rawValue)
-		 	setState(415)
+		 	setState(429)
 		 	try _errHandler.sync(self)
 		 	_la = try _input.LA(1)
 		 	while (//closure
@@ -3192,15 +3235,15 @@ open class tddParser: Parser {
 		 	}()
 		 	      return testSet
 		 	 }()) {
-		 		setState(412)
+		 		setState(426)
 		 		try statement()
 
 
-		 		setState(417)
+		 		setState(431)
 		 		try _errHandler.sync(self)
 		 		_la = try _input.LA(1)
 		 	}
-		 	setState(418)
+		 	setState(432)
 		 	try match(tddParser.Tokens.CLOSE_BLOCK.rawValue)
 
 		}
@@ -3260,23 +3303,23 @@ open class tddParser: Parser {
 	    }
 		do {
 		 	try enterOuterAlt(_localctx, 1)
-		 	setState(420)
+		 	setState(434)
 		 	try match(tddParser.Tokens.ID.rawValue)
-		 	setState(421)
+		 	setState(435)
 		 	try match(tddParser.Tokens.OPEN_PAR.rawValue)
-		 	setState(423)
+		 	setState(437)
 		 	try _errHandler.sync(self)
-		 	switch (try getInterpreter().adaptivePredict(_input,35,_ctx)) {
+		 	switch (try getInterpreter().adaptivePredict(_input,36,_ctx)) {
 		 	case 1:
-		 		setState(422)
+		 		setState(436)
 		 		try function_hiper_expresions()
 
 		 		break
 		 	default: break
 		 	}
-		 	setState(425)
+		 	setState(439)
 		 	try match(tddParser.Tokens.CLOSE_PAR.rawValue)
-		 	setState(426)
+		 	setState(440)
 		 	try match(tddParser.Tokens.SEMI_COLON.rawValue)
 
 		}

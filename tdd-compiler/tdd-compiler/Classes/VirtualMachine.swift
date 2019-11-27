@@ -379,9 +379,15 @@ class VirtualMachine {
     func addArrayBase(quad: Quadruple) {
         let (shift, _) = findValType(address: quad.leftOperand)
         let address = (shift as! Int) + quad.rightOperand
-        let (value, _) = findValType(address: address)
         
-        saveValue(address: quad.result, value: value)
+        saveValue(address: quad.result, value: address)
+    }
+    
+    func equalArray(quad: Quadruple) {
+        let (value, _) = findValType(address: quad.leftOperand)
+        let (saveAddress, _) = findValType(address: quad.result)
+        
+        saveValue(address: (saveAddress as! Int), value: value)
     }
     
     
@@ -455,8 +461,12 @@ class VirtualMachine {
             case "VER":
                 currentQuadIndex = currentQuadIndex + 1
                 break
-            case "++":
+            case "+arr":
                 addArrayBase(quad: quad)
+                currentQuadIndex = currentQuadIndex + 1
+                break
+            case "=arr":
+                equalArray(quad: quad)
                 currentQuadIndex = currentQuadIndex + 1
                 break
             case "ERA":
