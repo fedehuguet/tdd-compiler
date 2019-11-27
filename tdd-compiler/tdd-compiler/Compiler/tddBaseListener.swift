@@ -83,34 +83,34 @@ func createTemp(type: Type) -> Int {
     }
 }
 
-func getNegativeConstant(name: String) -> Variable {
-    for constant in constantsTable {
-        if constant.name == name {
-            return constant
-        }
-    }
-    let variable = createVariable(memory: constantMemory, id: "-\(name)", type: findType(value: name))
-    constantsTable.append(variable)
-    return variable
-}
-
-func getConstant(name: String) -> Variable {
-    for constant in constantsTable {
-        if constant.name == name {
-            return constant
-        }
-    }
-    let type = findType(value: name)
-    let variable : Variable
-    if type == .string {
-        // Avoid double quotes on strings 
-        variable = createVariable(memory: constantMemory, id: name.replacingOccurrences(of: "\"", with: ""), type: type)
-    } else {
-        variable = createVariable(memory: constantMemory, id: "\(name)", type: type)
-    }
-    constantsTable.append(variable)
-    return variable
-}
+//func getNegativeConstant(name: String) -> Variable {
+//    for constant in constantsTable {
+//        if constant.name == name {
+//            return constant
+//        }
+//    }
+//    let variable = createVariable(memory: constantMemory, id: "-\(name)", type: findType(value: name))
+//    constantsTable.append(variable)
+//    return variable
+//}
+//
+//func getConstant(name: String) -> Variable {
+//    for constant in constantsTable {
+//        if constant.name == name {
+//            return constant
+//        }
+//    }
+//    let type = findType(value: name)
+//    let variable : Variable
+//    if type == .string {
+//        // Avoid double quotes on strings
+//        variable = createVariable(memory: constantMemory, id: name.replacingOccurrences(of: "\"", with: ""), type: type)
+//    } else {
+//        variable = createVariable(memory: constantMemory, id: "\(name)", type: type)
+//    }
+//    constantsTable.append(variable)
+//    return variable
+//}
 
 
 
@@ -625,6 +625,9 @@ open class tddBaseListener: tddListener {
     open func enterArray_dimension_dec(_ ctx: tddParser.Array_dimension_decContext) {
         print(ctx.getText())
         print(ctx.VALUE()!)
+        let value = ctx.VALUE()!.getText()
+        let variable = createVariable(memory: constantMemory, id: value, type: .int)
+        constantVals.saveToVals(address: variable.address, value: ctx.VALUE()!.getText())
     }
     /**
      * {@inheritDoc}
@@ -639,7 +642,18 @@ open class tddBaseListener: tddListener {
      *
      * <p>The default implementation does nothing.</p>
      */
-    open func enterMatrix_dimension_dec(_ ctx: tddParser.Matrix_dimension_decContext) { }
+    open func enterMatrix_dimension_dec(_ ctx: tddParser.Matrix_dimension_decContext) {
+        let value1 = ctx.VALUE()[0].getText()
+        let value2 = ctx.VALUE()[1].getText()
+        
+        let var1 = createVariable(memory: constantMemory, id: value1, type: .int)
+        let var2 = createVariable(memory: constantMemory, id: value2, type: .int)
+        
+        constantVals.saveToVals(address: var1.address, value: value1)
+        
+        constantVals.saveToVals(address: var2.address, value: value2)
+        
+    }
     /**
      * {@inheritDoc}
      *
@@ -675,7 +689,7 @@ open class tddBaseListener: tddListener {
         arrayQuads.append(verQuad)
         // Use formula x + DirBase to get address
         let tmpAddress = createTemp(type: .int)
-        let addQuad = Quadruple(quadOperator: "+", leftOperand: pendingArrayAddresses.first!.0, rightOperand: indexAddress, result: tmpAddress)
+        let addQuad = Quadruple(quadOperator: "++", leftOperand: indexAddress, rightOperand: pendingArrayAddresses.first!.0, result: tmpAddress)
         arrayQuads.append(addQuad)
         sOperands.insert(tmpAddress, at: 0)
         pendingArrayAddresses.removeFirst()
@@ -717,7 +731,7 @@ open class tddBaseListener: tddListener {
         let d2 = pendingArrayAddresses.first!.1.1
         let dirBase = pendingArrayAddresses.first!.0
         let tmp1 = createTemp(type: .int)
-        let multQuad = Quadruple(quadOperator: "*", leftOperand: getConstant(name: String(d2)).address, rightOperand: x, result: tmp1)
+        let multQuad = Quadruple(quadOperator: "*", leftOperand: constantVals.getAddressForVal(val: d2), rightOperand: x, result: tmp1)
         
         arrayQuads.append(multQuad)
         
@@ -726,7 +740,7 @@ open class tddBaseListener: tddListener {
         arrayQuads.append(addQuad)
         
         let tmp3 = createTemp(type: .int)
-        let addQuad2 = Quadruple(quadOperator: "+", leftOperand: tmp2, rightOperand: dirBase, result: tmp3)
+        let addQuad2 = Quadruple(quadOperator: "++", leftOperand: tmp2, rightOperand: dirBase, result: tmp3)
         arrayQuads.append(addQuad2)
                sOperands.insert(tmp3, at: 0)
                pendingArrayAddresses.removeFirst()
