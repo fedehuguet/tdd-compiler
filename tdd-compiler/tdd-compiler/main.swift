@@ -36,6 +36,13 @@ let code: String = """
         }
     }
 
+#*
+%% Print an array
+*#
+void printArray(int arr[10]) {
+
+}
+
     main() {
         int arr2[4], mat[2][2];
         int a, b;
@@ -44,7 +51,10 @@ let code: String = """
             arr2[a] = a;
             a = a - 1;
         }
-        a = 1;
+        a = read(int);
+        b = read(int);
+        print(a+b);
+        b = b - 1;
         while(a >= 0) {
             b = 1;
             while(b >= 0) {

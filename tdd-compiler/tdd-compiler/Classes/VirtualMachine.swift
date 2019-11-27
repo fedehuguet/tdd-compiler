@@ -20,11 +20,14 @@ class VirtualMachine {
     var paramTemporal = ExecMemory(dirBase: -1)
     let semanticCube = SemanticCube()
     
+    var sReads : [Any]
+    
     var sJumps = [Int]()
     
-    init(quadruples: [Quadruple]!, constantMemory: ExecMemory) {
+    init(quadruples: [Quadruple]!, constantMemory: ExecMemory, sReads: [Any] = [Any]()) {
         self.quadruples = quadruples
         self.constantMemory = constantMemory
+        self.sReads = sReads
     }
     
     func printQuad(quad: Quadruple){
@@ -97,6 +100,13 @@ class VirtualMachine {
                 globalMemory.saveToValsExec(address: address, value: value)
             }
         }
+    }
+    
+    func readFunc(quad: Quadruple) {
+        print("READING")
+        let readVal = sReads.first!
+        saveValue(address: quad.result, value: readVal)
+        sReads.removeFirst()
     }
     
     func printFunc(quad: Quadruple) {
@@ -450,6 +460,10 @@ class VirtualMachine {
             switch quad.quadOperator {
             case "PRINT":
                 printFunc(quad: quad)
+                currentQuadIndex = currentQuadIndex + 1
+                break
+            case "READ":
+                readFunc(quad: quad)
                 currentQuadIndex = currentQuadIndex + 1
                 break
             case "+":
