@@ -224,7 +224,7 @@ open class tddBaseListener: tddListener {
         
         print(documentation)
         //Temporal VM test
-        let vm = VirtualMachine(quadruples: arrayQuads, constantMemory: constantVals)
+        let vm = VirtualMachine(quadruples: arrayQuads, constantMemory: constantVals, sReads: [1,2])
         vm.execute()
     }
 
@@ -1287,18 +1287,19 @@ open class tddBaseListener: tddListener {
      * <p>The default implementation does nothing.</p>
      */
     open func exitAsignation(_ ctx: tddParser.AsignationContext) {
-        
+        var value : Int
+        var valueType : Type
         if (ctx.READ() == nil) {
-            let value = sOperands.first!
+            value = sOperands.first!
             sOperands.removeFirst()
-            let valueType = sTypes.first
+            valueType = sTypes.first!
             sTypes.removeFirst()
         }
         else {
-            let valueType = Type(type: ctx.Type().getText())
-            let value = createTemp(type: valueType)
+            valueType = Type(type: (ctx.TYPE()?.getText())!)
+            value = createTemp(type: valueType)
             let readQuad = Quadruple(quadOperator: "READ", leftOperand: -1, rightOperand: -1, result: value)
-            
+            arrayQuads.append(readQuad)
         }
         
         var variableToAsign : Int
@@ -1317,7 +1318,7 @@ open class tddBaseListener: tddListener {
             sTypes.removeFirst()
         }
         
-        if !semanticCube.checkCube(currOperator: "=", leftType: valueType!, rightType: varType) {
+        if !semanticCube.checkCube(currOperator: "=", leftType: valueType, rightType: varType) {
             // TODO: Handle semantic cube error
             return
         }
