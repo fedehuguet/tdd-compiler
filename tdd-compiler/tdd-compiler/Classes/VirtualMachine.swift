@@ -385,6 +385,19 @@ class VirtualMachine {
         }
     }
     
+    func verify(quad: Quadruple) {
+        let (access, _) = findValType(address: quad.leftOperand)
+        if ( (access as! Int) < quad.rightOperand || (access as! Int) > quad.result) {
+            print("Access of array out of bounds")
+        }
+    }
+    
+    func multArrayBase(quad: Quadruple) {
+        let (shift, _) = findValType(address: quad.rightOperand)
+        let value = quad.leftOperand * (shift as! Int)
+        saveValue(address: quad.result, value: value)
+    }
+    
     
     func execute() {
         
@@ -471,6 +484,12 @@ class VirtualMachine {
                 break
             case "VERIFY":
                 printQuad(quad: quad)
+                currentQuadIndex = currentQuadIndex + 1
+                break
+            case "**":
+                printQuad(quad: quad)
+                multArrayBase(quad: quad)
+                currentQuadIndex = currentQuadIndex + 1
                 break
             case "ERA":
                 printQuad(quad: quad)

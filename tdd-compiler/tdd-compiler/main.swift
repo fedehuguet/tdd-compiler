@@ -35,7 +35,7 @@ let code: String = """
 
     main() {
         int b;
-        b = fact(3);
+        b = fact(3+1/2);
         while (b > 0) {
             print(b);
             b = b - 1;
