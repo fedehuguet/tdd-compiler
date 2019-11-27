@@ -149,7 +149,8 @@ algo_imprimible:
 asignation:
     ID EQUALS hiper_expresion SEMI_COLON
     | ID array_dimension EQUALS hiper_expresion SEMI_COLON
-    | ID matrix_dimension EQUALS hiper_expresion SEMI_COLON;
+    | ID matrix_dimension EQUALS hiper_expresion SEMI_COLON
+    | ID EQUALS READ OPEN_PAR TYPE CLOSE_PAR SEMI_COLON;
 
 while_loop:
     WHILE super_condition_check OPEN_BLOCK statement* CLOSE_BLOCK;
@@ -203,6 +204,7 @@ IF: 'if';
 ELSE: 'else';
 ELSEIF: 'elseif';
 PRINT: 'print';
+READ: 'read';
 
 COMMA: ',';
 

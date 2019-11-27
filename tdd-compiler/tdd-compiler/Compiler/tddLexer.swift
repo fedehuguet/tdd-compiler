@@ -22,9 +22,9 @@ open class tddLexer: Lexer {
             GREATER_EQUAL=20, AND=21, OR=22, DIFFERENT=23, NOT=24, EQUALITY=25, 
             EQUALS=26, PARAM_HEADER=27, RETURN_HEADER=28, TEST_HEADER=29, 
             FAT_ARROW=30, VOID=31, MAIN=32, RETURN=33, WHILE=34, IF=35, 
-            ELSE=36, ELSEIF=37, PRINT=38, COMMA=39, TYPE=40, VALUE=41, ID=42, 
-            CONST=43, DESCRIPTION=44, INT_VAL=45, NUMBER=46, STRING_VAL=47, 
-            CHAR_VAL=48, FLOAT_VAL=49, WHITESPACE=50, NEWLINE=51
+            ELSE=36, ELSEIF=37, PRINT=38, READ=39, COMMA=40, TYPE=41, VALUE=42, 
+            ID=43, CONST=44, DESCRIPTION=45, INT_VAL=46, NUMBER=47, STRING_VAL=48, 
+            CHAR_VAL=49, FLOAT_VAL=50, WHITESPACE=51, NEWLINE=52
 
 	public
 	static let channelNames: [String] = [
@@ -44,10 +44,10 @@ open class tddLexer: Lexer {
 		"GREATER_THAN", "LESS_EQUAL", "GREATER_EQUAL", "AND", "OR", "DIFFERENT", 
 		"NOT", "EQUALITY", "EQUALS", "PARAM_HEADER", "RETURN_HEADER", "TEST_HEADER", 
 		"FAT_ARROW", "VOID", "MAIN", "RETURN", "WHILE", "IF", "ELSE", "ELSEIF", 
-		"PRINT", "COMMA", "TYPE", "VALUE", "ID", "CONST", "DESCRIPTION", "INT_VAL", 
-		"NUMBER", "DESC", "STRING_VAL", "CHAR_VAL", "FLOAT_VAL", "INT", "FLOAT", 
-		"CHAR", "STR", "BOOL", "FALSE", "TRUE", "LOWER_CASE", "UPPPER_CASE", "DIGIT", 
-		"WHITESPACE", "NEWLINE"
+		"PRINT", "READ", "COMMA", "TYPE", "VALUE", "ID", "CONST", "DESCRIPTION", 
+		"INT_VAL", "NUMBER", "DESC", "STRING_VAL", "CHAR_VAL", "FLOAT_VAL", "INT", 
+		"FLOAT", "CHAR", "STR", "BOOL", "FALSE", "TRUE", "LOWER_CASE", "UPPPER_CASE", 
+		"DIGIT", "WHITESPACE", "NEWLINE"
 	]
 
 	private static let _LITERAL_NAMES: [String?] = [
@@ -55,7 +55,7 @@ open class tddLexer: Lexer {
 		"'*#'", "';'", "':'", "'+'", "'-'", "'*'", "'/'", "'<'", "'>'", "'<='", 
 		"'>='", "'&&'", "'||'", "'!='", "'!'", "'=='", "'='", "'@param'", "'@return'", 
 		"'@test'", "'=>'", "'void'", "'main'", "'return'", "'while'", "'if'", 
-		"'else'", "'elseif'", "'print'", "','"
+		"'else'", "'elseif'", "'print'", "'read'", "','"
 	]
 	private static let _SYMBOLIC_NAMES: [String?] = [
 		nil, "OPEN_BLOCK", "CLOSE_BLOCK", "OPEN_BRACKET", "CLOSE_BRACKET", "OPEN_PAR", 
@@ -64,8 +64,9 @@ open class tddLexer: Lexer {
 		"GREATER_THAN", "LESS_EQUAL", "GREATER_EQUAL", "AND", "OR", "DIFFERENT", 
 		"NOT", "EQUALITY", "EQUALS", "PARAM_HEADER", "RETURN_HEADER", "TEST_HEADER", 
 		"FAT_ARROW", "VOID", "MAIN", "RETURN", "WHILE", "IF", "ELSE", "ELSEIF", 
-		"PRINT", "COMMA", "TYPE", "VALUE", "ID", "CONST", "DESCRIPTION", "INT_VAL", 
-		"NUMBER", "STRING_VAL", "CHAR_VAL", "FLOAT_VAL", "WHITESPACE", "NEWLINE"
+		"PRINT", "READ", "COMMA", "TYPE", "VALUE", "ID", "CONST", "DESCRIPTION", 
+		"INT_VAL", "NUMBER", "STRING_VAL", "CHAR_VAL", "FLOAT_VAL", "WHITESPACE", 
+		"NEWLINE"
 	]
 	public
 	static let VOCABULARY = Vocabulary(_LITERAL_NAMES, _SYMBOLIC_NAMES)
