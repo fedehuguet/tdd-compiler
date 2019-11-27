@@ -10,63 +10,100 @@ import Foundation
 import Antlr4
 
 let code: String = """
- #*
- %% Test array params
- @param int  arr %% Arr to test
- *#
-    void testerinos(int arr[4], int mat2[2][2]) {
-        int a, b;
-        a = 4;
-        while(a >= 0) {
-            arr[a] = a;
-            print("Inside void!!!");
-            print(arr[a]);
-            a = a - 1;
-        }
-        a = 1;
-        while(a >= 0) {
-            b = 1;
-            while(b >= 0) {
-                mat2[a][b] = a*b;
-                print("Inside void!!!");
-                print(mat2[a][b]);
-                b = b - 1;
-            }
-            a = a - 1;
-        }
-    }
 
 #*
 %% Print an array
+@param int arr %% Array that will be printed
 *#
 void printArray(int arr[10]) {
+    int index;
+    index = 0;
+    while (index < 10) {
+        print(arr[index]);
+        index = index + 1;
+    }
+}
 
+#*
+%% Bubble sort
+@param int arr %% Array that will be sorted
+*#
+void sort(int arr[10]) {
+    bool swaped;
+    int index, n, tmp;
+    swaped = true;
+    index = 0;
+    while (index < 9 && swaped == true) {
+        swaped = false;
+        n = index + 1;
+        while (n < 10) {
+            if (arr[index] > arr[n]) {
+                tmp = arr[index];
+                arr[index] = arr[n];
+                arr[n] = tmp;
+            }
+            n = n + 1;
+        }
+        index = index + 1;
+    }
+    printArray(arr);
 }
 
     main() {
-        int arr2[4], mat[2][2];
-        int a, b;
-        a = 4;
-        while(a >= 0) {
-            arr2[a] = a;
-            a = a - 1;
-        }
-        a = read(int);
-        b = read(int);
-        print(a+b);
-        b = b - 1;
-        while(a >= 0) {
-            b = 1;
-            while(b >= 0) {
-                mat[a][b] = a*b;
-                b = b - 1;
-            }
-            a = a - 1;
-        }
-        print(a);
-        testerinos(arr2, mat);
+        int arr[10];
+        arr[0] = 4;
+        arr[1] = 2;
+        arr[2] = 1;
+        arr[3] = 6;
+        arr[4] = 1;
+        arr[5] = 19;
+        arr[6] = 22;
+        arr[7] = 34;
+        arr[8] = 55;
+        arr[9] = 45;
+        print("Arreglo original");
+        printArray(arr);
+        print("Sorted");
+        sort(arr);
     }
 
+"""
+
+let code3: String = """
+#*
+    %% Getting the nth Fibonacci number
+    @param int n %% The number of the sequence we want
+    @return int %% El numero de la secuencia
+    @test (10) => 55
+*#
+int fib(int n) {
+    if (n == 1 || n == 0) {
+
+        return n;
+    }
+    return fib(n-1) + fib(n-2);
+
+}
+
+#*
+%% Function to add two variables
+@param int  a %% First value to add
+@param int b %% Second value to add
+@return int %% la suma de los dos numeros
+
+@test (2,4) => 6
+@test (120,200) => 320
+*#
+
+int suma(int a, int b) {
+    return a + b;
+}
+
+    main() {
+      int n;
+        n = 10;
+        print(fib(n));
+    }
 """
 
 let code2: String = """
@@ -146,7 +183,7 @@ main(){
 """
 
 do {
-    let lexer = tddLexer(ANTLRInputStream(code))
+    let lexer = tddLexer(ANTLRInputStream(code3))
     let tokens = CommonTokenStream(lexer)
     let parser = try tddParser(tokens)
     let tree = try parser.program()

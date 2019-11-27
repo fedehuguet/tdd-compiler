@@ -396,7 +396,7 @@ class VirtualMachine {
     func param_asign(quad: Quadruple){
         var curAddress = quad.leftOperand!
         var curResult = quad.result!
-        for _ in 0...quad.rightOperand {
+        for _ in 0...quad.rightOperand - 1 {
             let (leftOperand, _) = findValType(address: curAddress)
             saveValue(address: curResult, value: leftOperand, param: true)
             curAddress = curAddress + 1

@@ -8,6 +8,12 @@ enum SolvingDimen {
     case none
 }
 
+struct Test {
+    let name: String
+    var params: [String]
+    var returnVal: String
+}
+
 // Little helper function to facilitate getting substrings
 extension String {
     subscript(_ range: CountableRange<Int>) -> String {
@@ -33,8 +39,8 @@ var sTypes = [Type]()
 var arrayQuads = [Quadruple]()
 var sJumps = [Int]() //Contains index of unfilled quadruple
 var sGoto = [Int]()
-var sWhile = [Int]()
 var sFunctions = [Function]()
+var tests = [Test]()
 // (Base address of array or matrix , (First dimension, second dimension))
 var pendingArrayAddresses = [Variable]()
 
@@ -363,13 +369,22 @@ open class tddBaseListener: tddListener {
         if testParams.count > 0 {
             documentation.append("- **\(docCurrFunName)**(")
         }
+        var params = [String]()
+        var test = Test(name: docCurrFunName, params: params, returnVal: "0")
         for (index, param) in testParams.enumerated() {
             if index == testParams.count - 1 {
                 documentation.append("\(param)) => \(ctx.VALUE()!.getText())\n")
+                params.append(param)
+                test.returnVal = ctx.VALUE()!.getText()
             } else {
                 documentation.append("\(param),")
+                params.append(param)
+                
             }
         }
+        test.params = params
+        tests.append(test)
+
     }
 
     /**
@@ -625,8 +640,6 @@ open class tddBaseListener: tddListener {
             }
             symbols.functionsDictionary[scope]?.variables.append(variable)
             symbols.functionsDictionary[scope]?.addInput()
-            sOperands.insert(variable.address, at: 0)
-            sTypes.insert(variable.type, at: 0)
         }
     }
     /**
@@ -672,8 +685,6 @@ open class tddBaseListener: tddListener {
             }
             symbols.functionsDictionary[scope]?.variables.append(variable)
             symbols.functionsDictionary[scope]?.addInput()
-            sOperands.insert(variable.address, at: 0)
-            sTypes.insert(variable.type, at: 0)
         }
     }
     /**
@@ -951,6 +962,7 @@ open class tddBaseListener: tddListener {
             }
         }
 
+     if pendingArrayAddresses.isEmpty {
         if let oper = ctx.AND()?.getText() {
             sOperators.insert(oper, at:0)
             // Create Quadruple
@@ -962,7 +974,7 @@ open class tddBaseListener: tddListener {
             sOperators.insert(oper, at:0)
             let newQuad = createQuad()
              arrayQuads.append(newQuad)
-        }
+        }}
     }
 
     /**
@@ -990,7 +1002,7 @@ open class tddBaseListener: tddListener {
      * <p>The default implementation does nothing.</p>
      */
     open func exitExp(_ ctx: tddParser.ExpContext) {
-        if (!sOperators.isEmpty) {
+        if (!sOperators.isEmpty && pendingArrayAddresses.isEmpty) {
             if(sOperators.first! == "==" || sOperators.first! == "!=" || sOperators.first! == "<" || sOperators.first! == ">" || sOperators.first! == "<=" || sOperators.first! == ">=") {
                 let newQuad = createQuad()
                 arrayQuads.append(newQuad)
@@ -1060,7 +1072,9 @@ open class tddBaseListener: tddListener {
                 //Compile error var does not exist
                 return
             }
-            if variable.dimensionated {
+            
+            if (variable.dimensionated  && (ctx.array_dimension() != nil
+                || ctx.matrix_dimension() != nil)){
                 pendingArrayAddresses.append(variable)
             } else {
                 sOperands.insert(variable.address, at:0)
@@ -1333,9 +1347,7 @@ open class tddBaseListener: tddListener {
      *
      * <p>The default implementation does nothing.</p>
      */
-    open func enterWhile_loop(_ ctx: tddParser.While_loopContext) {
-        sWhile.insert(arrayQuads.count, at: 0)
-    }
+    open func enterWhile_loop(_ ctx: tddParser.While_loopContext) {}
     /**
      * {@inheritDoc}
      *
@@ -1343,14 +1355,10 @@ open class tddBaseListener: tddListener {
      */
     open func exitWhile_loop(_ ctx: tddParser.While_loopContext) {
         //Generate GOTO
-        let quad = Quadruple.init(quadOperator: "GOTO", leftOperand: -1, rightOperand: -1, result: sWhile.first!)
-        sWhile.removeFirst()
+        let quad = Quadruple.init(quadOperator: "GOTO", leftOperand: -1, rightOperand: -1, result: sJumps.first!-1)
         arrayQuads.append(quad)
-        sGoto.insert(arrayQuads.count - 1, at: 0)
-        //Solve previous quad
-        if(!sJumps.isEmpty) {
-            solveQuad()
-        }
+        arrayQuads[sJumps.first!].fillMissingResult(result: arrayQuads.count)
+        sJumps.removeFirst()
     }
     
     /**
