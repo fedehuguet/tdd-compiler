@@ -10,7 +10,13 @@ import Foundation
 import Antlr4
 
 let code: String = """
- 
+ #*
+ %% Test array params
+ @param int  arr %% Arr to test
+ *#
+    void testerinos(int arr[4], int mat[5][5]) {
+        print("AA");
+    }
 
     main() {
         int b;
@@ -18,6 +24,7 @@ let code: String = """
         int y,x;
         string arr[5];
         string mat[5][5];
+        int arr2[4], mat2[5][5];
         b = 4;
         y = 2;
         hello = "Hello";
@@ -31,6 +38,8 @@ let code: String = """
             }
             y = y - 1;
         }
+
+        testerinos(arr2, mat2);
     }
 
 """

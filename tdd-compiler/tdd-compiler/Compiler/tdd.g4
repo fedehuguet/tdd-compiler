@@ -38,7 +38,11 @@ void_function_dec:
 
 inputs:
     TYPE ID
-    | TYPE ID COMMA inputs;
+    | TYPE ID COMMA inputs
+    | TYPE ID array_dimension_dec
+    | TYPE ID array_dimension_dec COMMA inputs
+    | TYPE ID matrix_dimension_dec
+    | TYPE ID matrix_dimension_dec COMMA inputs;
 
 body:
     (variable | non_atomic)* statement*;
