@@ -9,18 +9,35 @@
 import Foundation
 import Antlr4
 
-let code2: String = """
+let code: String = """
+ 
+
     main() {
-        int a;
-        if (a > 3) {
-            print("Hola");
+        int b;
+        string hello, world;
+        int y,x;
+        string arr[5];
+        string mat[5][5];
+        b = 4;
+        y = 2;
+        hello = "Hello";
+
+        while (y >= 0){
+            x = 2;
+            while (x >= 0){
+                mat[y][x] = hello;
+                print(mat[y][x]);
+                x = x - 1;
+            }
+            y = y - 1;
         }
     }
 
 """
 
-let code: String = """
+let code2: String = """
 int a;
+
 #*
 %% Ala a
 @param int  a %% A value
@@ -55,7 +72,7 @@ int nam(int a, float b) {
 
 int suma(int a, int b) {
     print(a);
-    return nam(nam(2,4.0), 4.0) + nam(2,4.0);
+    return nam(2,4.0);
 }
 
 #*
@@ -90,6 +107,7 @@ main(){
         a = a - 1;
     }
     print(4+2);
+    noReturnParams(a,"hola");
 }
 """
 

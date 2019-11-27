@@ -29,33 +29,41 @@ class Memory {
         self.dirBase = dirBase
     }
     
-    func addInt() -> Int {
-        return addVar(typeBase: integerBase, typeCounter: &integerCounter)
+    func addInt(size: Int = 1) -> Int {
+        return addVar(typeBase: integerBase, typeCounter: &integerCounter, size: size)
     }
     
-    func addFloat() -> Int {
-        return addVar(typeBase: floatBase, typeCounter: &floatCounter)
+    func addFloat(size: Int = 1) -> Int {
+        return addVar(typeBase: floatBase, typeCounter: &floatCounter, size: size)
     }
     
-    func addString() -> Int {
-        return addVar(typeBase: stringBase, typeCounter: &stringCounter)
+    func addString(size: Int = 1) -> Int {
+        return addVar(typeBase: stringBase, typeCounter: &stringCounter, size: size)
     }
     
-    func addChar() -> Int {
-        return addVar(typeBase: charBase, typeCounter: &charCounter)
+    func addChar(size: Int = 1) -> Int {
+        return addVar(typeBase: charBase, typeCounter: &charCounter, size: size)
     }
     
-    func addBool() -> Int {
-        return addVar(typeBase: boolBase, typeCounter: &boolCounter)
+    func addBool(size: Int = 1) -> Int {
+        return addVar(typeBase: boolBase, typeCounter: &boolCounter, size: size)
     }
     
-    private func addVar(typeBase: Int, typeCounter: inout Int) -> Int {
+    private func addVar(typeBase: Int, typeCounter: inout Int, size: Int = 1) -> Int {
         if (typeCounter  > varTotal) {
             return -1
         }
         let retVal = dirBase + typeBase + typeCounter
-        typeCounter = typeCounter + 1
+        typeCounter = typeCounter + size
         return retVal
+    }
+    
+    func clean() {
+        integerCounter = 0
+        floatCounter = 0
+        stringCounter = 0
+        charCounter = 0
+        boolCounter = 0
     }
     
 }

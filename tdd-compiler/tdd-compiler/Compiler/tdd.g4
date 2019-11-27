@@ -4,11 +4,11 @@ grammar tdd;
 */
 
 program:
-    variable* function* main;
+    (variable | non_atomic)* function* main;
 
 function:
-    header function_dec OPEN_BLOCK function_body CLOSE_BLOCK
-    | header void_function_dec OPEN_BLOCK void_function_body CLOSE_BLOCK;
+    header function_dec OPEN_BLOCK body CLOSE_BLOCK
+    | header void_function_dec OPEN_BLOCK body CLOSE_BLOCK;
 
 header:
     OPEN_HEADER header_body CLOSE_HEADER;
@@ -40,14 +40,8 @@ inputs:
     TYPE ID
     | TYPE ID COMMA inputs;
 
-function_body:
-    body return_statement;
-
-void_function_body:
-    body;
-
 body:
-    variable* statement*;
+    (variable | non_atomic)* statement*;
 
 return_statement:
     RETURN hiper_expresion SEMI_COLON;
@@ -61,12 +55,37 @@ variable:
 var_declaration:
     ID SEMI_COLON
     | ID COMMA var_declaration;
+    
+non_atomic:
+    TYPE na_declaration+;
+    
+na_declaration:
+    ID array_dimension_dec SEMI_COLON
+    | ID array_dimension_dec COMMA na_declaration
+    | ID matrix_dimension_dec SEMI_COLON
+    | ID matrix_dimension_dec COMMA na_declaration;
+
+array_dimension_dec:
+    OPEN_BRACKET VALUE CLOSE_BRACKET;
+    
+matrix_dimension_dec:
+    OPEN_BRACKET VALUE CLOSE_BRACKET
+    OPEN_BRACKET VALUE CLOSE_BRACKET;
+    
+array_dimension:
+        OPEN_BRACKET hiper_expresion CLOSE_BRACKET;
+        
+matrix_dimension:
+        OPEN_BRACKET hiper_expresion CLOSE_BRACKET
+        OPEN_BRACKET hiper_expresion CLOSE_BRACKET;
 
 statement:
     asignation
     | condition
     | print
-    | while_loop;
+    | while_loop
+    | void_func_call
+    | return_statement;
     
 super_condition_check:
     condition_check;
@@ -104,7 +123,9 @@ termino:
 
 factor:
     SUBSTRACT VALUE
-    | VALUE | ID 
+    | VALUE | ID
+    | ID array_dimension
+    | ID matrix_dimension
     | OPEN_PAR hiper_expresion CLOSE_PAR
     | ID OPEN_PAR function_hiper_expresions? CLOSE_PAR;
     
@@ -122,10 +143,15 @@ algo_imprimible:
     | STRING_VAL COMMA algo_imprimible;
 
 asignation:
-    ID EQUALS expresion SEMI_COLON;
+    ID EQUALS hiper_expresion SEMI_COLON
+    | ID array_dimension EQUALS hiper_expresion SEMI_COLON
+    | ID matrix_dimension EQUALS hiper_expresion SEMI_COLON;
 
 while_loop:
     WHILE super_condition_check OPEN_BLOCK statement* CLOSE_BLOCK;
+    
+void_func_call:
+    ID OPEN_PAR function_hiper_expresions? CLOSE_PAR SEMI_COLON;
 
 /*
     Lexer rules
@@ -134,6 +160,8 @@ while_loop:
 //Reserved characters
 OPEN_BLOCK: '{';
 CLOSE_BLOCK: '}';
+OPEN_BRACKET: '[';
+CLOSE_BRACKET: ']';
 OPEN_PAR: '(';
 CLOSE_PAR: ')';
 OPEN_COMMENT: '/*';
@@ -180,14 +208,13 @@ ID: LOWER_CASE (LOWER_CASE | UPPPER_CASE | '_')* NUMBER?;
 CONST: UPPPER_CASE (UPPPER_CASE | '_')* NUMBER?;
 DESCRIPTION: DESC (LOWER_CASE | UPPPER_CASE | WHITESPACE)+;
 
-
+INT_VAL: [0-9]+;
 NUMBER: DIGIT+;
 
 fragment DESC: '%%';
 
 STRING_VAL: '"'(.*?)'"';
 CHAR_VAL: '\'' (.?) '\'';
-INT_VAL: NUMBER;
 FLOAT_VAL: NUMBER '.' NUMBER;
 
 fragment INT: 'int';

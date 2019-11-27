@@ -2,6 +2,12 @@
 
 import Antlr4
 
+enum SolvingDimen {
+    case array
+    case matrix
+    case none
+}
+
 // Little helper function to facilitate getting substrings
 extension String {
     subscript(_ range: CountableRange<Int>) -> String {
@@ -16,7 +22,9 @@ let semanticCube = SemanticCube()
 var symbols = SymbolTable()
 var scope: String = "error"
 
-var function_param_index: Int = 0
+var sfunction_param_index = [Int]()
+
+var solvingDimen: SolvingDimen = .none
 
 //Stacks
 var sOperators = [String]()
@@ -27,8 +35,8 @@ var sJumps = [Int]() //Contains index of unfilled quadruple
 var sGoto = [Int]()
 var sWhile = [Int]()
 var sFunctions = [Function]()
-
-var constantsTable = [Variable]()
+// (Base address of array or matrix , (First dimension, second dimension))
+var pendingArrayAddresses = [Variable]()
 
 var documentation = "# Documentation \n"
 var docCurrFunName = ""
@@ -38,6 +46,8 @@ let globalMemory = Memory(dirBase: 0)
 let constantMemory = Memory(dirBase: 10000)
 let temporalMemory = Memory(dirBase: 20000)
 let localMemory = Memory(dirBase: 30000)
+
+var constantVals = ExecMemory(dirBase: 10000)
 
 func findType(value: String) -> Type {
     var sType : String = "int"
@@ -73,24 +83,55 @@ func createTemp(type: Type) -> Int {
     }
 }
 
-func createVariable(memory: Memory, id: String, type: Type, input: Bool = false) -> Variable {
+//func getNegativeConstant(name: String) -> Variable {
+//    for constant in constantsTable {
+//        if constant.name == name {
+//            return constant
+//        }
+//    }
+//    let variable = createVariable(memory: constantMemory, id: "-\(name)", type: findType(value: name))
+//    constantsTable.append(variable)
+//    return variable
+//}
+//
+//func getConstant(name: String) -> Variable {
+//    for constant in constantsTable {
+//        if constant.name == name {
+//            return constant
+//        }
+//    }
+//    let type = findType(value: name)
+//    let variable : Variable
+//    if type == .string {
+//        // Avoid double quotes on strings
+//        variable = createVariable(memory: constantMemory, id: name.replacingOccurrences(of: "\"", with: ""), type: type)
+//    } else {
+//        variable = createVariable(memory: constantMemory, id: "\(name)", type: type)
+//    }
+//    constantsTable.append(variable)
+//    return variable
+//}
+
+
+
+func createVariable(memory: Memory, id: String, type: Type, input: Bool = false, size: Int = 1, dimensionated: Bool = false, x: Int = 1, y: Int = 1) -> Variable {
     let address: Int!
     switch type {
     case .int:
-        address = memory.addInt()
+        address = memory.addInt(size: size)
     case .float:
-        address = memory.addFloat()
+        address = memory.addFloat(size: size)
     case .string:
-        address = memory.addString()
+        address = memory.addString(size: size)
     case .bool:
-        address = memory.addBool()
+        address = memory.addBool(size: size)
     case .char:
-        address = memory.addChar()
+        address = memory.addChar(size: size)
     case .error, .void:
         address = -1
     }
     // TODO: Handle error in case the address is -1
-    return Variable(name: id, type: type, address: address, input: input)
+    return Variable(name: id, type: type, address: address, input: input, dimensionated: dimensionated, size: size, x: x, y: y)
 }
 
 func solveQuad() {
@@ -124,15 +165,18 @@ func createQuad() -> Quadruple {
 
 func addParamQuad() -> Quadruple {
     let function = sFunctions.first!
-    if function_param_index >= function.input_total || !function.variables[function.input_total - function_param_index - 1].input {
+    if sfunction_param_index.first! >= function.input_total || !function.variables[function.input_total - sfunction_param_index.first! - 1].input {
         print("ERROR argument quantity mismatch")
     }
-    if sTypes.first! != function.variables[function.input_total - function_param_index - 1].type {
+    if sTypes.first! != function.variables[function.input_total - sfunction_param_index.first! - 1].type {
         print("ERROR types mismatch")
     }
+    // Potential way to not allow arrays as parameters
+//    if function.variables[function.input_total - function_param_index - 1].dimensionated {
+//        print("Error, no dimensionated variables as parameters")
+//    }
     
-    let temporalMemoryAssignedSpace = createTemp(type: sTypes.first!)
-    let newQuad = Quadruple(quadOperator: "parameter", leftOperand: sOperands.first!, rightOperand: -1, result: temporalMemoryAssignedSpace)
+    let newQuad = Quadruple(quadOperator: "PARAM", leftOperand: sOperands.first!, rightOperand: -1, result: function.variables[function.input_total - sfunction_param_index.first! - 1].address)
     sTypes.removeFirst()
     sOperands.removeFirst()
     
@@ -155,6 +199,9 @@ open class tddBaseListener: tddListener {
         scope = "global"
         let function = Function(name: scope, type: .int, scope: scope)
         symbols.insert(function: function)
+        //Instert jump to main
+        let jumtToMain = Quadruple(quadOperator: "GOTO", leftOperand: -1, rightOperand: -1, result: -1)
+        arrayQuads.append(jumtToMain)
         
     }
     /**
@@ -163,15 +210,21 @@ open class tddBaseListener: tddListener {
      * <p>The default implementation does nothing.</p>
      */
     open func exitProgram(_ ctx: tddParser.ProgramContext) {
+        let endProg = Quadruple(quadOperator: "END", leftOperand: -1, rightOperand: -1, result: -1)
+        arrayQuads.append(endProg)
+        localMemory.clean()
         print("QUADRUPLOS")
-        for quad in arrayQuads {
+        for (index, quad) in arrayQuads.enumerated() {
             guard let oper = quad.quadOperator, let left = quad.leftOperand, let right = quad.rightOperand, let res = quad.result else {
                 return
             }
-            print("operator \(oper) left: \(left) right \(right) result: \(res)")
+            print("\(index): operator \(oper) left: \(left) right \(right) result: \(res)")
         }
         
         print(documentation)
+        //Temporal VM test
+        let vm = VirtualMachine(quadruples: arrayQuads, constantMemory: constantVals)
+        vm.execute()
     }
 
     /**
@@ -185,7 +238,11 @@ open class tddBaseListener: tddListener {
      *
      * <p>The default implementation does nothing.</p>
      */
-    open func exitFunction(_ ctx: tddParser.FunctionContext) { }
+    open func exitFunction(_ ctx: tddParser.FunctionContext) {
+        let endProc = Quadruple(quadOperator: "ENDPROC", leftOperand: -1, rightOperand: -1, result: -1)
+        arrayQuads.append(endProc)
+        localMemory.clean()
+    }
 
     /**
      * {@inheritDoc}
@@ -370,7 +427,7 @@ open class tddBaseListener: tddListener {
             return
         }
         scope = functionName
-        let function = Function(name: functionName, type: Type(type: "void"), scope: scope)
+        let function = Function(name: functionName, type: .void, scope: scope)
         symbols.insert(function: function)
     }
     /**
@@ -410,32 +467,6 @@ open class tddBaseListener: tddListener {
      *
      * <p>The default implementation does nothing.</p>
      */
-    open func enterFunction_body(_ ctx: tddParser.Function_bodyContext) { }
-    /**
-     * {@inheritDoc}
-     *
-     * <p>The default implementation does nothing.</p>
-     */
-    open func exitFunction_body(_ ctx: tddParser.Function_bodyContext) { }
-
-    /**
-     * {@inheritDoc}
-     *
-     * <p>The default implementation does nothing.</p>
-     */
-    open func enterVoid_function_body(_ ctx: tddParser.Void_function_bodyContext) { }
-    /**
-     * {@inheritDoc}
-     *
-     * <p>The default implementation does nothing.</p>
-     */
-    open func exitVoid_function_body(_ ctx: tddParser.Void_function_bodyContext) { }
-
-    /**
-     * {@inheritDoc}
-     *
-     * <p>The default implementation does nothing.</p>
-     */
     open func enterBody(_ ctx: tddParser.BodyContext) {
         
     }
@@ -458,14 +489,15 @@ open class tddBaseListener: tddListener {
      * <p>The default implementation does nothing.</p>
      */
     open func exitReturn_statement(_ ctx: tddParser.Return_statementContext) {
-        let return_type = symbols.functionsDictionary[scope]?.type
-        if (sTypes.first! != return_type) {
+        let function = symbols.functionsDictionary[scope]
+        if (sTypes.first! != function?.type) {
             print("Return type does not match function")
         }
-        let newQuad = Quadruple(quadOperator: "RETURN", leftOperand: -1, rightOperand: -1, result: sOperands.first!)
+        let newQuad = Quadruple(quadOperator: "RETURN", leftOperand: sOperands.first!, rightOperand: -1, result: function!.return_address)
         arrayQuads.append(newQuad)
         sOperands.removeFirst()
         sTypes.removeFirst()
+        temporalMemory.clean()
     }
 
     /**
@@ -475,8 +507,10 @@ open class tddBaseListener: tddListener {
      */
     open func enterMain(_ ctx: tddParser.MainContext) {
         scope = "main"
-        let function = Function(name: scope, type: .int, scope: scope)
+        let function = Function(name: scope, type: .void, scope: scope)
         symbols.insert(function: function)
+        //Solve jump to Main
+        arrayQuads[0].fillMissingResult(result: arrayQuads.count)
     }
     /**
      * {@inheritDoc}
@@ -501,6 +535,199 @@ open class tddBaseListener: tddListener {
      */
     open func exitVariable(_ ctx: tddParser.VariableContext) {
        
+    }
+    
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation does nothing.</p>
+     */
+    open func enterNon_atomic(_ ctx: tddParser.Non_atomicContext) { }
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation does nothing.</p>
+     */
+    open func exitNon_atomic(_ ctx: tddParser.Non_atomicContext) { }
+
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation does nothing.</p>
+     */
+    open func enterNa_declaration(_ ctx: tddParser.Na_declarationContext) { }
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation does nothing.</p>
+     */
+    open func exitNa_declaration(_ ctx: tddParser.Na_declarationContext) {
+        
+        var parent = ctx.parent
+               while(!((parent as? tddParser.Non_atomicContext) != nil)) {
+                   parent = parent?.parent
+               }
+               guard let type = (parent as! tddParser.Non_atomicContext).TYPE(), let id = ctx.ID() else {
+                   print("error")
+                   return
+               }
+        let variable: Variable!
+        var size = 1
+        var x: Int = 1
+        var y: Int = 1
+
+        if let arrayDimenInfo = ctx.children![1] as? tddParser.Array_dimension_decContext {
+            x = Int(arrayDimenInfo.VALUE()!.getText()) ?? 1
+            size = x
+        } else if let matrixDimenInfo = ctx.children![1] as? tddParser.Matrix_dimension_decContext {
+            x = Int(matrixDimenInfo.VALUE()[0].getText()) ?? 1
+            y = Int(matrixDimenInfo.VALUE()[1].getText()) ?? 1
+            size = x * y
+
+        }
+               if scope == "global" {
+                variable = createVariable(memory: globalMemory, id: id.getText(), type: Type(type: type.getText()), size: size, dimensionated: true, x: x, y: y)
+               } else {
+                variable = createVariable(memory: localMemory, id: id.getText(), type: Type(type: type.getText()), size: size, dimensionated: true, x: x, y: y)
+               }
+               symbols.functionsDictionary[scope]?.variables.append(variable)
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation does nothing.</p>
+     */
+    open func enterArray_dimension_dec(_ ctx: tddParser.Array_dimension_decContext) {
+        print(ctx.getText())
+        print(ctx.VALUE()!)
+        let value = ctx.VALUE()!.getText()
+        let variable = createVariable(memory: constantMemory, id: value, type: .int)
+        constantVals.saveToVals(address: variable.address, value: ctx.VALUE()!.getText())
+    }
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation does nothing.</p>
+     */
+    open func exitArray_dimension_dec(_ ctx: tddParser.Array_dimension_decContext) {
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation does nothing.</p>
+     */
+    open func enterMatrix_dimension_dec(_ ctx: tddParser.Matrix_dimension_decContext) {
+        let value1 = ctx.VALUE()[0].getText()
+        let value2 = ctx.VALUE()[1].getText()
+        
+        let var1 = createVariable(memory: constantMemory, id: value1, type: .int)
+        let var2 = createVariable(memory: constantMemory, id: value2, type: .int)
+        
+        constantVals.saveToVals(address: var1.address, value: value1)
+        
+        constantVals.saveToVals(address: var2.address, value: value2)
+        
+    }
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation does nothing.</p>
+     */
+    open func exitMatrix_dimension_dec(_ ctx: tddParser.Matrix_dimension_decContext) {
+//        sOperands.removeFirst()
+//        sOperands.removeFirst()
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation does nothing.</p>
+     */
+    open func enterArray_dimension(_ ctx: tddParser.Array_dimensionContext) {
+        solvingDimen = .array
+
+
+    }
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation does nothing.</p>
+     */
+    open func exitArray_dimension(_ ctx: tddParser.Array_dimensionContext) {
+        
+        
+        print(ctx.getText())
+        // Crear cuadruplo de VER
+        let indexAddress = sOperands.first!
+        // TODO: Get real address for array (Sumarle el desplazamiento)
+        let verQuad = Quadruple(quadOperator: "VER", leftOperand: indexAddress, rightOperand: 0, result: pendingArrayAddresses.first!.x)
+        sOperands.removeFirst()
+        sTypes.removeFirst()
+        arrayQuads.append(verQuad)
+        // Use formula x + DirBase to get address
+        let tmpAddress = -1 * createTemp(type: .int)
+        let addQuad = Quadruple(quadOperator: "+arr", leftOperand: indexAddress, rightOperand: pendingArrayAddresses.first!.address, result: tmpAddress)
+        arrayQuads.append(addQuad)
+        sOperands.insert(tmpAddress, at: 0)
+        sTypes.insert(pendingArrayAddresses.first!.type, at:0)
+        pendingArrayAddresses.removeFirst()
+        solvingDimen = .none
+        
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation does nothing.</p>
+     */
+    open func enterMatrix_dimension(_ ctx: tddParser.Matrix_dimensionContext) {
+        solvingDimen = .matrix
+    }
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation does nothing.</p>
+     */
+    open func exitMatrix_dimension(_ ctx: tddParser.Matrix_dimensionContext) {
+        print(ctx.getText())
+        // Crear primer cuadruplo de VER
+        let indexAddress = sOperands.first!
+        // TODO: Get real address for array (Sumarle el desplazamiento)
+        let verQuad = Quadruple(quadOperator: "VER", leftOperand: indexAddress, rightOperand: 0, result: pendingArrayAddresses.first!.y)
+        sOperands.removeFirst()
+               arrayQuads.append(verQuad)
+        
+        
+        let indexAddress2 = sOperands.first!
+        let verQuad2 = Quadruple(quadOperator: "VER", leftOperand: indexAddress2, rightOperand: 0, result: pendingArrayAddresses.first!.x)
+        arrayQuads.append(verQuad2)
+        sOperands.removeFirst()
+        
+        // Use formula x * d2 + y + DirBase to get address
+        
+        let x = indexAddress2
+        let y = indexAddress
+        let d2 = pendingArrayAddresses.first!.y
+        let dirBase = pendingArrayAddresses.first!.address
+        let tmp1 = createTemp(type: .int)
+        let multQuad = Quadruple(quadOperator: "*", leftOperand: constantVals.getAddressForVal(val: d2), rightOperand: x, result: tmp1)
+        
+        arrayQuads.append(multQuad)
+        
+        let tmp2 = createTemp(type: .int)
+        let addQuad = Quadruple(quadOperator: "+", leftOperand: tmp1, rightOperand: y, result: tmp2)
+        arrayQuads.append(addQuad)
+        
+        let tmp3 = -1 * createTemp(type: .int)
+        let addQuad2 = Quadruple(quadOperator: "+arr", leftOperand: tmp2, rightOperand: dirBase, result: tmp3)
+        arrayQuads.append(addQuad2)
+        sOperands.insert(tmp3, at: 0)
+        sTypes.insert(pendingArrayAddresses.first!.type, at: 0)
+        pendingArrayAddresses.removeFirst()
+        solvingDimen = .none
+        
     }
 
     /**
@@ -557,6 +784,7 @@ open class tddBaseListener: tddListener {
     open func exitSuper_condition_check(_ ctx: tddParser.Super_condition_checkContext) {
         sTypes.removeFirst()
         sOperands.removeFirst()
+        temporalMemory.clean()
         let quad = Quadruple.init(quadOperator: "GOTOF", leftOperand: arrayQuads[arrayQuads.count-1].result, rightOperand: -1, result: -1)
         arrayQuads.append(quad)
         sJumps.insert(arrayQuads.count - 1, at: 0)
@@ -666,7 +894,6 @@ open class tddBaseListener: tddListener {
      * <p>The default implementation does nothing.</p>
      */
     open func exitHiper_expresion(_ ctx: tddParser.Hiper_expresionContext) {
-        print (ctx.getText())
         //Check for closing parenthesis
         if let parent = ctx.parent as? tddParser.FactorContext {
             if parent.CLOSE_PAR() != nil && sOperators.first == "(" {
@@ -677,6 +904,7 @@ open class tddBaseListener: tddListener {
                 return
             }
         }
+
         if let oper = ctx.AND()?.getText() {
             sOperators.insert(oper, at:0)
             // Create Quadruple
@@ -756,7 +984,7 @@ open class tddBaseListener: tddListener {
      * <p>The default implementation does nothing.</p>
      */
     open func exitTermino(_ ctx: tddParser.TerminoContext) {
-        if (!sOperators.isEmpty) {
+        if (!sOperators.isEmpty && solvingDimen == .none) {
             //TODO gen quadruple with sOperators.first!
             if(sOperators.first! == "+" || sOperators.first! == "-") {
                let newQuad = createQuad()
@@ -780,16 +1008,18 @@ open class tddBaseListener: tddListener {
      * <p>The default implementation does nothing.</p>
      */
     open func enterFactor(_ ctx: tddParser.FactorContext) {
-        print(ctx.getText())
         //Check for ID
         if let id = ctx.ID()?.getText() {
             guard let variable = symbols.findID(scope: scope, id: id) else {
                 //Compile error var does not exist
                 return
             }
-            
-            sOperands.insert(variable.address, at:0)
-            sTypes.insert(variable.type, at:0)
+            if variable.dimensionated {
+                pendingArrayAddresses.append(variable)
+            } else {
+                sOperands.insert(variable.address, at:0)
+                sTypes.insert(variable.type, at:0)
+            }
         }
         //Check for negative constant
         else if ctx.SUBSTRACT()?.getText() != nil {
@@ -798,14 +1028,14 @@ open class tddBaseListener: tddListener {
                 return
             }
             let variable = createVariable(memory: constantMemory, id: "-\(value)", type: findType(value: value))
-            constantsTable.append(variable)
+            constantVals.saveToVals(address: variable.address, value: variable.name)
             sOperands.insert(variable.address, at:0)
             sTypes.insert(variable.type, at:0)
         }
         //Check for constant
         else if let value = ctx.VALUE()?.getText() {
             let variable = createVariable(memory: constantMemory, id: value, type: findType(value: value))
-            constantsTable.append(variable)
+            constantVals.saveToVals(address: variable.address, value: variable.name)
             sOperands.insert(variable.address, at:0)
             sTypes.insert(variable.type, at:0)
         }
@@ -818,7 +1048,7 @@ open class tddBaseListener: tddListener {
     open func exitFactor(_ ctx: tddParser.FactorContext) {
         if (!sOperators.isEmpty) {
             //TODO gen quadruple with sOperators.first!
-            if(sOperators.first! == "*" || sOperators.first! == "/") {
+            if((sOperators.first! == "*" || sOperators.first! == "/") && solvingDimen == .none) {
                let newQuad = createQuad()
                 arrayQuads.append(newQuad)
 
@@ -840,20 +1070,35 @@ open class tddBaseListener: tddListener {
      * <p>The default implementation does nothing.</p>
      */
     open func enterFunction_hiper_expresions(_ ctx: tddParser.Function_hiper_expresionsContext) {
+        //Function with return call starts
         print(ctx.getText())
-        //Function call starts
         if let parent = ctx.parent as? tddParser.FactorContext {
             sOperators.insert("(", at: 0)
-            function_param_index = 0
+            sfunction_param_index.insert(0, at: 0)
             let function_name = parent.ID()?.getText()
             let function = symbols.functionsDictionary[function_name!]
-            if  function != nil && function!.type != .void {
+            if  function != nil && function?.type != .void{
                 sFunctions.insert(function!, at: 0)
                 let newQuad = Quadruple(quadOperator: "ERA", leftOperand: function!.start_quadruple, rightOperand: -1, result: -1)
                 arrayQuads.append(newQuad)
             }
             else {
                 print("Not a return function")
+            }
+        }
+        //Void function call starts
+        else if let parent = ctx.parent as? tddParser.Void_func_callContext {
+            sOperators.insert("(", at: 0)
+            sfunction_param_index.insert(0, at: 0)
+            let function_name = parent.ID()?.getText()
+            let function = symbols.functionsDictionary[function_name!]
+            if  function != nil && function?.type == .void {
+                sFunctions.insert(function!, at: 0)
+                let newQuad = Quadruple(quadOperator: "ERA", leftOperand: function!.start_quadruple, rightOperand: -1, result: -1)
+                arrayQuads.append(newQuad)
+            }
+            else {
+                print("Not a void function")
             }
         }
     }
@@ -869,15 +1114,15 @@ open class tddBaseListener: tddListener {
             if (sOperands.count > 0 && sTypes.count > 0) {
                 let paramQuad = addParamQuad()
                 arrayQuads.append(paramQuad)
-                function_param_index = function_param_index + 1
+                sfunction_param_index[0] = sfunction_param_index[0] + 1
             }
             let function = sFunctions.first!
             sFunctions.removeFirst()
             
-            if (function_param_index < function.input_total) {
+            if (sfunction_param_index.first! < function.input_total) {
                 print("ERROR too few arguments")
             }
-            function_param_index = 0 //Reset params count
+            sfunction_param_index.removeFirst() //Reset params count
             
             let subQuad = Quadruple(quadOperator: "GOSUB", leftOperand: function.start_quadruple, rightOperand: -1, result: -1)
             arrayQuads.append(subQuad)
@@ -892,13 +1137,34 @@ open class tddBaseListener: tddListener {
             
             sOperands.insert(tempReturn, at: 0)
             sTypes.insert(function.type, at: 0)
-            sOperators.removeFirst()
+            sOperators.removeFirst() //Remove last )
+        }
+        else if let parent = ctx.parent as? tddParser.Void_func_callContext {
+            //First or unique parameter is going to be processed last
+            if (sOperands.count > 0 && sTypes.count > 0) {
+                let paramQuad = addParamQuad()
+                arrayQuads.append(paramQuad)
+                sfunction_param_index[0] = sfunction_param_index[0] + 1
+            }
+            let function = sFunctions.first!
+            sFunctions.removeFirst()
+            
+            if (sfunction_param_index.first! < function.input_total) {
+                print("ERROR too few arguments")
+            }
+            sfunction_param_index.removeFirst() //Reset params count
+            
+            let subQuad = Quadruple(quadOperator: "GOSUB", leftOperand: function.start_quadruple, rightOperand: -1, result: -1)
+            arrayQuads.append(subQuad)
+            
+            sOperators.removeFirst()//Remove last )
+            temporalMemory.clean()
         }
         //Reading 2nd to nth function param are going to be processed first
-        else if function_param_index >= 0 {
+        else if sfunction_param_index.first! >= 0 {
             let paramQuad = addParamQuad()
             arrayQuads.append(paramQuad)
-            function_param_index = function_param_index + 1
+            sfunction_param_index[0] = sfunction_param_index[0] + 1
         }
         else {
             print("ERROR")
@@ -927,6 +1193,7 @@ open class tddBaseListener: tddListener {
         sTypes.removeFirst()
         let printOperand = sOperands.first!
         sOperands.removeFirst()
+        temporalMemory.clean()
         let newQuad = Quadruple(quadOperator: "PRINT", leftOperand: -1, rightOperand: printOperand, result: -1)
         arrayQuads.append(newQuad)
         
@@ -950,27 +1217,59 @@ open class tddBaseListener: tddListener {
      *
      * <p>The default implementation does nothing.</p>
      */
-    open func enterAsignation(_ ctx: tddParser.AsignationContext) { }
+    open func enterAsignation(_ ctx: tddParser.AsignationContext) {
+        if let arrayInfo = ctx.array_dimension() {
+            if let id = ctx.ID()?.getText() {
+                guard let variable = symbols.findID(scope: scope, id: id) else {
+                           //Compile error var does not exist
+                           return
+                       }
+                pendingArrayAddresses.append(variable)            }
+        } else if let matrixInfo = ctx.matrix_dimension() {
+            if let id = ctx.ID()?.getText() {
+                    guard let variable = symbols.findID(scope: scope, id: id) else {
+                                //Compile error var does not exist
+                                return
+                            }
+                    pendingArrayAddresses.append(variable)
+               }
+        }
+    }
     /**
      * {@inheritDoc}
      *
      * <p>The default implementation does nothing.</p>
      */
     open func exitAsignation(_ ctx: tddParser.AsignationContext) {
-        let variableToAsign = symbols.findID(scope: scope, id: ctx.ID()!.getText())
-        let leftType = variableToAsign?.type
-        let rightType = sTypes.first!
+        
+        let value = sOperands.first!
+        sOperands.removeFirst()
+        let valueType = sTypes.first
         sTypes.removeFirst()
         
-        if !semanticCube.checkCube(currOperator: "=", leftType: leftType!, rightType: rightType) {
+        var variableToAsign : Int
+        var varType : Type
+        var newQuad : Quadruple
+        if (ctx.array_dimension() == nil && ctx.matrix_dimension() == nil ) {
+            let variable = symbols.findID(scope: scope, id: ctx.ID()!.getText())!
+            variableToAsign = variable.address
+            varType = variable.type
+        }
+        else {
+            //IS array
+            variableToAsign = sOperands.first!
+            sOperands.removeFirst()
+            varType = sTypes.first!
+            sTypes.removeFirst()
+        }
+        
+        if !semanticCube.checkCube(currOperator: "=", leftType: valueType!, rightType: varType) {
             // TODO: Handle semantic cube error
             return
         }
         
-        let valueToAsignAddress = sOperands.first!
-        sOperands.removeFirst()
-        
-        let newQuad = Quadruple(quadOperator: "=", leftOperand: valueToAsignAddress, rightOperand: -1, result: variableToAsign!.address)
+        temporalMemory.clean()
+        newQuad = Quadruple(quadOperator: "=", leftOperand: value, rightOperand: -1, result: variableToAsign)
         arrayQuads.append(newQuad)
     }
 
@@ -998,6 +1297,19 @@ open class tddBaseListener: tddListener {
             solveQuad()
         }
     }
+    
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation does nothing.</p>
+     */
+    open func enterVoid_func_call(_ ctx: tddParser.Void_func_callContext) { }
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The default implementation does nothing.</p>
+     */
+    open func exitVoid_func_call(_ ctx: tddParser.Void_func_callContext) { }
 
     /**
      * {@inheritDoc}

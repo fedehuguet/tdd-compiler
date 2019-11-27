@@ -139,30 +139,6 @@ public protocol tddListener: ParseTreeListener {
 	 */
 	func exitInputs(_ ctx: tddParser.InputsContext)
 	/**
-	 * Enter a parse tree produced by {@link tddParser#function_body}.
-	 - Parameters:
-	   - ctx: the parse tree
-	 */
-	func enterFunction_body(_ ctx: tddParser.Function_bodyContext)
-	/**
-	 * Exit a parse tree produced by {@link tddParser#function_body}.
-	 - Parameters:
-	   - ctx: the parse tree
-	 */
-	func exitFunction_body(_ ctx: tddParser.Function_bodyContext)
-	/**
-	 * Enter a parse tree produced by {@link tddParser#void_function_body}.
-	 - Parameters:
-	   - ctx: the parse tree
-	 */
-	func enterVoid_function_body(_ ctx: tddParser.Void_function_bodyContext)
-	/**
-	 * Exit a parse tree produced by {@link tddParser#void_function_body}.
-	 - Parameters:
-	   - ctx: the parse tree
-	 */
-	func exitVoid_function_body(_ ctx: tddParser.Void_function_bodyContext)
-	/**
 	 * Enter a parse tree produced by {@link tddParser#body}.
 	 - Parameters:
 	   - ctx: the parse tree
@@ -222,6 +198,78 @@ public protocol tddListener: ParseTreeListener {
 	   - ctx: the parse tree
 	 */
 	func exitVar_declaration(_ ctx: tddParser.Var_declarationContext)
+	/**
+	 * Enter a parse tree produced by {@link tddParser#non_atomic}.
+	 - Parameters:
+	   - ctx: the parse tree
+	 */
+	func enterNon_atomic(_ ctx: tddParser.Non_atomicContext)
+	/**
+	 * Exit a parse tree produced by {@link tddParser#non_atomic}.
+	 - Parameters:
+	   - ctx: the parse tree
+	 */
+	func exitNon_atomic(_ ctx: tddParser.Non_atomicContext)
+	/**
+	 * Enter a parse tree produced by {@link tddParser#na_declaration}.
+	 - Parameters:
+	   - ctx: the parse tree
+	 */
+	func enterNa_declaration(_ ctx: tddParser.Na_declarationContext)
+	/**
+	 * Exit a parse tree produced by {@link tddParser#na_declaration}.
+	 - Parameters:
+	   - ctx: the parse tree
+	 */
+	func exitNa_declaration(_ ctx: tddParser.Na_declarationContext)
+	/**
+	 * Enter a parse tree produced by {@link tddParser#array_dimension_dec}.
+	 - Parameters:
+	   - ctx: the parse tree
+	 */
+	func enterArray_dimension_dec(_ ctx: tddParser.Array_dimension_decContext)
+	/**
+	 * Exit a parse tree produced by {@link tddParser#array_dimension_dec}.
+	 - Parameters:
+	   - ctx: the parse tree
+	 */
+	func exitArray_dimension_dec(_ ctx: tddParser.Array_dimension_decContext)
+	/**
+	 * Enter a parse tree produced by {@link tddParser#matrix_dimension_dec}.
+	 - Parameters:
+	   - ctx: the parse tree
+	 */
+	func enterMatrix_dimension_dec(_ ctx: tddParser.Matrix_dimension_decContext)
+	/**
+	 * Exit a parse tree produced by {@link tddParser#matrix_dimension_dec}.
+	 - Parameters:
+	   - ctx: the parse tree
+	 */
+	func exitMatrix_dimension_dec(_ ctx: tddParser.Matrix_dimension_decContext)
+	/**
+	 * Enter a parse tree produced by {@link tddParser#array_dimension}.
+	 - Parameters:
+	   - ctx: the parse tree
+	 */
+	func enterArray_dimension(_ ctx: tddParser.Array_dimensionContext)
+	/**
+	 * Exit a parse tree produced by {@link tddParser#array_dimension}.
+	 - Parameters:
+	   - ctx: the parse tree
+	 */
+	func exitArray_dimension(_ ctx: tddParser.Array_dimensionContext)
+	/**
+	 * Enter a parse tree produced by {@link tddParser#matrix_dimension}.
+	 - Parameters:
+	   - ctx: the parse tree
+	 */
+	func enterMatrix_dimension(_ ctx: tddParser.Matrix_dimensionContext)
+	/**
+	 * Exit a parse tree produced by {@link tddParser#matrix_dimension}.
+	 - Parameters:
+	   - ctx: the parse tree
+	 */
+	func exitMatrix_dimension(_ ctx: tddParser.Matrix_dimensionContext)
 	/**
 	 * Enter a parse tree produced by {@link tddParser#statement}.
 	 - Parameters:
@@ -414,4 +462,16 @@ public protocol tddListener: ParseTreeListener {
 	   - ctx: the parse tree
 	 */
 	func exitWhile_loop(_ ctx: tddParser.While_loopContext)
+	/**
+	 * Enter a parse tree produced by {@link tddParser#void_func_call}.
+	 - Parameters:
+	   - ctx: the parse tree
+	 */
+	func enterVoid_func_call(_ ctx: tddParser.Void_func_callContext)
+	/**
+	 * Exit a parse tree produced by {@link tddParser#void_func_call}.
+	 - Parameters:
+	   - ctx: the parse tree
+	 */
+	func exitVoid_func_call(_ ctx: tddParser.Void_func_callContext)
 }
