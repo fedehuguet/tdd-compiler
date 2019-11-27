@@ -21,13 +21,15 @@ class VirtualMachine {
     let semanticCube = SemanticCube()
     
     var sReads : [Any]
+    var testInputs : Bool
     
     var sJumps = [Int]()
     
-    init(quadruples: [Quadruple]!, constantMemory: ExecMemory, sReads: [Any] = [Any]()) {
+    init(quadruples: [Quadruple]!, constantMemory: ExecMemory, sReads: [Any] = [Any](), testInputs : Bool = false) {
         self.quadruples = quadruples
         self.constantMemory = constantMemory
         self.sReads = sReads
+        self.testInputs = testInputs
     }
     
     func printQuad(quad: Quadruple){
@@ -560,10 +562,18 @@ class VirtualMachine {
                 currentQuadIndex = sJumps.first!
                 sJumps.removeFirst()
                 break
+            case "TEST":
+                if (testInputs) {
+                    currentQuadIndex = currentQuadIndex + 1
+                }
+                else {
+                    currentQuadIndex = quad.result
+                }
+                break
             case "END":
                 sLocalMemory.removeFirst()
                 sTemporalMemory.removeFirst()
-                currentQuadIndex = currentQuadIndex + 1
+                currentQuadIndex = quadruples.count
                 break
             default:
                 // Shoouldn't happen but maybe should do some type of error

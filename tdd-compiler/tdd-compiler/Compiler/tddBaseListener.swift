@@ -89,37 +89,6 @@ func createTemp(type: Type) -> Int {
     }
 }
 
-//func getNegativeConstant(name: String) -> Variable {
-//    for constant in constantsTable {
-//        if constant.name == name {
-//            return constant
-//        }
-//    }
-//    let variable = createVariable(memory: constantMemory, id: "-\(name)", type: findType(value: name))
-//    constantsTable.append(variable)
-//    return variable
-//}
-//
-//func getConstant(name: String) -> Variable {
-//    for constant in constantsTable {
-//        if constant.name == name {
-//            return constant
-//        }
-//    }
-//    let type = findType(value: name)
-//    let variable : Variable
-//    if type == .string {
-//        // Avoid double quotes on strings
-//        variable = createVariable(memory: constantMemory, id: name.replacingOccurrences(of: "\"", with: ""), type: type)
-//    } else {
-//        variable = createVariable(memory: constantMemory, id: "\(name)", type: type)
-//    }
-//    constantsTable.append(variable)
-//    return variable
-//}
-
-
-
 func createVariable(memory: Memory, id: String, type: Type, input: Bool = false, size: Int = 1, dimensionated: Bool = false, x: Int = 1, y: Int = 1) -> Variable {
     let address: Int!
     switch type {
@@ -190,6 +159,40 @@ func addParamQuad() -> Quadruple {
     return newQuad
 }
 
+func genQuadTest(test: Test) {
+    let function = symbols.functionsDictionary[test.name]!
+    let eraQuad = Quadruple(quadOperator: "ERA", leftOperand: function.start_quadruple, rightOperand: 0, result: 0)
+    arrayQuads.append(eraQuad)
+    var paramQuad: Quadruple
+    var index : Int = 0
+    for param in test.params {
+        let variable = createVariable(memory: constantMemory, id: param, type: findType(value: param))
+        constantVals.saveToVals(address: variable.address, value: variable.name)
+        paramQuad = Quadruple(quadOperator: "PARAM", leftOperand: variable.address, rightOperand: variable.size, result: function.variables[index].address)
+        arrayQuads.append(paramQuad)
+        index = index + 1
+    }
+    let goSub = Quadruple(quadOperator: "GOSUB", leftOperand: function.start_quadruple, rightOperand: 0, result: 0)
+    arrayQuads.append(goSub)
+    let testVal = createVariable(memory: constantMemory, id: test.returnVal, type: findType(value: test.returnVal))
+    constantVals.saveToVals(address: testVal.address, value: testVal.name)
+    let tmpRes = createTemp(type: .bool)
+    let testEqual = Quadruple(quadOperator: "!=", leftOperand: function.return_address, rightOperand: testVal.address, result: tmpRes)
+    arrayQuads.append(testEqual)
+    
+    let gotoF = Quadruple(quadOperator: "GOTOF", leftOperand: tmpRes, rightOperand: -1, result: arrayQuads.count + 3)
+    arrayQuads.append(gotoF)
+    
+    let testMessage = createVariable(memory: constantMemory, id: "EERROR en unit tests de " + test.name + " " , type: .string)
+    constantVals.saveToVals(address: testMessage.address, value: testMessage.name)
+    
+    let printTest = Quadruple(quadOperator: "PRINT", leftOperand: -1, rightOperand: testMessage.address, result: -1)
+    arrayQuads.append(printTest)
+    
+    let endFail = Quadruple(quadOperator: "END", leftOperand: -1, rightOperand: -1, result: -1)
+    arrayQuads.append(endFail)
+}
+
 /**
  * This class provides an empty implementation of {@link tddListener},
  * which can be extended to create a listener which only needs to handle a subset
@@ -217,6 +220,12 @@ open class tddBaseListener: tddListener {
      * <p>The default implementation does nothing.</p>
      */
     open func exitProgram(_ ctx: tddParser.ProgramContext) {
+        let testInp = Quadruple(quadOperator: "TEST", leftOperand: -1, rightOperand: -1, result: -1)
+        arrayQuads.append(testInp)
+        for test in tests {
+            genQuadTest(test: test)
+        }
+        testInp.fillMissingResult(result: arrayQuads.count)
         let endProg = Quadruple(quadOperator: "END", leftOperand: -1, rightOperand: -1, result: -1)
         arrayQuads.append(endProg)
         localMemory.clean()
@@ -230,7 +239,7 @@ open class tddBaseListener: tddListener {
         
         print(documentation)
         //Temporal VM test
-        let vm = VirtualMachine(quadruples: arrayQuads, constantMemory: constantVals, sReads: [1,2])
+        let vm = VirtualMachine(quadruples: arrayQuads, constantMemory: constantVals)
         vm.execute()
     }
 

@@ -66,7 +66,6 @@ void sort(int arr[10]) {
         print("Sorted");
         sort(arr);
     }
-
 """
 
 let code3: String = """
@@ -74,7 +73,7 @@ let code3: String = """
     %% Getting the nth Fibonacci number
     @param int n %% The number of the sequence we want
     @return int %% El numero de la secuencia
-    @test (10) => 55
+    @test (10) => 56
 *#
 int fib(int n) {
     if (n == 1 || n == 0) {
@@ -102,7 +101,6 @@ int suma(int a, int b) {
     main() {
       int n;
         n = 10;
-        print(fib(n));
     }
 """
 
