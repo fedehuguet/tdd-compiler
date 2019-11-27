@@ -1,33 +1,118 @@
-# TDD Compiler
+# Tdd Language
 
-A simple fun compiler written using antlr and Swift.
+## User Manual
 
-## Running instructions
+### Headers
 
-First install antlr by running the following;
+To reinforce test driven develpment and force documentation. Every function must have a header with the name, description, description of inputs and unit tests if it applies. This header will automatically generate documentation in Markdown as well as automatized unit tests.
+```
+    #*
+    %% Function to add two variables
+    @param int  a %% First value to add
+    @param int b %% Second value to add
+    @return int %% la suma de los dos numeros
 
-```bash
-cd /usr/local/lib
-sudo curl -O https://www.antlr.org/download/antlr-4.7.2-complete.jar
+    @test (2,4) => 6
+    @test (120,200) => 320
+    *#
+    int suma(int a, int b) {
+        return a + b;
+    }
+    main() {
+        print(suma(2,4));
+    }
 ```
 
-To easily run the project add the following aliases to your `~/.bash_profile`:
+### Variable declaration
 
-```bash
-export CLASSPATH=".:/usr/local/lib/antlr-4.7.2-complete.jar:$CLASSPATH"
-alias antlr4='java -jar /usr/local/lib/antlr-4.7.2-complete.jar'
-alias grun='java org.antlr.v4.gui.TestRig'
-alias run-tdd='antlr4 tdd.g4 && javac tdd*.java && grun tdd program -gui'
+Several variables of the same type can be declared separated by commas. The language supports int, float, string, char and bool. You can also declare arrays and matrixes! But it has to be on separate lines.
+
 ```
 
-Remember to restart your terminal so the changes apply.
+    main() {
+        int a, b;
+        int arr[2];
+        string c;
+    }
+```
 
-After installing everything and creating the aliases you can run:
+### Functions
 
-`run-tdd`
+Functions can be void or have type return value. They are declared as type name (type params). And inside you can write statements (conditionals, asignations, while loops and more)! The first function that executes is main. You can pass arrays as paramaters as well.
 
-Followed by the code you want to test. And press Ctrl+D to see the constructed tree.
+```
+    void noReturn(int a[2][2]){
+        print("Welcome");
+    }
+    int suma(int a, int b) {
+        return a + b;
+    }
+    main() {
+        int arr[2][2];
+        print(suma(2,4));
+        noReturn(arr);
+    }
+```
 
-**An example for input text can be seen on input.txt.**
+### Arrays
 
-Symbol table is implemented as a hashing table with separate chaining to handle collisions
+Arrays must be declared with its size for its later use. And they must be accesed the following way:
+```
+    int arr[5];
+    arr[2] = 100;
+    print(arr[2]);
+    print(arr[2]*2);
+```
+
+
+### Conditionals
+
+You can write if, else if and else. And include statements in their body.
+
+```
+    bool tddIsAwesome;
+    tddIsAwesome = true;
+    if tddIsAwesome {
+        print("Tdd is awesome!");
+    }
+    else {
+        print("It is also cool");
+    }
+```
+
+### While loop
+
+A while loop continues until the meet condition is False. You can write it the following way.
+
+```
+    int i;
+    i = 0;
+
+    while (i < 10) {
+        print("Awesome");
+        i = i + 1;
+    }
+```
+
+### Interaction
+
+
+### Read
+
+You can read values from the user, to write it you need to pass the type to read.
+
+```
+    x = read(type);
+```
+
+### Read
+
+You can print values to output.
+
+```
+    print(value);
+```
+## Authors
+
+Federico Miguel Huguet Mack
+José Antonio Toussaint García
