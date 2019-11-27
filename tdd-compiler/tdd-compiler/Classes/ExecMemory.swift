@@ -50,6 +50,7 @@ class ExecMemory {
         else {
             self.values[address] = value as! Int
         }
+        
     }
     
     func getType(address: Int) -> (Type) {
@@ -86,5 +87,17 @@ class ExecMemory {
         else {
             return (values[address]!, .int)
         }
+    }
+    
+    func getAddressForVal(val: Int) -> Int {
+        for (key, value) in self.values {
+            guard value is Int else {
+                continue
+            }
+            if (value as! Int) == val {
+                return key
+            }
+        }
+        return -1
     }
 }
