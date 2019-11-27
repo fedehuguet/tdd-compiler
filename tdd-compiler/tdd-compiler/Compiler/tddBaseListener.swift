@@ -168,7 +168,8 @@ func addParamQuad() -> Quadruple {
     if sfunction_param_index.first! >= function.input_total || !function.variables[function.input_total - sfunction_param_index.first! - 1].input {
         print("ERROR argument quantity mismatch")
     }
-    if sTypes.first! != function.variables[function.input_total - sfunction_param_index.first! - 1].type {
+    let currentVar = function.variables[function.input_total - sfunction_param_index.first! - 1]
+    if sTypes.first! != currentVar.type {
         print("ERROR types mismatch")
     }
     // Potential way to not allow arrays as parameters
@@ -176,7 +177,7 @@ func addParamQuad() -> Quadruple {
 //        print("Error, no dimensionated variables as parameters")
 //    }
     
-    let newQuad = Quadruple(quadOperator: "PARAM", leftOperand: sOperands.first!, rightOperand: -1, result: function.variables[function.input_total - sfunction_param_index.first! - 1].address)
+    let newQuad = Quadruple(quadOperator: "PARAM", leftOperand: sOperands.first!, rightOperand: currentVar.size, result: currentVar.address)
     sTypes.removeFirst()
     sOperands.removeFirst()
     
@@ -451,9 +452,11 @@ open class tddBaseListener: tddListener {
             // TODO: Handle possible error
             return
         }
-        let variable = createVariable(memory: localMemory, id: name, type: Type(type: type), input: true)
-        symbols.functionsDictionary[scope]?.variables.append(variable)
-        symbols.functionsDictionary[scope]?.addInput()
+        if ctx.array_dimension_dec() == nil && ctx.matrix_dimension_dec() == nil {
+            let variable = createVariable(memory: localMemory, id: name, type: Type(type: type), input: true)
+            symbols.functionsDictionary[scope]?.variables.append(variable)
+            symbols.functionsDictionary[scope]?.addInput()
+        }
     }
     /**
      * {@inheritDoc}
@@ -604,6 +607,27 @@ open class tddBaseListener: tddListener {
         let value = ctx.VALUE()!.getText()
         let variable = createVariable(memory: constantMemory, id: value, type: .int)
         constantVals.saveToVals(address: variable.address, value: ctx.VALUE()!.getText())
+        //For array input declaration
+        if let inputParent = ctx.parent as? tddParser.InputsContext {
+            let variable: Variable!
+            let size = Int(value)!
+            let x: Int = size
+            
+            guard let type = inputParent.TYPE(), let id = inputParent.ID() else {
+                print("error")
+                return
+            }
+
+            if scope == "global" {
+                variable = createVariable(memory: globalMemory, id: id.getText(), type: Type(type: type.getText()), input: true, size: size, dimensionated: true, x: x)
+            } else {
+                variable = createVariable(memory: localMemory, id: id.getText(), type: Type(type: type.getText()), input: true, size: size, dimensionated: true, x: x)
+            }
+            symbols.functionsDictionary[scope]?.variables.append(variable)
+            symbols.functionsDictionary[scope]?.addInput()
+            sOperands.insert(variable.address, at: 0)
+            sTypes.insert(variable.type, at: 0)
+        }
     }
     /**
      * {@inheritDoc}
@@ -629,6 +653,28 @@ open class tddBaseListener: tddListener {
         
         constantVals.saveToVals(address: var2.address, value: value2)
         
+        //For matrix input declaration
+        if let inputParent = ctx.parent as? tddParser.InputsContext {
+            let variable: Variable!
+            let x: Int = Int(value1)!
+            let y: Int = Int(value2)!
+            let size : Int = x*y
+            
+            guard let type = inputParent.TYPE(), let id = inputParent.ID() else {
+                print("error")
+                return
+            }
+
+            if scope == "global" {
+                variable = createVariable(memory: globalMemory, id: id.getText(), type: Type(type: type.getText()), input: true, size: size, dimensionated: true, x: x, y: y)
+            } else {
+                variable = createVariable(memory: localMemory, id: id.getText(), type: Type(type: type.getText()), input: true, size: size, dimensionated: true, x: x, y: y)
+            }
+            symbols.functionsDictionary[scope]?.variables.append(variable)
+            symbols.functionsDictionary[scope]?.addInput()
+            sOperands.insert(variable.address, at: 0)
+            sTypes.insert(variable.type, at: 0)
+        }
     }
     /**
      * {@inheritDoc}
@@ -636,8 +682,6 @@ open class tddBaseListener: tddListener {
      * <p>The default implementation does nothing.</p>
      */
     open func exitMatrix_dimension_dec(_ ctx: tddParser.Matrix_dimension_decContext) {
-//        sOperands.removeFirst()
-//        sOperands.removeFirst()
     }
 
     /**
@@ -697,6 +741,7 @@ open class tddBaseListener: tddListener {
         // TODO: Get real address for array (Sumarle el desplazamiento)
         let verQuad = Quadruple(quadOperator: "VER", leftOperand: indexAddress, rightOperand: 0, result: pendingArrayAddresses.first!.y)
         sOperands.removeFirst()
+        sTypes.removeFirst()
                arrayQuads.append(verQuad)
         
         
@@ -704,6 +749,7 @@ open class tddBaseListener: tddListener {
         let verQuad2 = Quadruple(quadOperator: "VER", leftOperand: indexAddress2, rightOperand: 0, result: pendingArrayAddresses.first!.x)
         arrayQuads.append(verQuad2)
         sOperands.removeFirst()
+        sTypes.removeFirst()
         
         // Use formula x * d2 + y + DirBase to get address
         

@@ -14,32 +14,47 @@ let code: String = """
  %% Test array params
  @param int  arr %% Arr to test
  *#
-    void testerinos(int arr[4], int mat[5][5]) {
-        print("AA");
+    void testerinos(int arr[4], int mat2[2][2]) {
+        int a, b;
+        a = 4;
+        while(a >= 0) {
+            arr[a] = a;
+            print("Inside void!!!");
+            print(arr[a]);
+            a = a - 1;
+        }
+        a = 1;
+        while(a >= 0) {
+            b = 1;
+            while(b >= 0) {
+                mat2[a][b] = a*b;
+                print("Inside void!!!");
+                print(mat2[a][b]);
+                b = b - 1;
+            }
+            a = a - 1;
+        }
     }
 
     main() {
-        int b;
-        string hello, world;
-        int y,x;
-        string arr[5];
-        string mat[5][5];
-        int arr2[4], mat2[5][5];
-        b = 4;
-        y = 2;
-        hello = "Hello";
-
-        while (y >= 0){
-            x = 2;
-            while (x >= 0){
-                mat[y][x] = hello;
-                print(mat[y][x]);
-                x = x - 1;
-            }
-            y = y - 1;
+        int arr2[4], mat[2][2];
+        int a, b;
+        a = 4;
+        while(a >= 0) {
+            arr2[a] = a;
+            a = a - 1;
         }
-
-        testerinos(arr2, mat2);
+        a = 1;
+        while(a >= 0) {
+            b = 1;
+            while(b >= 0) {
+                mat[a][b] = a*b;
+                b = b - 1;
+            }
+            a = a - 1;
+        }
+        print(a);
+        testerinos(arr2, mat);
     }
 
 """
