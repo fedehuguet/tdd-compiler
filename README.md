@@ -2,6 +2,19 @@
 
 ## User Manual
 
+### Index
+
+* [Headers](#Headers)
+* [Variable declaration](#Variable-declaration)
+* [Functions](#Functions)
+* [Arrays](#Arrays)
+* [Conditionals](#Conditionals)
+* [While loop](#While-loop)
+* [Interaction](#Interaction)
+    * [Read](#Read)
+    * [Print](#Print)
+* [Authors](#Authors)
+
 ### Headers
 
 To reinforce test driven develpment and force documentation. Every function must have a header with the name, description, description of inputs and unit tests if it applies. This header will automatically generate documentation in Markdown as well as automatized unit tests.
@@ -105,7 +118,7 @@ You can read values from the user, to write it you need to pass the type to read
     x = read(type);
 ```
 
-### Read
+### Print
 
 You can print values to output.
 
