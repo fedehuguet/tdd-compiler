@@ -1288,10 +1288,18 @@ open class tddBaseListener: tddListener {
      */
     open func exitAsignation(_ ctx: tddParser.AsignationContext) {
         
-        let value = sOperands.first!
-        sOperands.removeFirst()
-        let valueType = sTypes.first
-        sTypes.removeFirst()
+        if (ctx.READ() == nil) {
+            let value = sOperands.first!
+            sOperands.removeFirst()
+            let valueType = sTypes.first
+            sTypes.removeFirst()
+        }
+        else {
+            let valueType = Type(type: ctx.Type().getText())
+            let value = createTemp(type: valueType)
+            let readQuad = Quadruple(quadOperator: "READ", leftOperand: -1, rightOperand: -1, result: value)
+            
+        }
         
         var variableToAsign : Int
         var varType : Type
