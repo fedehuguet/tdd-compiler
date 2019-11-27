@@ -7,8 +7,8 @@ program:
     (variable | non_atomic)* function* main;
 
 function:
-    header function_dec OPEN_BLOCK function_body CLOSE_BLOCK
-    | header void_function_dec OPEN_BLOCK void_function_body CLOSE_BLOCK;
+    header function_dec OPEN_BLOCK body CLOSE_BLOCK
+    | header void_function_dec OPEN_BLOCK body CLOSE_BLOCK;
 
 header:
     OPEN_HEADER header_body CLOSE_HEADER;
@@ -39,12 +39,6 @@ void_function_dec:
 inputs:
     TYPE ID
     | TYPE ID COMMA inputs;
-
-function_body:
-    body return_statement;
-
-void_function_body:
-    body;
 
 body:
     (variable | non_atomic)* statement*;
@@ -90,7 +84,8 @@ statement:
     | condition
     | print
     | while_loop
-    | void_func_call;
+    | void_func_call
+    | return_statement;
     
 super_condition_check:
     condition_check;
@@ -148,7 +143,9 @@ algo_imprimible:
     | STRING_VAL COMMA algo_imprimible;
 
 asignation:
-    ID EQUALS hiper_expresion SEMI_COLON;
+    ID EQUALS hiper_expresion SEMI_COLON
+    | ID array_dimension EQUALS hiper_expresion
+    | ID matrix_dimension EQUALS hiper_expresion;
 
 while_loop:
     WHILE super_condition_check OPEN_BLOCK statement* CLOSE_BLOCK;

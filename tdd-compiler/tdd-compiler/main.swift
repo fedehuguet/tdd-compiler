@@ -9,29 +9,26 @@
 import Foundation
 import Antlr4
 
-let code2: String = """
+let code: String = """
+ 
 
-#*
-%% Arrays can not be sent as parameters
-@param int arr %% array
-*#
-void failFunction(int arr){
-    print("Hola!");
-
-}
     main() {
-        int arr[3], mat[4][5];
-        int a1, a2, x;
-        x = 1;
-        a2 = arr[x] * mat[99][4];
-        a1 = 2.4 * 8.4;
-    failFunction(arr);
+        int b;
+        int arr[5];
+        b = 4;
+        while (b >= 0){
+        arr[b] = b;
+        b = b - 1;
+        }
+        b = arr[1];
+        print(b);
     }
 
 """
 
 let code2: String = """
 int a;
+
 #*
 %% Ala a
 @param int  a %% A value
@@ -66,8 +63,7 @@ int nam(int a, float b) {
 
 int suma(int a, int b) {
     print(a);
-    a = nam(nam(2,4.0), 4.0) + nam(2,4.0);
-    return a;
+    return nam(2,4.0);
 }
 
 #*
@@ -107,7 +103,7 @@ main(){
 """
 
 do {
-    let lexer = tddLexer(ANTLRInputStream(code2))
+    let lexer = tddLexer(ANTLRInputStream(code))
     let tokens = CommonTokenStream(lexer)
     let parser = try tddParser(tokens)
     let tree = try parser.program()

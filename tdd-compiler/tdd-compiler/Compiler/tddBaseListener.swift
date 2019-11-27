@@ -22,7 +22,7 @@ let semanticCube = SemanticCube()
 var symbols = SymbolTable()
 var scope: String = "error"
 
-var function_param_index: Int = 0
+var sfunction_param_index = [Int]()
 
 var solvingDimen: SolvingDimen = .none
 
@@ -165,10 +165,10 @@ func createQuad() -> Quadruple {
 
 func addParamQuad() -> Quadruple {
     let function = sFunctions.first!
-    if function_param_index >= function.input_total || !function.variables[function.input_total - function_param_index - 1].input {
+    if sfunction_param_index.first! >= function.input_total || !function.variables[function.input_total - sfunction_param_index.first! - 1].input {
         print("ERROR argument quantity mismatch")
     }
-    if sTypes.first! != function.variables[function.input_total - function_param_index - 1].type {
+    if sTypes.first! != function.variables[function.input_total - sfunction_param_index.first! - 1].type {
         print("ERROR types mismatch")
     }
     // Potential way to not allow arrays as parameters
@@ -176,8 +176,7 @@ func addParamQuad() -> Quadruple {
 //        print("Error, no dimensionated variables as parameters")
 //    }
     
-    let temporalMemoryAssignedSpace = createTemp(type: sTypes.first!)
-    let newQuad = Quadruple(quadOperator: "parameter", leftOperand: sOperands.first!, rightOperand: -1, result: temporalMemoryAssignedSpace)
+    let newQuad = Quadruple(quadOperator: "PARAM", leftOperand: sOperands.first!, rightOperand: -1, result: function.variables[function.input_total - sfunction_param_index.first! - 1].address)
     sTypes.removeFirst()
     sOperands.removeFirst()
     
@@ -211,6 +210,9 @@ open class tddBaseListener: tddListener {
      * <p>The default implementation does nothing.</p>
      */
     open func exitProgram(_ ctx: tddParser.ProgramContext) {
+        let endProg = Quadruple(quadOperator: "END", leftOperand: -1, rightOperand: -1, result: -1)
+        arrayQuads.append(endProg)
+        localMemory.clean()
         print("QUADRUPLOS")
         for (index, quad) in arrayQuads.enumerated() {
             guard let oper = quad.quadOperator, let left = quad.leftOperand, let right = quad.rightOperand, let res = quad.result else {
@@ -425,7 +427,7 @@ open class tddBaseListener: tddListener {
             return
         }
         scope = functionName
-        let function = Function(name: functionName, type: Type(type: "void"), scope: scope)
+        let function = Function(name: functionName, type: .void, scope: scope)
         symbols.insert(function: function)
     }
     /**
@@ -465,32 +467,6 @@ open class tddBaseListener: tddListener {
      *
      * <p>The default implementation does nothing.</p>
      */
-    open func enterFunction_body(_ ctx: tddParser.Function_bodyContext) { }
-    /**
-     * {@inheritDoc}
-     *
-     * <p>The default implementation does nothing.</p>
-     */
-    open func exitFunction_body(_ ctx: tddParser.Function_bodyContext) { }
-
-    /**
-     * {@inheritDoc}
-     *
-     * <p>The default implementation does nothing.</p>
-     */
-    open func enterVoid_function_body(_ ctx: tddParser.Void_function_bodyContext) { }
-    /**
-     * {@inheritDoc}
-     *
-     * <p>The default implementation does nothing.</p>
-     */
-    open func exitVoid_function_body(_ ctx: tddParser.Void_function_bodyContext) { }
-
-    /**
-     * {@inheritDoc}
-     *
-     * <p>The default implementation does nothing.</p>
-     */
     open func enterBody(_ ctx: tddParser.BodyContext) {
         
     }
@@ -513,11 +489,11 @@ open class tddBaseListener: tddListener {
      * <p>The default implementation does nothing.</p>
      */
     open func exitReturn_statement(_ ctx: tddParser.Return_statementContext) {
-        let return_type = symbols.functionsDictionary[scope]?.type
-        if (sTypes.first! != return_type) {
+        let function = symbols.functionsDictionary[scope]
+        if (sTypes.first! != function?.type) {
             print("Return type does not match function")
         }
-        let newQuad = Quadruple(quadOperator: "RETURN", leftOperand: -1, rightOperand: -1, result: sOperands.first!)
+        let newQuad = Quadruple(quadOperator: "RETURN", leftOperand: sOperands.first!, rightOperand: -1, result: function!.return_address)
         arrayQuads.append(newQuad)
         sOperands.removeFirst()
         sTypes.removeFirst()
@@ -531,7 +507,7 @@ open class tddBaseListener: tddListener {
      */
     open func enterMain(_ ctx: tddParser.MainContext) {
         scope = "main"
-        let function = Function(name: scope, type: .int, scope: scope)
+        let function = Function(name: scope, type: .void, scope: scope)
         symbols.insert(function: function)
         //Solve jump to Main
         arrayQuads[0].fillMissingResult(result: arrayQuads.count)
@@ -1092,10 +1068,10 @@ open class tddBaseListener: tddListener {
         print(ctx.getText())
         if let parent = ctx.parent as? tddParser.FactorContext {
             sOperators.insert("(", at: 0)
-            function_param_index = 0
+            sfunction_param_index.insert(0, at: 0)
             let function_name = parent.ID()?.getText()
             let function = symbols.functionsDictionary[function_name!]
-            if  function != nil {
+            if  function != nil && function?.type != .void{
                 sFunctions.insert(function!, at: 0)
                 let newQuad = Quadruple(quadOperator: "ERA", leftOperand: function!.start_quadruple, rightOperand: -1, result: -1)
                 arrayQuads.append(newQuad)
@@ -1107,16 +1083,16 @@ open class tddBaseListener: tddListener {
         //Void function call starts
         else if let parent = ctx.parent as? tddParser.Void_func_callContext {
             sOperators.insert("(", at: 0)
-            function_param_index = 0
+            sfunction_param_index.insert(0, at: 0)
             let function_name = parent.ID()?.getText()
             let function = symbols.functionsDictionary[function_name!]
-            if  function != nil {
+            if  function != nil && function?.type == .void {
                 sFunctions.insert(function!, at: 0)
                 let newQuad = Quadruple(quadOperator: "ERA", leftOperand: function!.start_quadruple, rightOperand: -1, result: -1)
                 arrayQuads.append(newQuad)
             }
             else {
-                print("Not a return function")
+                print("Not a void function")
             }
         }
     }
@@ -1132,15 +1108,15 @@ open class tddBaseListener: tddListener {
             if (sOperands.count > 0 && sTypes.count > 0) {
                 let paramQuad = addParamQuad()
                 arrayQuads.append(paramQuad)
-                function_param_index = function_param_index + 1
+                sfunction_param_index[0] = sfunction_param_index[0] + 1
             }
             let function = sFunctions.first!
             sFunctions.removeFirst()
             
-            if (function_param_index < function.input_total) {
+            if (sfunction_param_index.first! < function.input_total) {
                 print("ERROR too few arguments")
             }
-            function_param_index = 0 //Reset params count
+            sfunction_param_index.removeFirst() //Reset params count
             
             let subQuad = Quadruple(quadOperator: "GOSUB", leftOperand: function.start_quadruple, rightOperand: -1, result: -1)
             arrayQuads.append(subQuad)
@@ -1162,15 +1138,15 @@ open class tddBaseListener: tddListener {
             if (sOperands.count > 0 && sTypes.count > 0) {
                 let paramQuad = addParamQuad()
                 arrayQuads.append(paramQuad)
-                function_param_index = function_param_index + 1
+                sfunction_param_index[0] = sfunction_param_index[0] + 1
             }
             let function = sFunctions.first!
             sFunctions.removeFirst()
             
-            if (function_param_index < function.input_total) {
+            if (sfunction_param_index.first! < function.input_total) {
                 print("ERROR too few arguments")
             }
-            function_param_index = 0 //Reset params count
+            sfunction_param_index.removeFirst() //Reset params count
             
             let subQuad = Quadruple(quadOperator: "GOSUB", leftOperand: function.start_quadruple, rightOperand: -1, result: -1)
             arrayQuads.append(subQuad)
@@ -1179,10 +1155,10 @@ open class tddBaseListener: tddListener {
             temporalMemory.clean()
         }
         //Reading 2nd to nth function param are going to be processed first
-        else if function_param_index >= 0 {
+        else if sfunction_param_index.first! >= 0 {
             let paramQuad = addParamQuad()
             arrayQuads.append(paramQuad)
-            function_param_index = function_param_index + 1
+            sfunction_param_index[0] = sfunction_param_index[0] + 1
         }
         else {
             print("ERROR")
